@@ -21,7 +21,7 @@ export class User {
   userId: number;
 
   @Column("text", { name: "userName" })
-  userName: string;
+  username: string;
 
   @Column("text", { name: "password" })
   password: string;

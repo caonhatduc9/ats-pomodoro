@@ -1,33 +1,33 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Setting } from "./setting.entity";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Setting } from './setting.entity';
 
-@Entity("asset", { schema: "ats_pomodoro" })
+@Entity('asset', { schema: 'ats_pomodoro' })
 export class Asset {
-  @PrimaryGeneratedColumn({ type: "int", name: "assetId" })
+  @PrimaryGeneratedColumn({ type: 'int', name: 'assetId' })
   assetId: number;
 
-  @Column("text", { name: "assetName" })
+  @Column('text', { name: 'assetName' })
   assetName: string;
 
-  @Column("text", { name: "author" })
+  @Column('text', { name: 'author' })
   author: string;
 
-  @Column("varchar", { name: "type", length: 10 })
+  @Column('varchar', { name: 'type', length: 10 })
   type: string;
 
-  @Column("text", { name: "assetURL" })
+  @Column('text', { name: 'assetURL' })
   assetUrl: string;
 
-  @Column("tinyint", { name: "isFree" })
+  @Column('tinyint', { name: 'isFree' })
   isFree: number;
 
-  @Column("date", { name: "createdDate" })
+  @Column('date', { name: 'createdDate' })
   createdDate: string;
 
-  @Column("date", { name: "publishedDate", nullable: true })
+  @Column('date', { name: 'publishedDate', nullable: true })
   publishedDate: string | null;
 
-  @Column("date", { name: "modifiedDate", nullable: true })
+  @Column('date', { name: 'modifiedDate', nullable: true })
   modifiedDate: string | null;
 
   @OneToMany(() => Setting, (setting) => setting.backgroundMusic2)

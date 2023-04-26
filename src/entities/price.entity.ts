@@ -1,18 +1,18 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Subcription } from "./subcription.entity";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Subcription } from './subcription.entity';
 
-@Entity("price", { schema: "ats_pomodoro" })
+@Entity('price', { schema: 'ats_pomodoro' })
 export class Price {
-  @PrimaryGeneratedColumn({ type: "int", name: "priceId" })
+  @PrimaryGeneratedColumn({ type: 'int', name: 'priceId' })
   priceId: number;
 
-  @Column("varchar", { name: "type", length: 45 })
+  @Column('varchar', { name: 'type', length: 45 })
   type: string;
 
-  @Column("float", { name: "price", precision: 12 })
+  @Column('float', { name: 'price', precision: 12 })
   price: number;
 
-  @Column("text", { name: "planDetail" })
+  @Column('text', { name: 'planDetail' })
   planDetail: string;
 
   @OneToMany(() => Subcription, (subcription) => subcription.price)

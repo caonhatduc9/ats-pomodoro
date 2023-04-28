@@ -7,13 +7,19 @@ import { LocalStrategy } from './strategies/local.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './auth.constants';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { MailingModule } from '../mailing/mailing.module';
+import { GoogleStrategy } from './strategies/google.strategy';
 
 @Module({
-  imports: [UserModule, PassportModule,
+  imports: [
+    UserModule,
+    PassportModule,
     JwtModule.register({
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '2m' },
-    })],
+    }),
+    MailingModule
+  ],
   controllers: [AuthController],
   providers: [AuthService, LocalStrategy, JwtStrategy],
   exports: [AuthService],

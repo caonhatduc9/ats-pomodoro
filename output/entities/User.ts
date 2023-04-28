@@ -51,7 +51,7 @@ export class User {
   paymentAccount: string | null;
 
   @Column("tinyint", { name: "active", nullable: true })
-  active: number | null;
+  isActive: number | null;
 
   @OneToMany(() => Focusedpomodoro, (focusedpomodoro) => focusedpomodoro.user)
   focusedpomodoros: Focusedpomodoro[];

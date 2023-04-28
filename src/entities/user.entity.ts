@@ -13,6 +13,7 @@ import { Project } from './project.entity';
 import { Setting } from './setting.entity';
 import { Subcription } from './subcription.entity';
 import { Task } from './task.entity';
+import { Exclude } from 'class-transformer';
 
 @Index('user_subcription_subcriptionId_idx', ['currentSubcriptionId'], {})
 @Entity('user', { schema: 'ats_pomodoro' })
@@ -22,7 +23,7 @@ export class User {
 
   @Column('text', { name: 'userName' })
   username: string;
-
+  @Exclude()
   @Column('text', { name: 'password' })
   password: string;
 
@@ -41,7 +42,7 @@ export class User {
   @Column('text', { name: 'email' })
   email: string;
 
-  @Column('varchar', { name: 'phoneNumber', length: 12 })
+  @Column('varchar', { name: 'phoneNumber', length: 12, nullable: true })
   phoneNumber: string;
 
   @Column('text', { name: 'accessToken', nullable: true })
@@ -51,7 +52,7 @@ export class User {
   paymentAccount: string | null;
 
   @Column('tinyint', { name: 'active', nullable: true })
-  active: number | null;
+  isActive: number | null;
 
   @OneToMany(() => Focusedpomodoro, (focusedpomodoro) => focusedpomodoro.user)
   focusedpomodoros: Focusedpomodoro[];

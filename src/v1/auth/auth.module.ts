@@ -21,7 +21,7 @@ import { GoogleStrategy } from './strategies/google.strategy';
     MailingModule
   ],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
+  providers: [AuthService, LocalStrategy, JwtStrategy, GoogleStrategy],
   exports: [AuthService],
 })
 export class AuthModule { }

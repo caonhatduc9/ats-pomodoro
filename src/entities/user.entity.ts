@@ -15,6 +15,13 @@ import { Subcription } from './subcription.entity';
 import { Task } from './task.entity';
 import { Exclude } from 'class-transformer';
 
+
+
+enum AuthProvider {
+  LOCAL = 'local',
+  GOOGLE = 'google',
+  APPLE = 'apple',
+}
 @Index('user_subcription_subcriptionId_idx', ['currentSubcriptionId'], {})
 @Entity('user', { schema: 'ats_pomodoro' })
 export class User {
@@ -54,6 +61,12 @@ export class User {
   @Column('tinyint', { name: 'active', nullable: true })
   isActive: number | null;
 
+  @Column({
+    type: 'enum',
+    enum: AuthProvider,
+    default: AuthProvider.LOCAL,
+  })
+  authProvider: AuthProvider;
   @OneToMany(() => Focusedpomodoro, (focusedpomodoro) => focusedpomodoro.user)
   focusedpomodoros: Focusedpomodoro[];
 

@@ -46,7 +46,6 @@ export class MailingService {
     }
     public async sendMail(email: string, subject: string, content: string) {
         await this.setTransport();
-        console.log("check");
         this.mailerService
             .sendMail({
                 transporterName: 'gmail',
@@ -57,7 +56,7 @@ export class MailingService {
                 html: content
             })
             .then((success) => {
-                console.log(success);
+                console.log("send email success", success);
             })
             .catch((err) => {
                 console.log(err);

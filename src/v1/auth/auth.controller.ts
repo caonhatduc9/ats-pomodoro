@@ -15,7 +15,7 @@ import { LocalAuthGuard } from './guards/auth.local.guard';
 import { JwtAuthGuard } from './guards/auth.jwt.guard';
 import { UserSignupDto } from './dto/auth.signup.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { async } from 'rxjs';
+import {LoginValidationPipe} from './pipes/login.validate.pipe';
 
 @Controller('auth')
 export class AuthController {

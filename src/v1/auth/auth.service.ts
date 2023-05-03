@@ -15,13 +15,13 @@ export class AuthService {
     private userService: UserService,
     private jwtService: JwtService,
     private maillingService: MailingService,
-  ) { }
+  ) {}
 
-  async validateUser(userName: string, pass: string): Promise<any> {
-    console.log("check user", userName, pass);
-    const user = await this.userService.findOne(userName);
-    console.log("check user find", user);
-    const passwordMatch = await bcrypt.compare(pass, user.password);
+  async validateUser(email: string, password: string): Promise<any> {
+    console.log('check user', email, password);
+    const user = await this.userService.findUserByEmail(email);
+    console.log('check user find', user);
+    const passwordMatch = await bcrypt.compare(password, user.password);
     if (user && passwordMatch) {
       const { password, ...result } = user;
       return result;
@@ -29,7 +29,7 @@ export class AuthService {
     return null;
   }
 
-  //local strategy login 
+  //local strategy login
   async login(user: any) {
     const payload = { username: user.username, sub: user.userId };
     return {
@@ -65,7 +65,7 @@ export class AuthService {
     user.authProvider = AuthProvider.LOCAL;
     const savedUser = await this.userService.create(user);
     const subject = 'Verficiaction Code';
-    const content = `<p>this is default password: <b>${randomPassword}</b>. Please change password after login</p>`
+    const content = `<p>this is default password: <b>${randomPassword}</b>. Please change password after login</p>`;
     this.maillingService.sendMail(user.email, subject, content);
     return {
       status: 'success',
@@ -90,8 +90,7 @@ export class AuthService {
         throw new BadRequestException(
           `email ${req.user.email} is already used by another auth provider`,
         );
-      }
-      else {
+      } else {
         const payload = { username: foundUser.username, sub: 12 };
         return {
           status: 'success',
@@ -104,8 +103,7 @@ export class AuthService {
           },
         };
       }
-    }
-    else {
+    } else {
       const user = new User();
       user.email = req.user.email;
       user.username = req.user.email.split('@')[0];

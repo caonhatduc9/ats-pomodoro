@@ -6,7 +6,7 @@ import { CreateUserDto } from './dto/createUser.dto';
 export class UserService {
   constructor(
     @Inject('USER_REPOSITORY') private userRepository: Repository<User>,
-  ) { }
+  ) {}
   async findAll(): Promise<User[]> {
     return this.userRepository.find();
   }

@@ -18,10 +18,10 @@ import { GoogleStrategy } from './strategies/google.strategy';
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '2m' },
     }),
-    MailingModule
+    MailingModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, LocalStrategy, JwtStrategy, GoogleStrategy],
   exports: [AuthService],
 })
-export class AuthModule { }
+export class AuthModule {}

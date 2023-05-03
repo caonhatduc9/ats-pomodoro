@@ -15,11 +15,11 @@ import { LocalAuthGuard } from './guards/auth.local.guard';
 import { JwtAuthGuard } from './guards/auth.jwt.guard';
 import { UserSignupDto } from './dto/auth.signup.dto';
 import { AuthGuard } from '@nestjs/passport';
-import {LoginValidationPipe} from './pipes/login.validate.pipe';
+import { LoginValidationPipe } from './pipes/login.validate.pipe';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) { }
+  constructor(private readonly authService: AuthService) {}
   @UseGuards(LocalAuthGuard)
   @Post('login')
   async login(@Request() req: any) {
@@ -32,12 +32,12 @@ export class AuthController {
 
   @Get('google')
   @UseGuards(AuthGuard('google'))
-  async googleAuth(@Request() req) { }
+  async googleAuth(@Request() req) {}
 
   @Get('google/redirect')
   @UseGuards(AuthGuard('google'))
   googleAuthRedirect(@Request() req) {
-    return this.authService.googleLogin(req)
+    return this.authService.googleLogin(req);
   }
 
   @UseGuards(JwtAuthGuard)

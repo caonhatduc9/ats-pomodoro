@@ -15,8 +15,6 @@ import { Subcription } from './subcription.entity';
 import { Task } from './task.entity';
 import { Exclude } from 'class-transformer';
 
-
-
 enum AuthProvider {
   LOCAL = 'local',
   GOOGLE = 'google',

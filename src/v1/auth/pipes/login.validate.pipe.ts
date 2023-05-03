@@ -1,9 +1,9 @@
-import { BadRequestException, Injectable, PipeTransform } from "@nestjs/common";
-import {LoginDto} from '../dto/auth.login.dto';
-import { plainToClass } from "class-transformer";
-import { validate } from "class-validator";
+import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
+import { LoginDto } from '../dto/auth.login.dto';
+import { plainToClass } from 'class-transformer';
+import { validate } from 'class-validator';
 
-Injectable()
+Injectable();
 export class LoginValidationPipe implements PipeTransform {
   async transform(value: any) {
     const loginDto = plainToClass(LoginDto, value);

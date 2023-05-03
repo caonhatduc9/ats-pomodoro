@@ -15,8 +15,12 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    DatabaseModule, UserModule, AuthModule, MailingModule],
+    DatabaseModule,
+    UserModule,
+    AuthModule,
+    MailingModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}

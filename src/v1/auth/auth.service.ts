@@ -1,4 +1,10 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { ChangePassDto } from './dto/changePass.dto';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { UserSignupDto } from './dto/auth.signup.dto';
@@ -8,6 +14,8 @@ import * as generator from 'generate-password';
 import * as bcrypt from 'bcrypt';
 import { MailingService } from '../mailing/mailing.service';
 import { AuthProvider } from './auth.constants';
+import { log } from 'console';
+import { clouddebugger } from 'googleapis/build/src/apis/clouddebugger';
 
 @Injectable()
 export class AuthService {
@@ -122,6 +130,37 @@ export class AuthService {
           payment: 'free',
         },
       };
+    }
+  }
+
+  async changePassword(changePassDto: ChangePassDto): Promise<any> {
+    console.log('check change passs', changePassDto);
+    const foundUser = await this.userService.findUserByEmail(
+      changePassDto.email,
+    );
+    if (!foundUser) {
+      throw new NotFoundException('user not exist');
+    }
+    //found user
+    const passwordMatch = await bcrypt.compare(
+      changePassDto.currentPassword,
+      foundUser.password,
+    );
+    if (!passwordMatch) {
+      throw new BadRequestException('old password incorrect');
+    }
+    const hashedPassword = await bcrypt.hash(changePassDto.newPassword, 10);
+    const inforUpdateReturn = await this.userService.updatePasswordById(
+      foundUser.userId,
+      hashedPassword,
+    );
+    if (inforUpdateReturn.affected > 0) {
+      return {
+        statusCode: '200',
+        message: 'success',
+      };
+    } else {
+      throw new InternalServerErrorException();
     }
   }
 }

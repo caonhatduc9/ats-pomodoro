@@ -17,18 +17,19 @@ import { CorsInterceptor } from './cors.interceptor';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    
+
     DatabaseModule,
     UserModule,
     AuthModule,
     MailingModule,
   ],
   controllers: [AppController],
-  providers: [AppService,
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: CorsInterceptor,
-    },
+  providers: [
+    AppService,
+    // {
+    //   provide: APP_INTERCEPTOR,
+    //   useClass: CorsInterceptor,
+    // },
   ],
 })
 export class AppModule {}

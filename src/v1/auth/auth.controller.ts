@@ -17,6 +17,7 @@ import { UserSignupDto } from './dto/auth.signup.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { LoginValidationPipe } from './pipes/login.validate.pipe';
 import { ChangePassDto } from './dto/changePass.dto';
+import { log } from 'console';
 
 @Controller('v1/auth')
 export class AuthController {
@@ -50,5 +51,10 @@ export class AuthController {
   @Patch('changePass')
   changePassword(@Body() changePassDto: ChangePassDto): Promise<any> {
     return this.authService.changePassword(changePassDto);
+  }
+
+  @Post('forgotPass')
+  forgotPassword(@Body('email') email: string): Promise<any> {
+    return this.authService.forgotPassword(email);
   }
 }

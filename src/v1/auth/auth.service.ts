@@ -163,4 +163,32 @@ export class AuthService {
       throw new InternalServerErrorException();
     }
   }
+
+  async forgotPassword(email: string): Promise<any> {
+    const foundUser = await this.userService.findUserByEmail(email);
+    if (!foundUser) {
+      throw new NotFoundException('user not exist');
+    }
+    const randomPassword = generator.generate({
+      length: 8,
+      numbers: true,
+      uppercase: true,
+    });
+    const hashedPassword = await bcrypt.hash(randomPassword, 10);
+    const subject = 'Fotgot Password';
+    const content = `<p>this is default password: <b>${randomPassword}</b>. Please change password after login</p>`;
+    this.maillingService.sendMail(email, subject, content);
+    const inforUpdateReturn = await this.userService.updatePasswordById(
+      foundUser.userId,
+      hashedPassword,
+    );
+    if (inforUpdateReturn.affected > 0) {
+      return {
+        statusCode: '200',
+        message: 'success',
+      };
+    } else {
+      throw new InternalServerErrorException();
+    }
+  }
 }

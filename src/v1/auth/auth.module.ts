@@ -16,7 +16,7 @@ import { GoogleStrategy } from './strategies/google.strategy';
     PassportModule,
     JwtModule.register({
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '2m' },
+      signOptions: { expiresIn: '72h' },
     }),
     MailingModule,
   ],

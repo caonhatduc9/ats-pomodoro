@@ -26,10 +26,10 @@ import { CorsInterceptor } from './cors.interceptor';
   controllers: [AppController],
   providers: [
     AppService,
-    // {
-    //   provide: APP_INTERCEPTOR,
-    //   useClass: CorsInterceptor,
-    // },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: CorsInterceptor,
+    },
   ],
 })
 export class AppModule {}

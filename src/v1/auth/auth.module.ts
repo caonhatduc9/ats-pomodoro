@@ -9,6 +9,7 @@ import { jwtConstants } from './auth.constants';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { MailingModule } from '../mailing/mailing.module';
 import { GoogleStrategy } from './strategies/google.strategy';
+import { AppleStrategy } from './strategies/apple.strategy';
 
 @Module({
   imports: [
@@ -21,7 +22,13 @@ import { GoogleStrategy } from './strategies/google.strategy';
     MailingModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, JwtStrategy, GoogleStrategy],
+  providers: [
+    AuthService,
+    LocalStrategy,
+    JwtStrategy,
+    GoogleStrategy,
+    AppleStrategy,
+  ],
   exports: [AuthService],
 })
 export class AuthModule {}

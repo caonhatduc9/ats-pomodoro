@@ -8,6 +8,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  HttpStatus,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 // import { AuthGuard } from '@nestjs/passport';
@@ -34,12 +35,26 @@ export class AuthController {
 
   @Get('google')
   @UseGuards(AuthGuard('google'))
-  async googleAuth(@Request() req) {}
+  async googleAuth(@Request() req) {
+    return HttpStatus.OK;
+  }
 
   @Get('google/redirect')
   @UseGuards(AuthGuard('google'))
   googleAuthRedirect(@Request() req) {
     return this.authService.googleLogin(req);
+  }
+
+  @Get('apple')
+  @UseGuards(AuthGuard('apple'))
+  async appleAuth(@Request() req): Promise<any> {
+    return HttpStatus.OK;
+  }
+
+  @Get('apple/redirect')
+  @UseGuards(AuthGuard('apple'))
+  appleAuthRedirect(@Request() req: any): any {
+    return this.authService.appleLogin(req);
   }
 
   @UseGuards(JwtAuthGuard)

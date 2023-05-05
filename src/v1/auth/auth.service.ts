@@ -136,6 +136,10 @@ export class AuthService {
     }
   }
 
+  async appleLogin(req: any): Promise<void> {
+    console.log('applelogin servide: ', req);
+  }
+
   async changePassword(changePassDto: ChangePassDto): Promise<any> {
     console.log('check change passs', changePassDto);
     const foundUser = await this.userService.findUserByEmail(

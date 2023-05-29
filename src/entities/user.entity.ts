@@ -81,7 +81,7 @@ export class User {
   tasks: Task[];
 
   @ManyToOne(() => Subcription, (subcription) => subcription.users, {
-    onDelete: 'RESTRICT',
+    onDelete: 'RESTRICT', 
     onUpdate: 'RESTRICT',
   })
   @JoinColumn([

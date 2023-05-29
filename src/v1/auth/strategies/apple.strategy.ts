@@ -8,11 +8,11 @@ import { VerifyCallback, Strategy } from 'passport-apple';
 export class AppleStrategy extends PassportStrategy(Strategy, 'apple') {
   constructor(config: ConfigService) {
     super({
-      clientID: config.get<string>('APPLE_CLIENTID'),
-      teamID: config.get<string>('APPLE_TEAMID'),
-      keyID: config.get<string>('APPLE_KEYID'),
-      keyFilePath: config.get<string>('APPLE_KEYFILE_PATH'),
-      callbackURL: config.get<string>('APPLE_CALLBACK'),
+      clientID: config.get('APPLE_CLIENT_ID'),
+      teamID: config.get('APPLE_TEAM_ID'),
+      keyID: config.get('APPLE_KEY_ID'),
+      keyFilePath: './../../../../secret_key/AuthKey_FNB33GLMG7.p8', //config.get('APPLE_KEYFILE_PATH'),
+      callbackURL: config.get('APPLE_CALLBACK'),
       passReqToCallback: false,
       scope: ['email', 'name'],
     });

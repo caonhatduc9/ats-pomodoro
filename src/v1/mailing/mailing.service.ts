@@ -9,7 +9,7 @@ export class MailingService {
   constructor(
     private readonly configService: ConfigService,
     private readonly mailerService: MailerService,
-  ) {}
+  ) { }
 
   private async setTransport() {
     const OAuth2 = google.auth.OAuth2;
@@ -20,7 +20,7 @@ export class MailingService {
     );
 
     oauth2Client.setCredentials({
-      refresh_token: process.env.REFRESH_TOKEN,
+      refresh_token: this.configService.get('REFRESH_TOKEN'),
     });
 
     const accessToken: string = await new Promise((resolve, reject) => {

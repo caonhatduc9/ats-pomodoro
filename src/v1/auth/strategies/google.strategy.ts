@@ -15,7 +15,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       accessType: 'offline', // yêu cầu cấp refresh token
       prompt: 'consent',
     });
-    console.log('secret', configService.get('GOOGLE_CLIENT_SECRET'));
+    console.log('google secret', configService.get('GOOGLE_CLIENT_SECRET'));
   }
 
   async validate(

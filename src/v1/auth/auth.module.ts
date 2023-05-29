@@ -10,6 +10,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { MailingModule } from '../mailing/mailing.module';
 import { GoogleStrategy } from './strategies/google.strategy';
 import { AppleStrategy } from './strategies/apple.strategy';
+import { GithubStrategy } from './strategies/github.strategy';
 
 @Module({
   imports: [
@@ -28,7 +29,8 @@ import { AppleStrategy } from './strategies/apple.strategy';
     JwtStrategy,
     GoogleStrategy,
     AppleStrategy,
+    GithubStrategy
   ],
   exports: [AuthService],
 })
-export class AuthModule {}
+export class AuthModule { }

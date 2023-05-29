@@ -23,7 +23,7 @@ export class AuthService {
     private userService: UserService,
     private jwtService: JwtService,
     private maillingService: MailingService,
-  ) {}
+  ) { }
 
   async validateUser(email: string, password: string): Promise<any> {
     console.log('check user', email, password);
@@ -196,6 +196,55 @@ export class AuthService {
       };
     } else {
       throw new InternalServerErrorException();
+    }
+  }
+
+
+  //github strategy login
+  async githubLogin(req: any) {
+    console.log('github login', req.user);
+    if (!req.user) {
+      throw new BadRequestException('No user from github');
+    }
+    const foundUser = await this.userService.findUserByEmail(req.user.email);
+    if (foundUser) {
+      if (foundUser.authProvider !== AuthProvider.GITHUB) {
+        throw new BadRequestException(
+          `email ${req.user.email} is already used by another auth provider`,
+        );
+      } else {
+        const payload = { username: foundUser.username, sub: 12 };
+        return {
+          status: 'success',
+          data: {
+            userId: foundUser.userId,
+            access_token: this.jwtService.sign(payload),
+            userName: foundUser.username,
+            avatarURL: foundUser.avatarUrl,
+            payment: 'free',
+          },
+        };
+      }
+    } else {
+      const user = new User();
+      user.email = req.user.email;
+      user.username = req.user.email.split('@')[0];
+      user.password = 'google_auth';
+      user.isActive = 1;
+      user.authProvider = AuthProvider.GITHUB;
+      user.avatarUrl = req.user.avatarUrl;
+      const savedUser = await this.userService.create(user);
+      const payload = { username: savedUser.username, sub: savedUser.userId };
+      return {
+        status: 'success',
+        data: {
+          userId: savedUser.userId,
+          access_token: this.jwtService.sign(payload),
+          userName: savedUser.username,
+          avatarURL: savedUser.avatarUrl,
+          payment: 'free',
+        },
+      };
     }
   }
 }

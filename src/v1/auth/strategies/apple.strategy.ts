@@ -16,7 +16,7 @@ export class AppleStrategy extends PassportStrategy(Strategy, 'apple') {
       passReqToCallback: false,
       scope: ['email', 'name'],
     });
-    console.log('secret', config.get('APPLE_CLIENTID'));
+    console.log('apple secret', config.get('APPLE_CLIENT_ID'));
   }
 
   async validate(

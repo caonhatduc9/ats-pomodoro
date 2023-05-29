@@ -19,6 +19,7 @@ enum AuthProvider {
   LOCAL = 'local',
   GOOGLE = 'google',
   APPLE = 'apple',
+  GITHUB = 'github',
 }
 @Index('user_subcription_subcriptionId_idx', ['currentSubcriptionId'], {})
 @Entity('user', { schema: 'ats_pomodoro' })

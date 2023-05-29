@@ -72,4 +72,16 @@ export class AuthController {
   forgotPassword(@Body('email') email: string): Promise<any> {
     return this.authService.forgotPassword(email);
   }
+
+  @Get('github')
+  @UseGuards(AuthGuard('github'))
+  async githubAuth(@Request() req) {
+    return HttpStatus.OK;
+  }
+
+  @Get('github/callback')
+  @UseGuards(AuthGuard('github'))
+  githubAuthRedirect(@Request() req) {
+    return this.authService.githubLogin(req);
+  }
 }

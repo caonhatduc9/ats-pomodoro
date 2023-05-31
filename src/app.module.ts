@@ -9,6 +9,7 @@ import { ConfigModule } from '@nestjs/config';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { CorsInterceptor } from './cors.interceptor';
+import { SettingModule } from './setting/setting.module';
 
 @Module({
   //fix error cors when frontend fetch API
@@ -21,6 +22,7 @@ import { CorsInterceptor } from './cors.interceptor';
     UserModule,
     AuthModule,
     MailingModule,
+    SettingModule,
   ],
   controllers: [AppController],
   providers: [

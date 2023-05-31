@@ -19,10 +19,11 @@ import { AuthGuard } from '@nestjs/passport';
 import { LoginValidationPipe } from './pipes/login.validate.pipe';
 import { ChangePassDto } from './dto/changePass.dto';
 import { log } from 'console';
+import { request } from 'http';
 
 @Controller('v1/auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
   @UseGuards(LocalAuthGuard)
   @Post('login')
   async login(@Request() req: any) {
@@ -59,7 +60,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('profile')
-  getProfile(@Request() req) {
+  getProfile(@Request() req: any): any {
     return req.user;
   }
 

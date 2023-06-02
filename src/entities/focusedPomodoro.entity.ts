@@ -1,10 +1,10 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from './user.entity';
 
 @Index('dayFocus_user_userId_idx', ['userId'], {})
 @Entity('focusedpomodoro', { schema: 'ats_pomodoro' })
 export class Focusedpomodoro {
-  @Column('int', { primary: true, name: 'focusedPomodoroId' })
+  @PrimaryGeneratedColumn({ type: 'int', name: 'focusedPomodoroId' })
   focusedPomodoroId: number;
 
   @Column('int', { name: 'userId', nullable: true })

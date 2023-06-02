@@ -58,11 +58,11 @@ export class AuthController {
     return this.authService.appleLogin(req);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Get('profile')
-  getProfile(@Request() req: any): any {
-    return req.user;
-  }
+    @UseGuards(JwtAuthGuard)
+    @Get('profile')
+    getProfile(@Request() req: any): any {
+      return req.user;
+    }
 
   @Patch('changePass')
   changePassword(@Body() changePassDto: ChangePassDto): Promise<any> {

@@ -18,7 +18,7 @@ import { GithubStrategy } from './strategies/github.strategy';
     PassportModule,
     JwtModule.register({
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '72h' },
+      signOptions: { expiresIn: '15m' },
     }),
     MailingModule,
   ],

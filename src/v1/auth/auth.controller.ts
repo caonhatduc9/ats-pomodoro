@@ -44,11 +44,11 @@ export class AuthController {
     return this.authService.googleLogin(user);
   }
 
-  @Get('google/redirect')
-  @UseGuards(AuthGuard('google'))
-  googleAuthRedirect(@Request() req) {
-    return this.authService.googleLogin(req);
-  }
+  // @Get('google/redirect')
+  // @UseGuards(AuthGuard('google'))
+  // googleAuthRedirect(@Request() req) {
+  //   return this.authService.googleLogin(req);
+  // }
 
   @Get('apple')
   @UseGuards(AuthGuard('apple'))
@@ -78,15 +78,19 @@ export class AuthController {
     return this.authService.forgotPassword(email);
   }
 
-  @Get('github')
-  @UseGuards(AuthGuard('github'))
-  async githubAuth(@Request() req) {
-    return HttpStatus.OK;
+  @Post('github')
+  // @UseGuards(AuthGuard('github'))
+  // async githubAuth(@Request() req) {
+  //   return HttpStatus.OK;
+  // }
+  async githubAuth(@Body() user: any): Promise<any> {
+    return this.authService.githubLogin(user);
   }
 
-  @Get('github/callback')
-  @UseGuards(AuthGuard('github'))
-  githubAuthRedirect(@Request() req) {
-    return this.authService.githubLogin(req);
-  }
+
+  // @Get('github/callback')
+  // @UseGuards(AuthGuard('github'))
+  // githubAuthRedirect(@Request() req) {
+  //   return this.authService.githubLogin(req);
+  // }
 }

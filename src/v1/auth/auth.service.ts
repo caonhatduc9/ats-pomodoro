@@ -248,19 +248,65 @@ export class AuthService {
 
 
   //github strategy login
-  async githubLogin(req: any) {
-    console.log('github login', req.user);
-    if (!req.user) {
+  // async githubLogin(req: any) {
+  //   console.log('github login', req.user);
+  //   if (!req.user) {
+  //     throw new BadRequestException('No user from github');
+  //   }
+  //   const foundUser = await this.userService.findUserByEmail(req.user.email);
+  //   if (foundUser) {
+  //     if (foundUser.authProvider !== AuthProvider.GITHUB) {
+  //       throw new BadRequestException(
+  //         `email ${req.user.email} is already used by another auth provider`,
+  //       );
+  //     } else {
+  //       const payload = { username: foundUser.username, sub: 12 };
+  //       return {
+  //         status: 'success',
+  //         data: {
+  //           userId: foundUser.userId,
+  //           access_token: this.jwtService.sign(payload),
+  //           userName: foundUser.username,
+  //           avatarURL: foundUser.avatarUrl,
+  //           payment: 'free',
+  //         },
+  //       };
+  //     }
+  //   } else {
+  //     const user = new User();
+  //     user.email = req.user.email;
+  //     user.username = req.user.email.split('@')[0];
+  //     user.password = 'github_auth';
+  //     user.isActive = 1;
+  //     user.authProvider = AuthProvider.GITHUB;
+  //     user.avatarUrl = req.user.avatarUrl;
+  //     const savedUser = await this.userService.create(user);
+  //     const payload = { username: savedUser.username, sub: savedUser.userId };
+  //     return {
+  //       status: 'success',
+  //       data: {
+  //         userId: savedUser.userId,
+  //         access_token: this.jwtService.sign(payload),
+  //         userName: savedUser.username,
+  //         avatarURL: savedUser.avatarUrl,
+  //         payment: 'free',
+  //       },
+  //     };
+  //   }
+  // }
+  async githubLogin(user: any) {
+    console.log('github login', user);
+    if (!user) {
       throw new BadRequestException('No user from github');
     }
-    const foundUser = await this.userService.findUserByEmail(req.user.email);
+    const foundUser = await this.userService.findUserByEmail(user.email);
     if (foundUser) {
       if (foundUser.authProvider !== AuthProvider.GITHUB) {
         throw new BadRequestException(
-          `email ${req.user.email} is already used by another auth provider`,
+          `email ${user.email} is already used by another auth provider`,
         );
       } else {
-        const payload = { username: foundUser.username, sub: 12 };
+        const payload = { username: foundUser.username, sub: foundUser.userId };
         return {
           status: 'success',
           data: {
@@ -273,14 +319,14 @@ export class AuthService {
         };
       }
     } else {
-      const user = new User();
-      user.email = req.user.email;
-      user.username = req.user.email.split('@')[0];
-      user.password = 'github_auth';
-      user.isActive = 1;
-      user.authProvider = AuthProvider.GITHUB;
-      user.avatarUrl = req.user.avatarUrl;
-      const savedUser = await this.userService.create(user);
+      const createUser = new User();
+      createUser.email = user.email;
+      createUser.username = user.email.split('@')[0];
+      createUser.password = 'github_auth';
+      createUser.isActive = 1;
+      createUser.authProvider = AuthProvider.GITHUB;
+      createUser.avatarUrl = user.image;
+      const savedUser = await this.userService.create(createUser);
       const payload = { username: savedUser.username, sub: savedUser.userId };
       return {
         status: 'success',

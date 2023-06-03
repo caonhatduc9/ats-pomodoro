@@ -276,7 +276,7 @@ export class AuthService {
       const user = new User();
       user.email = req.user.email;
       user.username = req.user.email.split('@')[0];
-      user.password = 'google_auth';
+      user.password = 'github_auth';
       user.isActive = 1;
       user.authProvider = AuthProvider.GITHUB;
       user.avatarUrl = req.user.avatarUrl;

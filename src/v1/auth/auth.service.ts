@@ -165,7 +165,7 @@ export class AuthService {
       createUser.email = user.email;
       createUser.username = user.email.split('@')[0];
       createUser.password = 'google_auth';
-      createUser.avatarUrl = user.avatarUrl;
+      createUser.avatarUrl = user.image;
       createUser.isActive = 1;
       createUser.authProvider = AuthProvider.GOOGLE;
       const savedUser = await this.userService.create(createUser);

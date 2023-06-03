@@ -34,10 +34,14 @@ export class AuthController {
     return this.authService.signup(UserSignupDto);
   }
 
-  @Get('google')
-  @UseGuards(AuthGuard('google'))
-  async googleAuth(@Request() req) {
-    return HttpStatus.OK;
+  @Post('google')
+  // @UseGuards(AuthGuard('google'))
+  // async googleAuth(@Request() req) {
+  //   return HttpStatus.OK;
+  // }
+  async google(@Body() user: any): Promise<any> {
+    console.log("BODY", user);
+    return this.authService.googleLogin(user);
   }
 
   @Get('google/redirect')
@@ -58,11 +62,11 @@ export class AuthController {
     return this.authService.appleLogin(req);
   }
 
-    @UseGuards(JwtAuthGuard)
-    @Get('profile')
-    getProfile(@Request() req: any): any {
-      return req.user;
-    }
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  getProfile(@Request() req: any): any {
+    return req.user;
+  }
 
   @Patch('changePass')
   changePassword(@Body() changePassDto: ChangePassDto): Promise<any> {

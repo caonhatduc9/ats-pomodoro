@@ -91,15 +91,61 @@ export class AuthService {
   }
 
   //google strategy login
-  async googleLogin(req: any) {
-    if (!req.user) {
+  // async googleLogin(req: any) {
+  //   if (!req.user) {
+  //     throw new BadRequestException('No user from google');
+  //   }
+  //   const foundUser = await this.userService.findUserByEmail(req.user.email);
+  //   if (foundUser) {
+  //     if (foundUser.authProvider !== AuthProvider.GOOGLE) {
+  //       throw new BadRequestException(
+  //         `email ${req.user.email} is already used by another auth provider`,
+  //       );
+  //     } else {
+  //       const payload = { username: foundUser.username, sub: 12 };
+  //       return {
+  //         status: 'success',
+  //         data: {
+  //           userId: foundUser.userId,
+  //           access_token: this.jwtService.sign(payload),
+  //           userName: foundUser.username,
+  //           avatarURL: foundUser.avatarUrl,
+  //           payment: 'free',
+  //         },
+  //       };
+  //     }
+  //   } else {
+  //     const user = new User();
+  //     user.email = req.user.email;
+  //     user.username = req.user.email.split('@')[0];
+  //     // user.password = 'google_auth';
+  //     user.avatarUrl = req.user.avatarUrl;
+  //     user.isActive = 1;
+  //     user.authProvider = AuthProvider.GOOGLE;
+  //     const savedUser = await this.userService.create(user);
+  //     const payload = { username: savedUser.username, sub: savedUser.userId };
+  //     return {
+  //       status: 'success',
+  //       data: {
+  //         userId: savedUser.userId,
+  //         access_token: this.jwtService.sign(payload),
+  //         userName: savedUser.username,
+  //         avatarURL: savedUser.avatarUrl,
+  //         payment: 'free',
+  //       },
+  //     };
+  //   }
+  // }
+
+  async googleLogin(user: any) {
+    if (!user) {
       throw new BadRequestException('No user from google');
     }
-    const foundUser = await this.userService.findUserByEmail(req.user.email);
+    const foundUser = await this.userService.findUserByEmail(user.email);
     if (foundUser) {
       if (foundUser.authProvider !== AuthProvider.GOOGLE) {
         throw new BadRequestException(
-          `email ${req.user.email} is already used by another auth provider`,
+          `email ${user.email} is already used by another auth provider`,
         );
       } else {
         const payload = { username: foundUser.username, sub: 12 };
@@ -115,14 +161,14 @@ export class AuthService {
         };
       }
     } else {
-      const user = new User();
-      user.email = req.user.email;
-      user.username = req.user.email.split('@')[0];
-      // user.password = 'google_auth';
-      user.avatarUrl = req.user.avatarUrl;
-      user.isActive = 1;
-      user.authProvider = AuthProvider.GOOGLE;
-      const savedUser = await this.userService.create(user);
+      const createUser = new User();
+      createUser.email = user.email;
+      createUser.username = user.email.split('@')[0];
+      createUser.password = 'google_auth';
+      createUser.avatarUrl = user.avatarUrl;
+      createUser.isActive = 1;
+      createUser.authProvider = AuthProvider.GOOGLE;
+      const savedUser = await this.userService.create(createUser);
       const payload = { username: savedUser.username, sub: savedUser.userId };
       return {
         status: 'success',

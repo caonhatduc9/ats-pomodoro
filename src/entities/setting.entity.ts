@@ -20,14 +20,14 @@ export class Setting {
   @Column('int', { primary: true, name: 'userId' })
   userId: number;
 
-  @Column('time', { name: 'pomodoroTime', nullable: true })
-  pomodoroTime: string | null;
+  @Column('int', { name: 'pomodoroTime', nullable: true })
+  pomodoroTime: number | null;
 
-  @Column('time', { name: 'shortBreakTime', nullable: true })
-  shortBreakTime: string | null;
+  @Column('int', { name: 'shortBreakTime', nullable: true })
+  shortBreakTime: number | null;
 
-  @Column('time', { name: 'longBreakTime', nullable: true })
-  longBreakTime: string | null;
+  @Column('int', { name: 'longBreakTime', nullable: true })
+  longBreakTime: number | null;
 
   @Column('tinyint', { name: 'autoStartBreak', nullable: true })
   autoStartBreak: number | null;

@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { Asset } from './asset.entity';
 import { User } from './user.entity';
+import { Exclude } from 'class-transformer';
 
 @Index('setting_ringSound_asserId_idx', ['ringSound'], {})
 @Index('setting_backgroundMusic_asserId_idx', ['backgroundMusic'], {})
@@ -48,8 +49,8 @@ export class Setting {
 
   @Column('int', { name: 'ringSoundRepeat', nullable: true })
   ringSoundRepeat: number | null;
-
   @Column('int', { name: 'backgroundMusic', nullable: true })
+  @Exclude()
   backgroundMusic: number | null;
 
   @Column('int', { name: 'backgroundMusicVolumn', nullable: true })
@@ -57,15 +58,24 @@ export class Setting {
 
   @Column('int', { name: 'pomodoroBackground', nullable: true })
   pomodoroBackground: number | null;
-
   @Column('int', { name: 'shortBreakBackground', nullable: true })
+  @Exclude()
   shortBreakBackground: number | null;
-
   @Column('int', { name: 'longBreakBackground', nullable: true })
+  @Exclude()
   longBreakBackground: number | null;
 
   @Column('tinyint', { name: 'darkmodeWhenRunning', nullable: true })
   darkmodeWhenRunning: number | null;
+
+  @Column('varchar', { name: 'pomodoroColor', nullable: true, length: 12, default: '#d95550' })
+  pomodoroColor: string | null;
+
+  @Column('varchar', { name: 'shortBreakColor', nullable: true, length: 12, default: '#4c9195' })
+  shortBreakColor: string | null;
+
+  @Column('varchar', { name: 'longBreakColor', nullable: true, length: 12, default: '#457ca3' })
+  longBreakColor: string | null;
 
   @ManyToOne(() => Asset, (asset) => asset.settings, {
     onDelete: 'RESTRICT',

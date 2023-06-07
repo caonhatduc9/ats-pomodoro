@@ -12,11 +12,40 @@ export class SettingService {
   async findByUserId(id: number) {
     const data = await this.settingRepository.createQueryBuilder('setting')
       .leftJoinAndSelect('setting.user', 'user')
+      .leftJoinAndSelect('setting.ringSound2', 'ringSound')
+      .leftJoinAndSelect('setting.longBreakBackground2', 'longBreakBackground2')
+      .leftJoinAndSelect('setting.backgroundMusic2', 'backgroundMusic2')
+      .leftJoinAndSelect('setting.pomodoroBackground2', 'pomodoroBackground2')
+      .leftJoinAndSelect('setting.shortBreakBackground2', 'shortBreakBackground2')
       .where('user.userId = :id', { id })
       .getOne();
+
+    const cleanedData = {
+      userId: data["userId"],
+      pomodoroTime: data["pomodoroTime"],
+      shortBreakTime: data["shortBreakTime"],
+      longBreakTime: data["longBreakTime"],
+      autoStartBreak: data["autoStartBreak"],
+      autoStartPomodoro: data["autoStartPomodoro"],
+      longBreakInterval: data["longBreakInterval"],
+      autoSwitchTask: data["autoSwitchTask"],
+      ringSound: data["ringSound2"]["assetUrl"],
+      ringSoundVolumn: data["ringSoundVolumn"],
+      ringSoundRepeat: data["ringSoundRepeat"],
+      backgroundMusic: data["backgroundMusic2"]["assetUrl"],
+      backgroundMusicVolumn: data["backgroundMusicVolumn"],
+      pomodoroBackground: data["pomodoroBackground2"]["assetUrl"],
+      shortBreakBackground: data["shortBreakBackground2"]["assetUrl"],
+      longBreakBackground: data["longBreakBackground2"]["assetUrl"],
+      darkmodeWhenRunning: data["darkmodeWhenRunning"],
+      pomodoroColor: data["pomodoroColor"],
+      shortBreakColor: data["shortBreakColor"],
+      longBreakColor: data["longBreakColor"],
+    }
+
     return {
       status: 'success',
-      data: data ? data : {},
+      data: cleanedData ? cleanedData : {},
     }
   }
 }

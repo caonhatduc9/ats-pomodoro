@@ -30,38 +30,53 @@ export class ReportService {
   //   }
   // }
 
-  async getSummaryReportByUserId(id: number): Promise<any> {
-    // const dataRaw = await this.reportRepository.createQueryBuilder('project')
-    //   .leftJoinAndSelect('project.user', 'user')
-    //   .leftJoinAndSelect('user.focusedpomodoros', 'focusedPomodoro')
-    //   .where('user.userId = :id ', { id })
-    //   .getMany();
+  countConsecutiveDays(dates: string[]): number {
+    let count = 0;
+    let consecutiveCount = 0;
 
+    for (let i = 1; i < dates.length; i++) {
+      const currentDate = new Date(dates[i]);
+      const previousDate = new Date(dates[i - 1]);
+
+      // Chuyển đổi ngày thành timestamp để so sánh
+      const currentTimestamp = currentDate.getTime();
+      const previousTimestamp = previousDate.getTime();
+
+      // Kiểm tra xem ngày hiện tại có liền kề ngày trước đó hay không
+      if (currentTimestamp - previousTimestamp === 24 * 60 * 60 * 1000) {
+        consecutiveCount++;
+      } else {
+        // Ngày không liền kề, cập nhật lại consecutiveCount nếu cần
+        if (consecutiveCount > 0) {
+          count += 1; // Đếm ngày liên tục đã tìm thấy
+          consecutiveCount = 0; // Reset consecutiveCount
+        }
+      }
+    }
+
+    // Kiểm tra xem có ngày liên tục ở cuối mảng không
+    if (consecutiveCount > 0) {
+      count += 1;
+    }
+    return count + 1;
+  }
+
+
+  async getSummaryReportByUserId(id: number): Promise<any> {
     const dataRaw = await this.userRepository.createQueryBuilder('user')
       .leftJoinAndSelect('user.projects', 'project')
       .leftJoinAndSelect('user.focusedpomodoros', 'focusedPomodoro')
       .where('user.userId = :id ', { id })
       .getMany();
 
-    // return dataRaw;
-    let focusedHourses = 0;
-    // const projects = (dataRaw as any[]).map(item => {
-    //   // console.log("proID", projectId);
     let totalTime = new Date();
     totalTime.setHours(0);
     totalTime.setMinutes(0);
     totalTime.setSeconds(0);
-    // const totalHours = totalTime.getHours();
-    // const totalMinutes = totalTime.getMinutes();
-    // const totalSeconds = totalTime.getSeconds();
-    // const formattedTime = `${String(totalHours).padStart(2, '0')}:${String(totalMinutes).padStart(2, '0')}:${String(totalSeconds).padStart(2, '0')}`;
-
-    // console.log("Total Focus Time 1:", formattedTime);
     const focusTime = dataRaw[0].focusedpomodoros;
 
     focusTime.forEach(pomodoro => {
       const timeParts = pomodoro.timeFocus.split(":");
-      console.log("cehck", timeParts);
       const hours = parseInt(timeParts[0], 10);
       const minutes = parseInt(timeParts[1], 10);
       const seconds = parseInt(timeParts[2], 10);
@@ -69,69 +84,87 @@ export class ReportService {
       totalTime.setHours(totalTime.getHours() + hours);
       totalTime.setMinutes(totalTime.getMinutes() + minutes);
       totalTime.setSeconds(totalTime.getSeconds() + seconds);
-
-      const totalHours = totalTime.getHours();
-      const totalMinutes = totalTime.getMinutes();
-      const totalSeconds = totalTime.getSeconds();
-      const formattedTime = `${String(totalHours).padStart(2, '0')}:${String(totalMinutes).padStart(2, '0')}:${String(totalSeconds).padStart(2, '0')}`;
-
-      console.log("Total Focus Time:", formattedTime);
-
-
     });
     const totalHours = totalTime.getHours();
     const totalMinutes = totalTime.getMinutes();
     const totalSeconds = totalTime.getSeconds();
     const formattedTime = `${String(totalHours).padStart(2, '0')}:${String(totalMinutes).padStart(2, '0')}:${String(totalSeconds).padStart(2, '0')}`;
 
-    console.log("Total Focus Time:", formattedTime);
     const projects = dataRaw[0].projects;
-    console.log("focusTime", focusTime);
-    return { projects, focusTime, formattedTime };
+
+    const focusTimeCreatedDates = focusTime.map((item) => item.createdDate);
+    const streak = this.countConsecutiveDays(focusTimeCreatedDates);
+    const accessedDates = new Set();
 
 
-    // });
-    // (dataRaw as any[]).forEach(item => {
-    // const focusTime = item.user.focusedpomodoros;
-    (dataRaw as any[]).forEach(item => {
-      const focusTime = item.user.focusedpomodoros;
-      console.log("focusTime", focusTime);
-      focusTime.forEach(pomodoro => {
-        const timeParts = pomodoro.timeFocus.split(":");
-        console.log("cehck", timeParts);
-        const hours = parseInt(timeParts[0], 10);
-        const minutes = parseInt(timeParts[1], 10);
-        const seconds = parseInt(timeParts[2], 10);
-
-        totalTime.setHours(totalTime.getHours() + hours);
-        totalTime.setMinutes(totalTime.getMinutes() + minutes);
-        totalTime.setSeconds(totalTime.getSeconds() + seconds);
-
-        const totalHours = totalTime.getHours();
-        const totalMinutes = totalTime.getMinutes();
-        const totalSeconds = totalTime.getSeconds();
-        const formattedTime = `${String(totalHours).padStart(2, '0')}:${String(totalMinutes).padStart(2, '0')}:${String(totalSeconds).padStart(2, '0')}`;
-
-        console.log("Total Focus Time:", formattedTime);
-      });
-      // });
-
-
-
-      const { projectId, userId, projectName, description, createdDate, modifiedDate } = item;
-      // console.log("focus", focusTime);
-      const data = { projectId, userId, projectName, description, createdDate, modifiedDate };
-      // console.log("data", data);
+    // Thêm các giá trị createdDate từ focusTime vào Set
+    focusTime.forEach((item) => {
+      accessedDates.add(item.createdDate);
     });
-    // const totalHours = totalTime.getHours();
-    // const totalMinutes = totalTime.getMinutes();
-    // const totalSeconds = totalTime.getSeconds();
-    // const formattedTime = `${String(totalHours).padStart(2, '0')}:${String(totalMinutes).padStart(2, '0')}:${String(totalSeconds).padStart(2, '0')}`;
 
-    // console.log("Total Focus Time:", formattedTime);
+    // Đếm số ngày truy cập
+    const accessedDay = accessedDates.size;
+    console.log(accessedDay);
+    const dateReturn = {
+      activity_summary: {
+        focusedHours: formattedTime,
+        accessedDays: accessedDay,
+        streakDays: streak
+      },
+      focusHours: focusTime,
+      projects: projects
+    }
 
+    return {
+      statusCode: 200,
+      data: dateReturn ? dateReturn : {}
+    };
 
-
-    // console.log(projects);
   }
+
+
+  //     // });
+  //     // (dataRaw as any[]).forEach(item => {
+  //     // const focusTime = item.user.focusedpomodoros;
+  //     (dataRaw as any[]).forEach(item => {
+  //       const focusTime = item.user.focusedpomodoros;
+  //       console.log("focusTime", focusTime);
+  //       focusTime.forEach(pomodoro => {
+  //         const timeParts = pomodoro.timeFocus.split(":");
+  //         console.log("cehck", timeParts);
+  //         const hours = parseInt(timeParts[0], 10);
+  //         const minutes = parseInt(timeParts[1], 10);
+  //         const seconds = parseInt(timeParts[2], 10);
+
+  //         totalTime.setHours(totalTime.getHours() + hours);
+  //         totalTime.setMinutes(totalTime.getMinutes() + minutes);
+  //         totalTime.setSeconds(totalTime.getSeconds() + seconds);
+
+  //         const totalHours = totalTime.getHours();
+  //         const totalMinutes = totalTime.getMinutes();
+  //         const totalSeconds = totalTime.getSeconds();
+  //         const formattedTime = `${String(totalHours).padStart(2, '0')}:${String(totalMinutes).padStart(2, '0')}:${String(totalSeconds).padStart(2, '0')}`;
+
+  //         console.log("Total Focus Time:", formattedTime);
+  //       });
+  //       // });
+
+
+
+  //       const { projectId, userId, projectName, description, createdDate, modifiedDate } = item;
+  //       // console.log("focus", focusTime);
+  //       const data = { projectId, userId, projectName, description, createdDate, modifiedDate };
+  //       // console.log("data", data);
+  //     });
+  //   // const totalHours = totalTime.getHours();
+  //   // const totalMinutes = totalTime.getMinutes();
+  //   // const totalSeconds = totalTime.getSeconds();
+  //   // const formattedTime = `${String(totalHours).padStart(2, '0')}:${String(totalMinutes).padStart(2, '0')}:${String(totalSeconds).padStart(2, '0')}`;
+
+  //   // console.log("Total Focus Time:", formattedTime);
+
+
+
+  //   // console.log(projects);
+  // }
 }

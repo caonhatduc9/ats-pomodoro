@@ -2,12 +2,13 @@ import { Inject, Injectable } from '@nestjs/common';
 import { CreateSettingDto } from './dto/create-setting.dto';
 import { UpdateSettingDto } from './dto/update-setting.dto';
 import { Repository } from 'typeorm';
-import { Setting } from './entities/setting.entity';
-import { async } from 'rxjs';
-
+import { Setting } from '../entities/setting.entity';
+import { Asset } from '../entities/asset.entity';
 @Injectable()
 export class SettingService {
-  constructor(@Inject('SETTING_REPOSITORY') private settingRepository: Repository<Setting>) { }
+  constructor(@Inject('SETTING_REPOSITORY') private settingRepository: Repository<Setting>,
+    @Inject('ASSET_REPOSITORY') private assetRepository: Repository<Asset>
+  ) { }
 
   async findByUserId(id: number) {
     const data = await this.settingRepository.createQueryBuilder('setting')
@@ -48,4 +49,19 @@ export class SettingService {
       data: cleanedData ? cleanedData : {},
     }
   }
+
+  async create(userId: number, createSettingDto: CreateSettingDto) {
+
+    const createSetting = { userId, ...createSettingDto };
+    const createAssetRingSound = {
+      userId,
+      ringSound: createSettingDto.ringSound,
+      backgroundMusic: createSettingDto.backgroundMusic,
+      pomodoroBackground: createSettingDto.pomodoroBackground,
+      shortBreakBackground: createSettingDto.shortBreakBackground,
+      longBreakBackground: createSettingDto.longBreakBackground,
+    }
+
+  }
+
 }

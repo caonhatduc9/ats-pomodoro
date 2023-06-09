@@ -16,7 +16,7 @@ export class Task {
   @PrimaryGeneratedColumn({ type: 'int', name: 'taskId' })
   taskId: number;
 
-  @Column('int', { name: 'projectId' })
+  @Column('int', { name: 'projectId', nullable: true })
   projectId: number;
 
   @Column('int', { name: 'userId' })

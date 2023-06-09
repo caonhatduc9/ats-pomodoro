@@ -15,5 +15,9 @@ export class ReportController {
     return this.reportService.getSummaryReportByUserId(+req.user.userId);
   }
 
+  @Get('getDetailReport')
+  getDetailReport(@Req() req: any) {
+    return this.reportService.getDetailReportByUserId(+req.user.userId);
+  }
 
 }

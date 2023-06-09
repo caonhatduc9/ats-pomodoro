@@ -121,50 +121,60 @@ export class ReportService {
     };
 
   }
+  async getDetailReportByUserId(id: number): Promise<any> {
+    const dataRaw = await this.userRepository.createQueryBuilder('user')
+      .leftJoinAndSelect('user.projects', 'project')
+      .leftJoinAndSelect('user.tasks', 'task')
+      .leftJoinAndSelect('project.tasks', 'taskProject')
+      .where('user.userId = :id ', { id })
+      .getMany();
 
 
-  //     // });
-  //     // (dataRaw as any[]).forEach(item => {
-  //     // const focusTime = item.user.focusedpomodoros;
-  //     (dataRaw as any[]).forEach(item => {
-  //       const focusTime = item.user.focusedpomodoros;
-  //       console.log("focusTime", focusTime);
-  //       focusTime.forEach(pomodoro => {
-  //         const timeParts = pomodoro.timeFocus.split(":");
-  //         console.log("cehck", timeParts);
-  //         const hours = parseInt(timeParts[0], 10);
-  //         const minutes = parseInt(timeParts[1], 10);
-  //         const seconds = parseInt(timeParts[2], 10);
+    // Biến lưu trữ kết quả
+    let result = [];
 
-  //         totalTime.setHours(totalTime.getHours() + hours);
-  //         totalTime.setMinutes(totalTime.getMinutes() + minutes);
-  //         totalTime.setSeconds(totalTime.getSeconds() + seconds);
+    // Lặp qua các project
+    dataRaw[0].projects.forEach(project => {
+      // Tính tổng thời gian từ các task trong project
+      let totalMinutes = 0;
+      project.tasks.forEach(task => {
+        const [hours, minutes, seconds] = task.timeSpent.split(":");
+        totalMinutes += parseInt(hours) * 60 + parseInt(minutes);
+      });
 
-  //         const totalHours = totalTime.getHours();
-  //         const totalMinutes = totalTime.getMinutes();
-  //         const totalSeconds = totalTime.getSeconds();
-  //         const formattedTime = `${String(totalHours).padStart(2, '0')}:${String(totalMinutes).padStart(2, '0')}:${String(totalSeconds).padStart(2, '0')}`;
+      // Thêm project vào kết quả
+      result.push({
+        date: project.createdDate,
+        project: project.projectName,
+        minutes: totalMinutes
+      });
+    });
 
-  //         console.log("Total Focus Time:", formattedTime);
-  //       });
-  //       // });
+    // Lặp qua các task không thuộc project
+    dataRaw[0].tasks.forEach(task => {
+      if (task.projectId === null) {
+        const [hours, minutes, seconds] = task.timeSpent.split(":");
+        const taskName = task.taskName;
+        const existingTask = result.find(item => item.task === taskName);
+        if (existingTask) {
+          // Cộng thời gian vào task đã tồn tại trong kết quả
+          existingTask.minutes += parseInt(hours) * 60 + parseInt(minutes);
+        } else {
+          // Thêm task vào kết quả
+          result.push({
+            date: task.createdDate,
+            task: taskName,
+            minutes: parseInt(hours) * 60 + parseInt(minutes)
+          });
+        }
+      }
+    });
 
+    console.log(result);
 
-
-  //       const { projectId, userId, projectName, description, createdDate, modifiedDate } = item;
-  //       // console.log("focus", focusTime);
-  //       const data = { projectId, userId, projectName, description, createdDate, modifiedDate };
-  //       // console.log("data", data);
-  //     });
-  //   // const totalHours = totalTime.getHours();
-  //   // const totalMinutes = totalTime.getMinutes();
-  //   // const totalSeconds = totalTime.getSeconds();
-  //   // const formattedTime = `${String(totalHours).padStart(2, '0')}:${String(totalMinutes).padStart(2, '0')}:${String(totalSeconds).padStart(2, '0')}`;
-
-  //   // console.log("Total Focus Time:", formattedTime);
-
-
-
-  //   // console.log(projects);
-  // }
+    return {
+      statusCode: 200,
+      data: result ? result : {}
+    }
+  }
 }

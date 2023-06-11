@@ -5,6 +5,7 @@ import { Report } from './entities/report.entity';
 import { Repository } from 'typeorm';
 import { dataproc } from 'googleapis/build/src/apis/dataproc';
 import { User } from 'output/entities/User';
+import { FocusedPomodoro, Project, ReportData, SummaryReportResponse } from './interfaces/index.interface';
 
 @Injectable()
 export class ReportService {
@@ -59,68 +60,68 @@ export class ReportService {
       count += 1;
     }
     return count + 1;
-  }
+  } 
 
-
-  async getSummaryReportByUserId(id: number): Promise<any> {
+  async getSummaryReportByUserId(id: number): Promise<SummaryReportResponse> {
     const dataRaw = await this.userRepository.createQueryBuilder('user')
       .leftJoinAndSelect('user.projects', 'project')
       .leftJoinAndSelect('user.focusedpomodoros', 'focusedPomodoro')
       .where('user.userId = :id ', { id })
       .getMany();
 
-    let totalTime = new Date();
-    totalTime.setHours(0);
-    totalTime.setMinutes(0);
-    totalTime.setSeconds(0);
-    const focusTime = dataRaw[0].focusedpomodoros;
+    const focusTime: FocusedPomodoro[] = dataRaw[0].focusedpomodoros;
+    const projects: Project[] = dataRaw[0].projects;
 
-    focusTime.forEach(pomodoro => {
-      const timeParts = pomodoro.timeFocus.split(":");
-      const hours = parseInt(timeParts[0], 10);
-      const minutes = parseInt(timeParts[1], 10);
-      const seconds = parseInt(timeParts[2], 10);
+    // Lọc dữ liệu theo tuần
+    const weekStart = new Date();
+    weekStart.setDate(weekStart.getDate() - 7);
+    const weekData = this.filterDataByDate(focusTime, projects, weekStart);
 
-      totalTime.setHours(totalTime.getHours() + hours);
-      totalTime.setMinutes(totalTime.getMinutes() + minutes);
-      totalTime.setSeconds(totalTime.getSeconds() + seconds);
-    });
-    const totalHours = totalTime.getHours();
-    const totalMinutes = totalTime.getMinutes();
-    const totalSeconds = totalTime.getSeconds();
-    const formattedTime = `${String(totalHours).padStart(2, '0')}:${String(totalMinutes).padStart(2, '0')}:${String(totalSeconds).padStart(2, '0')}`;
+    // Lọc dữ liệu theo tháng
+    const monthStart = new Date();
+    monthStart.setDate(monthStart.getDate() - 30);
+    const monthData = this.filterDataByDate(focusTime, projects, monthStart);
 
-    const projects = dataRaw[0].projects;
+    // Lọc dữ liệu theo năm
+    const yearStart = new Date();
+    yearStart.setDate(yearStart.getDate() - 365);
+    const yearData = this.filterDataByDate(focusTime, projects, yearStart);
 
-    const focusTimeCreatedDates = focusTime.map((item) => item.createdDate);
-    const streak = this.countConsecutiveDays(focusTimeCreatedDates);
-    const accessedDates = new Set();
-
-
-    // Thêm các giá trị createdDate từ focusTime vào Set
-    focusTime.forEach((item) => {
-      accessedDates.add(item.createdDate);
-    });
-
-    // Đếm số ngày truy cập
-    const accessedDay = accessedDates.size;
-    console.log(accessedDay);
-    const dateReturn = {
-      activity_summary: {
-        focusedHours: formattedTime,
-        accessedDays: accessedDay,
-        streakDays: streak
+    const dateReturn: ReportData = {
+      week: {
+        focusHours: weekData.focusTime,
+        projects: weekData.projects,
       },
-      focusHours: focusTime,
-      projects: projects
-    }
+      month: {
+        focusHours: monthData.focusTime,
+        projects: monthData.projects,
+      },
+      year: {
+        focusHours: yearData.focusTime,
+        projects: yearData.projects,
+      },
+    };
 
     return {
       statusCode: 200,
-      data: dateReturn ? dateReturn : {}
+      data: dateReturn,
     };
-
   }
+
+  filterDataByDate(
+    focusTime: FocusedPomodoro[],
+    projects: Project[],
+    startDate: Date
+  ): { focusTime: FocusedPomodoro[]; projects: Project[] } {
+    const filteredFocusTime = focusTime.filter((item) => new Date(item.createdDate) >= startDate);
+    const filteredProjects = projects.filter((item) => new Date(item.createdDate) >= startDate);
+
+    return {
+      focusTime: filteredFocusTime,
+      projects: filteredProjects,
+    };
+  }
+
   async getDetailReportByUserId(id: number): Promise<any> {
     const dataRaw = await this.userRepository.createQueryBuilder('user')
       .leftJoinAndSelect('user.projects', 'project')

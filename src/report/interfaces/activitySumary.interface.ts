@@ -1,5 +1,5 @@
 export interface ActivitySummary {
-    focusedHours: string;
+    focusedHours: number;
     accessedDays: number;
     streakDays: number;
 }

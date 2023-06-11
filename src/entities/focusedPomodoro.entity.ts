@@ -10,8 +10,8 @@ export class Focusedpomodoro {
   @Column('int', { name: 'userId', nullable: true })
   userId: number | null;
 
-  @Column('time', { name: 'timeFocus', nullable: true })
-  timeFocus: string | null;
+  @Column('float', { name: 'timeFocus', nullable: true })
+  timeFocus: number | null;
 
   @Column('date', { name: 'createdDate', nullable: true })
   createdDate: string | null;

@@ -60,7 +60,8 @@ export class ReportService {
       count += 1;
     }
     return count + 1;
-  } 
+  }
+
 
   async getSummaryReportByUserId(id: number): Promise<SummaryReportResponse> {
     const dataRaw = await this.userRepository.createQueryBuilder('user')
@@ -71,6 +72,8 @@ export class ReportService {
 
     const focusTime: FocusedPomodoro[] = dataRaw[0].focusedpomodoros;
     const projects: Project[] = dataRaw[0].projects;
+
+    let totalMinutes: number = 0;
 
     // Lọc dữ liệu theo tuần
     const weekStart = new Date();
@@ -87,7 +90,28 @@ export class ReportService {
     yearStart.setDate(yearStart.getDate() - 365);
     const yearData = this.filterDataByDate(focusTime, projects, yearStart);
 
+    // const projects = dataRaw[0].projects;
+
+    const focusTimeCreatedDates = focusTime.map((item) => item.createdDate);
+    const streak = this.countConsecutiveDays(focusTimeCreatedDates);
+    const accessedDates = new Set();
+
+
+    // Thêm các giá trị createdDate từ focusTime vào Set va tinh total minutes
+    focusTime.forEach((item) => {
+      totalMinutes += +item.timeFocus;
+      accessedDates.add(item.createdDate);
+    });
+
+    // Đếm số ngày truy cập
+    const accessedDay = accessedDates.size;
+
     const dateReturn: ReportData = {
+      activitySummary: {
+        focusedHours: totalMinutes,
+        accessedDays: accessedDay,
+        streakDays: streak
+      },
       week: {
         focusHours: weekData.focusTime,
         projects: weekData.projects,

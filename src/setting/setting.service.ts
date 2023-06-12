@@ -21,6 +21,35 @@ export class SettingService {
       .where('user.userId = :id', { id })
       .getOne();
 
+    const listAsset = await this.assetRepository.createQueryBuilder('asset')
+      .select(['asset.assetId','asset.assetName','asset.author','asset.type', 'asset.assetUrl','asset.isFree'])
+      .getMany();
+
+    const ringSounds = [];
+    const backgroundMusics = [];
+    const pomodoroBackgrounds = [];
+    const shortBreakBackgrounds = [];
+    const longBreakBackgrounds = [];
+
+    listAsset.forEach(item => {
+      if (item.type === 'AUDIO') {
+        ringSounds.push(item);
+        backgroundMusics.push(item);
+      }
+      if (item.type === 'IMAGE') {
+        pomodoroBackgrounds.push(item);
+        shortBreakBackgrounds.push(item);
+        longBreakBackgrounds.push(item);
+      }
+    }
+    )
+    const assets = {
+      ringSounds,
+      backgroundMusics,
+      pomodoroBackgrounds,
+      shortBreakBackgrounds,
+      longBreakBackgrounds,
+    }
     const cleanedData = {
       userId: data["userId"],
       pomodoroTime: data["pomodoroTime"],
@@ -30,18 +59,44 @@ export class SettingService {
       autoStartPomodoro: data["autoStartPomodoro"],
       longBreakInterval: data["longBreakInterval"],
       autoSwitchTask: data["autoSwitchTask"],
-      ringSound: data["ringSound2"]["assetUrl"],
+      ringSound: {
+        assetId: data["ringSound2"]["assetId"],
+        assetName: data["ringSound2"]["assetName"],
+        type: data["ringSound2"]["type"],
+        assetUrl: data["ringSound2"]["assetUrl"]
+      },
       ringSoundVolumn: data["ringSoundVolumn"],
       ringSoundRepeat: data["ringSoundRepeat"],
-      backgroundMusic: data["backgroundMusic2"]["assetUrl"],
+      backgroundMusic: {
+        assetId: data["backgroundMusic2"]["assetId"],
+        assetName: data["backgroundMusic2"]["assetName"],
+        type: data["backgroundMusic2"]["type"],
+        assetUrl: data["backgroundMusic2"]["assetUrl"],
+      },
       backgroundMusicVolumn: data["backgroundMusicVolumn"],
-      pomodoroBackground: data["pomodoroBackground2"]["assetUrl"],
-      shortBreakBackground: data["shortBreakBackground2"]["assetUrl"],
-      longBreakBackground: data["longBreakBackground2"]["assetUrl"],
+      pomodoroBackground: {
+        assetId: data["pomodoroBackground2"]["assetId"],
+        assetName: data["pomodoroBackground2"]["assetName"],
+        type: data["pomodoroBackground2"]["type"],
+        assetUrl: data["pomodoroBackground2"]["assetUrl"]
+      },
+      shortBreakBackground: {
+        assetId: data["shortBreakBackground2"]["assetId"],
+        assetName: data["shortBreakBackground2"]["assetName"],
+        type: data["shortBreakBackground2"]["type"],
+        assetUrl: data["shortBreakBackground2"]["assetUrl"]
+      },
+      longBreakBackground: {
+        assetId: data["longBreakBackground2"]["assetId"],
+        assetName: data["longBreakBackground2"]["assetName"],
+        type: data["longBreakBackground2"]["type"],
+        assetUrl: data["longBreakBackground2"]["assetUrl"]
+      },
       darkmodeWhenRunning: data["darkmodeWhenRunning"],
       pomodoroColor: data["pomodoroColor"],
       shortBreakColor: data["shortBreakColor"],
       longBreakColor: data["longBreakColor"],
+      assets,
     }
 
     return {
@@ -51,7 +106,6 @@ export class SettingService {
   }
 
   async create(userId: number, createSettingDto: CreateSettingDto) {
-
     const createSetting = { userId, ...createSettingDto };
     const createAssetRingSound = {
       userId,
@@ -61,7 +115,5 @@ export class SettingService {
       shortBreakBackground: createSettingDto.shortBreakBackground,
       longBreakBackground: createSettingDto.longBreakBackground,
     }
-
   }
-
 }

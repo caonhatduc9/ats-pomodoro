@@ -41,7 +41,7 @@ export class Setting {
   @Column('tinyint', { name: 'autoSwitchTask', nullable: true })
   autoSwitchTask: number | null;
 
-  @Column('int', { name: 'ringSound', nullable: true })
+  @Column('int', { name: 'ringSoundSelected', nullable: true })
   ringSound: number | null;
 
   @Column('int', { name: 'ringSoundVolumn', nullable: true })
@@ -49,19 +49,19 @@ export class Setting {
 
   @Column('int', { name: 'ringSoundRepeat', nullable: true })
   ringSoundRepeat: number | null;
-  @Column('int', { name: 'backgroundMusic', nullable: true })
+  @Column('int', { name: 'backgroundMusicSelected', nullable: true })
   @Exclude()
   backgroundMusic: number | null;
 
   @Column('int', { name: 'backgroundMusicVolumn', nullable: true })
   backgroundMusicVolumn: number | null;
 
-  @Column('int', { name: 'pomodoroBackground', nullable: true })
+  @Column('int', { name: 'pomodoroBackgroundSelected', nullable: true })
   pomodoroBackground: number | null;
-  @Column('int', { name: 'shortBreakBackground', nullable: true })
+  @Column('int', { name: 'shortBreakBackgroundSelected', nullable: true })
   @Exclude()
   shortBreakBackground: number | null;
-  @Column('int', { name: 'longBreakBackground', nullable: true })
+  @Column('int', { name: 'longBreakBackgroundSelected', nullable: true })
   @Exclude()
   longBreakBackground: number | null;
 
@@ -81,7 +81,7 @@ export class Setting {
     onDelete: 'RESTRICT',
     onUpdate: 'RESTRICT',
   })
-  @JoinColumn([{ name: 'backgroundMusic', referencedColumnName: 'assetId' }])
+  @JoinColumn([{ name: 'backgroundMusicSelected', referencedColumnName: 'assetId' }])
   backgroundMusic2: Asset;
 
   @ManyToOne(() => Asset, (asset) => asset.settings2, {
@@ -89,7 +89,7 @@ export class Setting {
     onUpdate: 'RESTRICT',
   })
   @JoinColumn([
-    { name: 'longBreakBackground', referencedColumnName: 'assetId' },
+    { name: 'longBreakBackgroundSelected', referencedColumnName: 'assetId' },
   ])
   longBreakBackground2: Asset;
 
@@ -97,14 +97,14 @@ export class Setting {
     onDelete: 'RESTRICT',
     onUpdate: 'RESTRICT',
   })
-  @JoinColumn([{ name: 'pomodoroBackground', referencedColumnName: 'assetId' }])
+  @JoinColumn([{ name: 'pomodoroBackgroundSelected', referencedColumnName: 'assetId' }])
   pomodoroBackground2: Asset;
 
   @ManyToOne(() => Asset, (asset) => asset.settings4, {
     onDelete: 'RESTRICT',
     onUpdate: 'RESTRICT',
   })
-  @JoinColumn([{ name: 'ringSound', referencedColumnName: 'assetId' }])
+  @JoinColumn([{ name: 'ringSoundSelected', referencedColumnName: 'assetId' }])
   ringSound2: Asset;
 
   @ManyToOne(() => Asset, (asset) => asset.settings5, {
@@ -112,7 +112,7 @@ export class Setting {
     onUpdate: 'RESTRICT',
   })
   @JoinColumn([
-    { name: 'shortBreakBackground', referencedColumnName: 'assetId' },
+    { name: 'shortBreakBackgroundSelected', referencedColumnName: 'assetId' },
   ])
   shortBreakBackground2: Asset;
 

@@ -238,7 +238,7 @@ export class AuthService {
     );
     if (inforUpdateReturn.affected > 0) {
       return {
-        statusCode: '200',
+        statusCode: 200,
         message: 'success',
       };
     } else {

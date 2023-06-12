@@ -22,7 +22,7 @@ export class SettingService {
       .getOne();
 
     const listAsset = await this.assetRepository.createQueryBuilder('asset')
-      .select(['asset.assetId','asset.assetName','asset.author','asset.type', 'asset.assetUrl','asset.isFree'])
+      .select(['asset.assetId', 'asset.assetName', 'asset.author', 'asset.type', 'asset.assetUrl', 'asset.isFree'])
       .getMany();
 
     const ringSounds = [];
@@ -105,15 +105,48 @@ export class SettingService {
     }
   }
 
-  async create(userId: number, createSettingDto: CreateSettingDto) {
-    const createSetting = { userId, ...createSettingDto };
-    const createAssetRingSound = {
-      userId,
-      ringSound: createSettingDto.ringSound,
-      backgroundMusic: createSettingDto.backgroundMusic,
-      pomodoroBackground: createSettingDto.pomodoroBackground,
-      shortBreakBackground: createSettingDto.shortBreakBackground,
-      longBreakBackground: createSettingDto.longBreakBackground,
-    }
-  }
+  // async create(userId: number, createSettingDto: CreateSettingDto) {
+
+  //   const createSetting:Setting = {
+  //     userId,
+  //     pomodoroTime: createSettingDto.pomodoroTime ? createSettingDto.pomodoroTime : 25,
+  //     shortBreakTime: createSettingDto.shortBreakTime ? createSettingDto.shortBreakTime : 5,
+  //     longBreakTime: createSettingDto.longBreakTime ? createSettingDto.longBreakTime : 15,
+  //     autoStartBreak: createSettingDto.autoStartBreak ? createSettingDto.autoStartBreak : 0,
+  //     autoStartPomodoro: createSettingDto.autoStartPomodoro ? createSettingDto.autoStartPomodoro : 0,
+  //     longBreakInterval: createSettingDto.longBreakInterval ? createSettingDto.longBreakInterval : 4,
+  //     autoSwitchTask: createSettingDto.autoSwitchTask ? createSettingDto.autoSwitchTask : 0,
+  //     ringSound: createSettingDto.ringSoundId ? createSettingDto.ringSoundId : null,
+  //     ringSoundVolumn: createSettingDto.ringSoundVolumn ? createSettingDto.ringSoundVolumn : 100,
+  //     ringSoundRepeat: createSettingDto.ringSoundRepeat ? createSettingDto.ringSoundRepeat : 1,
+  //     backgroundMusic: createSettingDto.backgroundMusicId ? createSettingDto.backgroundMusicId : null,
+  //     backgroundMusicVolumn: createSettingDto.backgroundMusicVolumn ? createSettingDto.backgroundMusicVolumn : 100,
+  //     pomodoroBackground: createSettingDto.pomodoroBackgroundId ? createSettingDto.pomodoroBackgroundId : null,
+  //     shortBreakBackground: createSettingDto.shortBreakBackgroundId ? createSettingDto.shortBreakBackgroundId : null,
+  //     longBreakBackground: createSettingDto.longBreakBackgroundId ? createSettingDto.longBreakBackgroundId : null,
+  //     darkmodeWhenRunning: createSettingDto.darkmodeWhenRunning ? createSettingDto.darkmodeWhenRunning : 0,
+  //     pomodoroColor: createSettingDto.pomodoroColor ? createSettingDto.pomodoroColor : '#ff0000',
+  //     shortBreakColor: createSettingDto.shortBreakColor ? createSettingDto.shortBreakColor : '#00ff00',
+  //     longBreakColor: createSettingDto.longBreakColor ? createSettingDto.longBreakColor : '#0000ff',
+  //   }
+  //   console.log(createSetting);
+  //   const foundedSetting = await this.settingRepository.findOne({ where: { userId } });
+  //   if (foundedSetting) {
+  //     createSetting.userId = foundedSetting.userId;
+  //     const updatedSetting = await this.settingRepository.save(createSetting);
+  //     console.log("updatedSetting");
+  //     return {
+  //       statusCode: 200,
+  //       data: updatedSetting ? updatedSetting : {},
+  //     }
+  //   }
+  //   else {
+  //     const createdSetting = await this.settingRepository.save(createSetting);
+  //     console.log("createdSetting");
+  //     return {
+  //       sstatusCode: 200,
+  //       data: createdSetting ? createdSetting : {},
+  //     }
+  //   }
+  // }
 }

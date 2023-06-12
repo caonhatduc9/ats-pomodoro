@@ -44,7 +44,7 @@ export class AuthService {
   async login(user: any) {
     const payload = { username: user.username, sub: user.userId };
     return {
-      status: 'success',
+      statusCode: 200,
       data: {
         userId: user.userId,
         access_token: this.jwtService.sign(payload),
@@ -150,7 +150,7 @@ export class AuthService {
       } else {
         const payload = { username: foundUser.username, sub: 12 };
         return {
-          status: 'success',
+          statusCode: 200,
           data: {
             userId: foundUser.userId,
             access_token: this.jwtService.sign(payload),
@@ -210,7 +210,7 @@ export class AuthService {
     );
     if (inforUpdateReturn.affected > 0) {
       return {
-        statusCode: '200',
+        statusCode: 200,
         message: 'success',
       };
     } else {
@@ -308,7 +308,7 @@ export class AuthService {
       } else {
         const payload = { username: foundUser.username, sub: foundUser.userId };
         return {
-          status: 'success',
+          statusCode: 200,
           data: {
             userId: foundUser.userId,
             access_token: this.jwtService.sign(payload),

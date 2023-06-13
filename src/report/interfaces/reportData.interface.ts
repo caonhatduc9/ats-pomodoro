@@ -4,16 +4,6 @@ import { Project } from "./project.interface";
 
 export interface ReportData {
     activitySummary: ActivitySummary;
-    week: {
-        focusHours: FocusedPomodoro[];
-        projects: Project[];
-    };
-    month: {
-        focusHours: FocusedPomodoro[];
-        projects: Project[];
-    };
-    year: {
-        focusHours: FocusedPomodoro[];
-        projects: Project[];
-    };
+    focusHours: FocusedPomodoro[];
+    projects: Project[];
 }

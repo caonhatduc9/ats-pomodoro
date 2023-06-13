@@ -114,18 +114,20 @@ export class ReportService {
         accessedDays: accessedDay,
         streakDays: streak
       },
-      week: {
-        focusHours: weekData.focusTime,
-        projects: weekData.projects,
-      },
-      month: {
-        focusHours: monthData.focusTime,
-        projects: monthData.projects,
-      },
-      year: {
-        focusHours: yearData.focusTime,
-        projects: yearData.projects,
-      },
+      focusHours: focusTime,
+      projects,
+      // week: {
+      //   focusHours: weekData.focusTime,
+      //   projects: weekData.projects,
+      // },
+      // month: {
+      //   focusHours: monthData.focusTime,
+      //   projects: monthData.projects,
+      // },
+      // year: {
+      //   focusHours: yearData.focusTime,
+      //   projects: yearData.projects,
+      // },
     };
 
     return {

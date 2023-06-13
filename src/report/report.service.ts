@@ -7,6 +7,8 @@ import { dataproc } from 'googleapis/build/src/apis/dataproc';
 import { User } from 'output/entities/User';
 import { FocusedPomodoro, Project, ReportData, SummaryReportResponse } from './interfaces/index.interface';
 
+import * as moment from 'moment';
+
 @Injectable()
 export class ReportService {
   constructor(@Inject('PROJECT_REPOSITORY') private reportRepository: Repository<Report>,
@@ -166,10 +168,14 @@ export class ReportService {
         const [hours, minutes, seconds] = task.timeSpent.split(":");
         totalMinutes += parseInt(hours) * 60 + parseInt(minutes);
       });
-
+      const dateString: string = project.createdDate;
+      // Tạo đối tượng Moment từ chuỗi ngày
+      const date: moment.Moment = moment(dateString);
+      // Định dạng ngày theo mẫu 'DD-MMM-YYYY'
+      const formattedDate: string = date.format('DD-MMM-YYYY');
       // Thêm project vào kết quả
       result.push({
-        date: project.createdDate,
+        date: formattedDate,
         project: project.projectName,
         minutes: totalMinutes
       });
@@ -185,9 +191,15 @@ export class ReportService {
           // Cộng thời gian vào task đã tồn tại trong kết quả
           existingTask.minutes += parseInt(hours) * 60 + parseInt(minutes);
         } else {
+
+          const dateString: string = task.createdDate;
+          // Tạo đối tượng Moment từ chuỗi ngày
+          const date: moment.Moment = moment(dateString);
+          // Định dạng ngày theo mẫu 'DD-MMM-YYYY'
+          const formattedDate: string = date.format('DD-MMM-YYYY');
           // Thêm task vào kết quả
           result.push({
-            date: task.createdDate,
+            date: formattedDate,
             task: taskName,
             minutes: parseInt(hours) * 60 + parseInt(minutes)
           });

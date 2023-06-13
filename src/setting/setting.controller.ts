@@ -14,9 +14,9 @@ export class SettingController {
     // return req.user;
     return this.settingService.findByUserId(req.user.userId);
   }
-  @Post('createSettingByUserId')
-  createByUserId(@Req() req: any, @Body() body: any) {
-    // return req.user;
-    return this.settingService.create(req.user.userId, body);
-  }
+  // @Post('createSettingByUserId')
+  // createByUserId(@Req() req: any, @Body() body: any) {
+  //   // return req.user;
+  //   return this.settingService.create(req.user.userId, body);
+  // }
 }

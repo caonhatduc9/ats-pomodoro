@@ -172,7 +172,7 @@ export class ReportService {
       // Tạo đối tượng Moment từ chuỗi ngày
       const date: moment.Moment = moment(dateString);
       // Định dạng ngày theo mẫu 'DD-MMM-YYYY'
-      const formattedDate: string = date.format('DD-MMM-YYYY');
+      const formattedDate: string = date.format('YYYY-MM-DD');
       // Thêm project vào kết quả
       result.push({
         date: formattedDate,
@@ -196,7 +196,7 @@ export class ReportService {
           // Tạo đối tượng Moment từ chuỗi ngày
           const date: moment.Moment = moment(dateString);
           // Định dạng ngày theo mẫu 'DD-MMM-YYYY'
-          const formattedDate: string = date.format('DD-MMM-YYYY');
+          const formattedDate: string = date.format('YYYY-MM-DD');
           // Thêm task vào kết quả
           result.push({
             date: formattedDate,

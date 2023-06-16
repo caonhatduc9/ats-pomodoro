@@ -11,8 +11,9 @@ export class SettingController {
 
   @Get('getSettingByUserId')
   getByUserId(@Req() req: any) {
-    // return req.user;
     return this.settingService.findByUserId(req.user.userId);
+    // return this.settingService.createDefaultSetting(req.user.userId);
+
   }
   @Post('createSettingByUserId')
   createByUserId(@Req() req: any, @Body() body: any) {

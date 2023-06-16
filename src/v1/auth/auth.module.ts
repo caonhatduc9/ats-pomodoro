@@ -11,9 +11,11 @@ import { MailingModule } from '../mailing/mailing.module';
 import { GoogleStrategy } from './strategies/google.strategy';
 import { AppleStrategy } from './strategies/apple.strategy';
 import { GithubStrategy } from './strategies/github.strategy';
+import { SettingModule } from 'src/setting/setting.module';
 
 @Module({
   imports: [
+    SettingModule,
     UserModule,
     PassportModule,
     JwtModule.register({

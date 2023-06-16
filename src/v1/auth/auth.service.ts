@@ -16,6 +16,7 @@ import { MailingService } from '../mailing/mailing.service';
 import { AuthProvider } from './auth.constants';
 import { log } from 'console';
 import { clouddebugger } from 'googleapis/build/src/apis/clouddebugger';
+import { SettingService } from 'src/setting/setting.service';
 
 @Injectable()
 export class AuthService {
@@ -23,6 +24,7 @@ export class AuthService {
     private userService: UserService,
     private jwtService: JwtService,
     private maillingService: MailingService,
+    private settingService: SettingService,
   ) { }
 
   async validateUser(email: string, password: string): Promise<any> {
@@ -75,19 +77,25 @@ export class AuthService {
     user.isActive = 0;
     user.authProvider = AuthProvider.LOCAL;
     const savedUser = await this.userService.create(user);
-    const subject = 'Verficiaction Code';
-    const content = `<p>this is default password: <b>${randomPassword}</b>. Please change password after login</p>`;
-    this.maillingService.sendMail(user.email, subject, content);
-    return {
-      status: 'success',
-      data: {
-        userId: savedUser.userId,
-        access_token: '',
-        userName: savedUser.username,
-        avatarURL: savedUser.avatarUrl,
-        payment: 'free',
-      },
-    };
+    if (savedUser) {
+      await this.settingService.createDefaultSetting(savedUser.userId);
+      const subject = 'Verficiaction Code';
+      const content = `<p>this is default password: <b>${randomPassword}</b>. Please change password after login</p>`;
+      this.maillingService.sendMail(user.email, subject, content);
+      return {
+        status: 'success',
+        data: {
+          userId: savedUser.userId,
+          access_token: '',
+          userName: savedUser.username,
+          avatarURL: savedUser.avatarUrl,
+          payment: 'free',
+        },
+      };
+    }
+    else {
+      throw new InternalServerErrorException();
+    }
   }
 
   //google strategy login
@@ -169,17 +177,23 @@ export class AuthService {
       createUser.isActive = 1;
       createUser.authProvider = AuthProvider.GOOGLE;
       const savedUser = await this.userService.create(createUser);
-      const payload = { username: savedUser.username, sub: savedUser.userId };
-      return {
-        status: 'success',
-        data: {
-          userId: savedUser.userId,
-          access_token: this.jwtService.sign(payload),
-          userName: savedUser.username,
-          avatarURL: savedUser.avatarUrl,
-          payment: 'free',
-        },
-      };
+      if (savedUser) {
+        await this.settingService.createDefaultSetting(savedUser.userId);
+        const payload = { username: savedUser.username, sub: savedUser.userId };
+        return {
+          status: 'success',
+          data: {
+            userId: savedUser.userId,
+            access_token: this.jwtService.sign(payload),
+            userName: savedUser.username,
+            avatarURL: savedUser.avatarUrl,
+            payment: 'free',
+          },
+        };
+      }
+      else {
+        throw new InternalServerErrorException();
+      }
     }
   }
 
@@ -327,17 +341,23 @@ export class AuthService {
       createUser.authProvider = AuthProvider.GITHUB;
       createUser.avatarUrl = user.image;
       const savedUser = await this.userService.create(createUser);
-      const payload = { username: savedUser.username, sub: savedUser.userId };
-      return {
-        status: 'success',
-        data: {
-          userId: savedUser.userId,
-          access_token: this.jwtService.sign(payload),
-          userName: savedUser.username,
-          avatarURL: savedUser.avatarUrl,
-          payment: 'free',
-        },
-      };
+      if (savedUser) {
+        await this.settingService.createDefaultSetting(savedUser.userId);
+        const payload = { username: savedUser.username, sub: savedUser.userId };
+        return {
+          status: 'success',
+          data: {
+            userId: savedUser.userId,
+            access_token: this.jwtService.sign(payload),
+            userName: savedUser.username,
+            avatarURL: savedUser.avatarUrl,
+            payment: 'free',
+          },
+        };
+      }
+      else {
+        throw new InternalServerErrorException();
+      }
     }
   }
 }

@@ -216,4 +216,58 @@ export class SettingService {
       };
     }
   }
+  async createDefaultSetting(userId: number) {
+    const assets = await this.assetRepository
+      .createQueryBuilder('asset')
+      .where('asset.type LIKE :type', { type: 'DEFAULT%' })
+      .getMany();
+
+    const defaultMusic = assets.find(item => item.type === 'DEFAULT_MUSIC');
+    const defaultAudio = assets.find(item => item.type === 'DEFAULT_AUDIO');
+    const defaultImage = assets.find(item => item.type === 'DEFAULT_IMAGE');
+    const defaultPomodoroTime = 25;
+    const defaultRingSoundVolumn = 50;
+    const defaultRingSoundRepeat = 1;
+    const defaultBackgroundMusicVolumn = 50;
+    const defaultShortBreakTime = 5;
+    const defaultLongBreakTime = 15;
+    const defaultAutoStartBreak = 0;
+    const defaultAutoStartPomodoro = 0;
+    const defaultLongBreakInterval = 4;
+    const defaultAutoSwitchTask = 0;
+    const defaultDarkmodeWhenRunning = 0;
+    // console.log(defaultMusic);
+    // return assets;
+    const newSetting = this.settingRepository.create({
+      userId,
+      pomodoroTime: defaultPomodoroTime,
+      ringSoundVolumn: defaultRingSoundVolumn,
+      ringSoundRepeat: defaultRingSoundRepeat,
+      backgroundMusicVolumn: defaultBackgroundMusicVolumn,
+      shortBreakTime: defaultShortBreakTime,
+      longBreakTime: defaultLongBreakTime,
+      autoStartBreak: defaultAutoStartBreak,
+      autoStartPomodoro: defaultAutoStartPomodoro,
+      longBreakInterval: defaultLongBreakInterval,
+      autoSwitchTask: defaultAutoSwitchTask,
+      darkmodeWhenRunning: defaultDarkmodeWhenRunning,
+      ringSound: 1,
+      backgroundMusic: defaultMusic.assetId,
+      pomodoroBackground: defaultImage.assetId,
+      shortBreakBackground: defaultImage.assetId,
+      longBreakBackground: defaultImage.assetId,
+      // pomodoroColor: createSettingDto.pomodoroColor || null,
+      // shortBreakColor: createSettingDto.shortBreakColor,
+      // longBreakColor: createSettingDto.longBreakColor,
+    });
+
+
+    const createdSetting = await this.settingRepository.save(newSetting);
+    console.log("createdSetting");
+    return {
+      statusCode: 200,
+      meesage: "create success",
+    };
+  }
 }
+

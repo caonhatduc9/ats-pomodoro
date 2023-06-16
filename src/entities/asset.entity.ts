@@ -12,7 +12,7 @@ export class Asset {
   @Column('text', { name: 'author' })
   author: string;
 
-  @Column('varchar', { name: 'type', length: 10 })
+  @Column('varchar', { name: 'type', length: 20 })
   type: string;
 
   @Column('text', { name: 'assetURL' })

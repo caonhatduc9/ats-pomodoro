@@ -27,9 +27,7 @@ export class SettingService {
 
     const ringSounds = [];
     const backgroundMusics = [];
-    const pomodoroBackgrounds = [];
-    const shortBreakBackgrounds = [];
-    const longBreakBackgrounds = [];
+    const backgroundImages = [];
 
     listAsset.forEach(item => {
       if (item.type === 'AUDIO') {
@@ -37,18 +35,14 @@ export class SettingService {
         backgroundMusics.push(item);
       }
       if (item.type === 'IMAGE') {
-        pomodoroBackgrounds.push(item);
-        shortBreakBackgrounds.push(item);
-        longBreakBackgrounds.push(item);
+        backgroundImages.push(item);
       }
     }
     )
     const assets = {
       ringSounds,
       backgroundMusics,
-      pomodoroBackgrounds,
-      shortBreakBackgrounds,
-      longBreakBackgrounds,
+      backgroundImages,
     }
     const cleanedData = {
       userId: data["userId"],

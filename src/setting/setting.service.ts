@@ -32,6 +32,8 @@ export class SettingService {
     listAsset.forEach(item => {
       if (item.type === 'AUDIO') {
         ringSounds.push(item);
+      }
+      if (item.type === 'MUSIC') {
         backgroundMusics.push(item);
       }
       if (item.type === 'IMAGE') {

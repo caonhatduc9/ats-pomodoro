@@ -11,9 +11,7 @@ export class CreateSettingDto {
     ringSoundRepeat: number;
     backgroundMusicId: number;
     backgroundMusicVolumn: number;
-    pomodoroBackgroundId: number;
-    shortBreakBackgroundId: number;
-    longBreakBackgroundId: number;
+    currentBackgroundId: number;
     darkmodeWhenRunning: number;
     pomodoroColor: string;
     shortBreakColor: string;

@@ -14,10 +14,10 @@ export class SettingService {
     const data = await this.settingRepository.createQueryBuilder('setting')
       .leftJoinAndSelect('setting.user', 'user')
       .leftJoinAndSelect('setting.ringSound2', 'ringSound')
-      .leftJoinAndSelect('setting.longBreakBackground2', 'longBreakBackground2')
+      // .leftJoinAndSelect('setting.longBreakBackground2', 'longBreakBackground2')
       .leftJoinAndSelect('setting.backgroundMusic2', 'backgroundMusic2')
-      .leftJoinAndSelect('setting.pomodoroBackground2', 'pomodoroBackground2')
-      .leftJoinAndSelect('setting.shortBreakBackground2', 'shortBreakBackground2')
+      .leftJoinAndSelect('setting.currentBackgroundSelected2', 'currentBackgroundSelected2')
+      // .leftJoinAndSelect('setting.shortBreakBackground2', 'shortBreakBackground2')
       .where('user.userId = :id', { id })
       .getOne();
 
@@ -71,22 +71,10 @@ export class SettingService {
       },
       backgroundMusicVolumn: data["backgroundMusicVolumn"],
       pomodoroBackground: {
-        assetId: data["pomodoroBackground2"]["assetId"],
-        assetName: data["pomodoroBackground2"]["assetName"],
-        type: data["pomodoroBackground2"]["type"],
-        assetUrl: data["pomodoroBackground2"]["assetUrl"]
-      },
-      shortBreakBackground: {
-        assetId: data["shortBreakBackground2"]["assetId"],
-        assetName: data["shortBreakBackground2"]["assetName"],
-        type: data["shortBreakBackground2"]["type"],
-        assetUrl: data["shortBreakBackground2"]["assetUrl"]
-      },
-      longBreakBackground: {
-        assetId: data["longBreakBackground2"]["assetId"],
-        assetName: data["longBreakBackground2"]["assetName"],
-        type: data["longBreakBackground2"]["type"],
-        assetUrl: data["longBreakBackground2"]["assetUrl"]
+        assetId: data["currentBackgroundSelected2"]["assetId"],
+        assetName: data["currentBackgroundSelected2"]["assetName"],
+        type: data["currentBackgroundSelected2"]["type"],
+        assetUrl: data["currentBackgroundSelected2"]["assetUrl"]
       },
       darkmodeWhenRunning: data["darkmodeWhenRunning"],
       pomodoroColor: data["pomodoroColor"],
@@ -134,22 +122,11 @@ export class SettingService {
       }
 
       // Kiểm tra và cập nhật pomodoroBackground nếu pomodoroBackgroundId được cung cấp và tồn tại trong bảng Asset
-      if (createSettingDto.pomodoroBackgroundId) {
-        const pomodoroBackgroundExists = await this.assetRepository.findOne({ where: { assetId: createSettingDto.pomodoroBackgroundId } });
-        setting.pomodoroBackground = pomodoroBackgroundExists ? createSettingDto.pomodoroBackgroundId : null;
+      if (createSettingDto.currentBackgroundId) {
+        const pomodoroBackgroundExists = await this.assetRepository.findOne({ where: { assetId: createSettingDto.currentBackgroundId } });
+        setting.currentBackgroundSelected = pomodoroBackgroundExists ? createSettingDto.currentBackgroundId : null;
       }
 
-      // Kiểm tra và cập nhật shortBreakBackground nếu shortBreakBackgroundId được cung cấp và tồn tại trong bảng Asset
-      if (createSettingDto.shortBreakBackgroundId) {
-        const shortBreakBackgroundExists = await this.assetRepository.findOne({ where: { assetId: createSettingDto.shortBreakBackgroundId } });
-        setting.shortBreakBackground = shortBreakBackgroundExists ? createSettingDto.shortBreakBackgroundId : null;
-      }
-
-      // Kiểm tra và cập nhật longBreakBackground nếu longBreakBackgroundId được cung cấp và tồn tại trong bảng Asset
-      if (createSettingDto.longBreakBackgroundId) {
-        const longBreakBackgroundExists = await this.assetRepository.findOne({ where: { assetId: createSettingDto.longBreakBackgroundId } });
-        setting.longBreakBackground = longBreakBackgroundExists ? createSettingDto.longBreakBackgroundId : null;
-      }
 
       // Lưu setting đã cập nhật
       const updatedSetting = await this.settingRepository.save(setting);
@@ -190,21 +167,9 @@ export class SettingService {
       }
 
       // Kiểm tra và cập nhật pomodoroBackground nếu pomodoroBackgroundId được cung cấp và tồn tại trong bảng Asset
-      if (createSettingDto.pomodoroBackgroundId) {
-        const pomodoroBackgroundExists = await this.assetRepository.findOne({ where: { assetId: createSettingDto.pomodoroBackgroundId } });
-        newSetting.pomodoroBackground = pomodoroBackgroundExists ? createSettingDto.pomodoroBackgroundId : null;
-      }
-
-      // Kiểm tra và cập nhật shortBreakBackground nếu shortBreakBackgroundId được cung cấp và tồn tại trong bảng Asset
-      if (createSettingDto.shortBreakBackgroundId) {
-        const shortBreakBackgroundExists = await this.assetRepository.findOne({ where: { assetId: createSettingDto.shortBreakBackgroundId } });
-        newSetting.shortBreakBackground = shortBreakBackgroundExists ? createSettingDto.shortBreakBackgroundId : null;
-      }
-
-      // Kiểm tra và cập nhật longBreakBackground nếu longBreakBackgroundId được cung cấp và tồn tại trong bảng Asset
-      if (createSettingDto.longBreakBackgroundId) {
-        const longBreakBackgroundExists = await this.assetRepository.findOne({ where: { assetId: createSettingDto.longBreakBackgroundId } });
-        newSetting.longBreakBackground = longBreakBackgroundExists ? createSettingDto.longBreakBackgroundId : null;
+      if (createSettingDto.currentBackgroundId) {
+        const pomodoroBackgroundExists = await this.assetRepository.findOne({ where: { assetId: createSettingDto.currentBackgroundId } });
+        newSetting.currentBackgroundSelected = pomodoroBackgroundExists ? createSettingDto.currentBackgroundId : null;
       }
 
       const createdSetting = await this.settingRepository.save(newSetting);
@@ -251,11 +216,9 @@ export class SettingService {
       longBreakInterval: defaultLongBreakInterval,
       autoSwitchTask: defaultAutoSwitchTask,
       darkmodeWhenRunning: defaultDarkmodeWhenRunning,
-      ringSound: 1,
+      ringSound: defaultAudio.assetId,
       backgroundMusic: defaultMusic.assetId,
-      pomodoroBackground: defaultImage.assetId,
-      shortBreakBackground: defaultImage.assetId,
-      longBreakBackground: defaultImage.assetId,
+      currentBackgroundSelected: defaultImage.assetId,
       // pomodoroColor: createSettingDto.pomodoroColor || null,
       // shortBreakColor: createSettingDto.shortBreakColor,
       // longBreakColor: createSettingDto.longBreakColor,

@@ -33,15 +33,15 @@ export class Asset {
   @OneToMany(() => Setting, (setting) => setting.backgroundMusic2)
   settings: Setting[];
 
-  @OneToMany(() => Setting, (setting) => setting.longBreakBackground2)
-  settings2: Setting[];
+  // @OneToMany(() => Setting, (setting) => setting.longBreakBackground2)
+  // settings2: Setting[];
 
-  @OneToMany(() => Setting, (setting) => setting.pomodoroBackground2)
+  @OneToMany(() => Setting, (setting) => setting.currentBackgroundSelected2)
   settings3: Setting[];
 
   @OneToMany(() => Setting, (setting) => setting.ringSound2)
   settings4: Setting[];
 
-  @OneToMany(() => Setting, (setting) => setting.shortBreakBackground2)
-  settings5: Setting[];
+  // @OneToMany(() => Setting, (setting) => setting.shortBreakBackground2)
+  // settings5: Setting[];
 }

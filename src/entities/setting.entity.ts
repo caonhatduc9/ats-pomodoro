@@ -12,9 +12,9 @@ import { Exclude } from 'class-transformer';
 
 @Index('setting_ringSound_asserId_idx', ['ringSound'], {})
 @Index('setting_backgroundMusic_asserId_idx', ['backgroundMusic'], {})
-@Index('setting_pomodoroBackground_asserId_idx', ['pomodoroBackground'], {})
-@Index('setting_shortBreakBackground_asserId_idx', ['shortBreakBackground'], {})
-@Index('setting_longBreakBackground_asserId_idx', ['longBreakBackground'], {})
+@Index('setting_currentBackgroundSelected_asserId_idx', ['currentBackgroundSelected'], {})
+// @Index('setting_shortBreakBackground_asserId_idx', ['shortBreakBackground'], {})
+// @Index('setting_longBreakBackground_asserId_idx', ['longBreakBackground'], {})
 @Entity('setting', { schema: 'ats_pomodoro' })
 export class Setting {
   @Column('int', { primary: true, name: 'userId' })
@@ -56,14 +56,9 @@ export class Setting {
   @Column('int', { name: 'backgroundMusicVolumn', nullable: true })
   backgroundMusicVolumn: number | null;
 
-  @Column('int', { name: 'pomodoroBackgroundSelected', nullable: true })
-  pomodoroBackground: number | null;
-  @Column('int', { name: 'shortBreakBackgroundSelected', nullable: true })
-  @Exclude()
-  shortBreakBackground: number | null;
-  @Column('int', { name: 'longBreakBackgroundSelected', nullable: true })
-  @Exclude()
-  longBreakBackground: number | null;
+  @Column('int', { name: 'currentBackgroundSelected', nullable: true })
+  currentBackgroundSelected: number | null;
+
 
   @Column('tinyint', { name: 'darkmodeWhenRunning', nullable: true })
   darkmodeWhenRunning: number | null;
@@ -84,21 +79,21 @@ export class Setting {
   @JoinColumn([{ name: 'backgroundMusicSelected', referencedColumnName: 'assetId' }])
   backgroundMusic2: Asset;
 
-  @ManyToOne(() => Asset, (asset) => asset.settings2, {
-    onDelete: 'RESTRICT',
-    onUpdate: 'RESTRICT',
-  })
-  @JoinColumn([
-    { name: 'longBreakBackgroundSelected', referencedColumnName: 'assetId' },
-  ])
-  longBreakBackground2: Asset;
+  // @ManyToOne(() => Asset, (asset) => asset.settings2, {
+  //   onDelete: 'RESTRICT',
+  //   onUpdate: 'RESTRICT',
+  // })
+  // @JoinColumn([
+  //   { name: 'longBreakBackgroundSelected', referencedColumnName: 'assetId' },
+  // ])
+  // longBreakBackground2: Asset;
 
   @ManyToOne(() => Asset, (asset) => asset.settings3, {
     onDelete: 'RESTRICT',
     onUpdate: 'RESTRICT',
   })
-  @JoinColumn([{ name: 'pomodoroBackgroundSelected', referencedColumnName: 'assetId' }])
-  pomodoroBackground2: Asset;
+  @JoinColumn([{ name: 'currentBackgroundSelected', referencedColumnName: 'assetId' }])
+  currentBackgroundSelected2: Asset;
 
   @ManyToOne(() => Asset, (asset) => asset.settings4, {
     onDelete: 'RESTRICT',
@@ -107,14 +102,14 @@ export class Setting {
   @JoinColumn([{ name: 'ringSoundSelected', referencedColumnName: 'assetId' }])
   ringSound2: Asset;
 
-  @ManyToOne(() => Asset, (asset) => asset.settings5, {
-    onDelete: 'RESTRICT',
-    onUpdate: 'RESTRICT',
-  })
-  @JoinColumn([
-    { name: 'shortBreakBackgroundSelected', referencedColumnName: 'assetId' },
-  ])
-  shortBreakBackground2: Asset;
+  // @ManyToOne(() => Asset, (asset) => asset.settings5, {
+  //   onDelete: 'RESTRICT',
+  //   onUpdate: 'RESTRICT',
+  // })
+  // @JoinColumn([
+  //   { name: 'shortBreakBackgroundSelected', referencedColumnName: 'assetId' },
+  // ])
+  // shortBreakBackground2: Asset;
 
   @OneToOne(() => User, (user) => user.setting, {
     onDelete: 'RESTRICT',

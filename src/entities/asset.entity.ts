@@ -30,7 +30,7 @@ export class Asset {
   @Column('date', { name: 'modifiedDate', nullable: true })
   modifiedDate: string | null;
 
-  @Column('tinyint', { name: 'isDefault', nullable: true, default: 0 })
+  @Column('tinyint', { name: 'isDefault', nullable: false, default: 0 })
   isDefault: number | null;
 
   @OneToMany(() => Setting, (setting) => setting.backgroundMusic2)

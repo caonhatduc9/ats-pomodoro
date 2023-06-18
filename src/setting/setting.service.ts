@@ -184,12 +184,13 @@ export class SettingService {
   async createDefaultSetting(userId: number) {
     const assets = await this.assetRepository
       .createQueryBuilder('asset')
-      .where('asset.type LIKE :type', { type: 'DEFAULT%' })
+      .where('asset.isDefault = :value', { value: 1 })
       .getMany();
 
     const defaultMusic = assets.find(item => item.type === 'MUSIC' && item.isDefault === 1);
     const defaultAudio = assets.find(item => item.type === 'AUDIO' && item.isDefault === 1);
     const defaultImage = assets.find(item => item.type === 'IMAGE' && item.isDefault === 1);
+    console.log("default music ", defaultMusic);
     const defaultPomodoroTime = 25;
     const defaultRingSoundVolumn = 50;
     const defaultRingSoundRepeat = 1;

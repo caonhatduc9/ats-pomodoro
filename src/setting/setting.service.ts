@@ -70,7 +70,7 @@ export class SettingService {
         assetUrl: data["backgroundMusic2"]["assetUrl"],
       },
       backgroundMusicVolumn: data["backgroundMusicVolumn"],
-      pomodoroBackground: {
+      currentBackground: {
         assetId: data["currentBackgroundSelected2"]["assetId"],
         assetName: data["currentBackgroundSelected2"]["assetName"],
         type: data["currentBackgroundSelected2"]["type"],

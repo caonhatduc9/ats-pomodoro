@@ -187,9 +187,9 @@ export class SettingService {
       .where('asset.type LIKE :type', { type: 'DEFAULT%' })
       .getMany();
 
-    const defaultMusic = assets.find(item => item.type === 'DEFAULT_MUSIC');
-    const defaultAudio = assets.find(item => item.type === 'DEFAULT_AUDIO');
-    const defaultImage = assets.find(item => item.type === 'DEFAULT_IMAGE');
+    const defaultMusic = assets.find(item => item.type === 'MUSIC' && item.isDefault === 1);
+    const defaultAudio = assets.find(item => item.type === 'AUDIO' && item.isDefault === 1);
+    const defaultImage = assets.find(item => item.type === 'IMAGE' && item.isDefault === 1);
     const defaultPomodoroTime = 25;
     const defaultRingSoundVolumn = 50;
     const defaultRingSoundRepeat = 1;

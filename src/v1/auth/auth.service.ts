@@ -44,13 +44,14 @@ export class AuthService {
 
   //local strategy login
   async login(user: any) {
-    const payload = { username: user.username, sub: user.userId };
+    const payload = { username: user.username, sub: user.userId};
     return {
       statusCode: 200,
       data: {
-        userId: user.userId,
         access_token: this.jwtService.sign(payload),
-        userName: user.username,
+        userId: user.userId,
+        username: user.username,
+        email: user.email,
         avatarURL: user.avatarUrl,
         payment: 'free',
       },

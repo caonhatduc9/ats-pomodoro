@@ -20,13 +20,13 @@ export class Setting {
   @Column('int', { primary: true, name: 'userId' })
   userId: number;
 
-  @Column('int', { name: 'pomodoroTime', nullable: true })
+  @Column('float', { name: 'pomodoroTime', nullable: true })
   pomodoroTime: number | null;
 
-  @Column('int', { name: 'shortBreakTime', nullable: true })
+  @Column('float', { name: 'shortBreakTime', nullable: true })
   shortBreakTime: number | null;
 
-  @Column('int', { name: 'longBreakTime', nullable: true })
+  @Column('float', { name: 'longBreakTime', nullable: true })
   longBreakTime: number | null;
 
   @Column('tinyint', { name: 'autoStartBreak', nullable: true })

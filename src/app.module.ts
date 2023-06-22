@@ -11,6 +11,8 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { CorsInterceptor } from './cors.interceptor';
 import { SettingModule } from './setting/setting.module';
 import { ReportModule } from './report/report.module';
+import { TaskModule } from './task/task.module';
+import { ProjectModule } from './project/project.module';
 
 @Module({
   //fix error cors when frontend fetch API
@@ -25,6 +27,8 @@ import { ReportModule } from './report/report.module';
     MailingModule,
     SettingModule,
     ReportModule,
+    TaskModule,
+    ProjectModule,
   ],
   controllers: [AppController],
   providers: [

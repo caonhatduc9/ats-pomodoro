@@ -38,8 +38,8 @@ export class Task {
   })
   actualPormonoro: number | null;
 
-  @Column('time', { name: 'timeSpent', nullable: true })
-  timeSpent: string | null;
+  @Column('float', { name: 'timeSpent', nullable: true })
+  timeSpent: number | null;
 
   @Column('text', { name: 'note', nullable: true })
   note: string | null;

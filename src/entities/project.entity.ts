@@ -23,8 +23,8 @@ export class Project {
   @Column('text', { name: 'projectName' })
   projectName: string;
 
-  @Column('text', { name: 'description' })
-  description: string;
+  @Column('text', { name: 'description', nullable: true })
+  description: string | null;
 
   @Column('date', { name: 'createdDate' })
   createdDate: string;

@@ -22,21 +22,21 @@ export class Task {
   @Column('int', { name: 'userId' })
   userId: number;
 
-  @Column('varchar', { name: 'status', length: 20 })
-  status: string;
+  @Column('varchar', { name: 'status', length: 20, nullable: true })
+  status: string | null;
 
   @Column('text', { name: 'taskName' })
   taskName: string;
 
-  @Column('float', { name: 'estimatePomonoro' })
-  estimatePomonoro: number;
+  @Column('float', { name: 'estimatePomodoro' })
+  estimatePomodoro: number;
 
   @Column('float', {
-    name: 'actualPormonoro',
+    name: 'actualPomodoro',
     nullable: true,
     default: () => 0,
   })
-  actualPormonoro: number | null;
+  actualPomodoro: number | null;
 
   @Column('float', { name: 'timeSpent', nullable: true })
   timeSpent: number | null;

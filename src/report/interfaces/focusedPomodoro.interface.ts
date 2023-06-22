@@ -1,6 +1,6 @@
 export interface FocusedPomodoro {
     focusedPomodoroId: number;
     userId: number;
-    timeFocus: string;
+    timeFocus: number;
     createdDate: string;
 }

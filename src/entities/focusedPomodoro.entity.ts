@@ -2,8 +2,8 @@ import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } 
 import { User } from './user.entity';
 
 @Index('dayFocus_user_userId_idx', ['userId'], {})
-@Entity('focusedpomodoro', { schema: 'ats_pomodoro' })
-export class Focusedpomodoro {
+@Entity('focusedPomodoro', { schema: 'ats_pomodoro' })
+export class FocusedPomodoro {
   @PrimaryGeneratedColumn({ type: 'int', name: 'focusedPomodoroId' })
   focusedPomodoroId: number;
 
@@ -16,7 +16,7 @@ export class Focusedpomodoro {
   @Column('date', { name: 'createdDate', nullable: true })
   createdDate: string | null;
 
-  @ManyToOne(() => User, (user) => user.focusedpomodoros, {
+  @ManyToOne(() => User, (user) => user.focusedPomodoros, {
     onDelete: 'RESTRICT',
     onUpdate: 'RESTRICT',
   })

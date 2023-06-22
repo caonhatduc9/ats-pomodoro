@@ -8,7 +8,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Focusedpomodoro } from './focusedPomodoro.entity';
+import { FocusedPomodoro } from './focusedPomodoro.entity';
 import { Project } from './project.entity';
 import { Setting } from './setting.entity';
 import { Subcription } from './subcription.entity';
@@ -66,8 +66,8 @@ export class User {
     default: AuthProvider.LOCAL,
   })
   authProvider: AuthProvider;
-  @OneToMany(() => Focusedpomodoro, (focusedpomodoro) => focusedpomodoro.user)
-  focusedpomodoros: Focusedpomodoro[];
+  @OneToMany(() => FocusedPomodoro, (focusedPomodoro) => focusedPomodoro.user)
+  focusedPomodoros: FocusedPomodoro[];
 
   @OneToMany(() => Project, (project) => project.user)
   projects: Project[];

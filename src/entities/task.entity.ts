@@ -28,13 +28,13 @@ export class Task {
   @Column('text', { name: 'taskName' })
   taskName: string;
 
-  @Column('int', { name: 'estimatePomonoro' })
+  @Column('float', { name: 'estimatePomonoro' })
   estimatePomonoro: number;
 
-  @Column('int', {
+  @Column('float', {
     name: 'actualPormonoro',
     nullable: true,
-    default: () => "'0'",
+    default: () => 0,
   })
   actualPormonoro: number | null;
 

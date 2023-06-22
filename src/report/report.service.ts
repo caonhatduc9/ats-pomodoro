@@ -4,7 +4,7 @@ import { UpdateReportDto } from './dto/update-report.dto';
 import { Report } from './entities/report.entity';
 import { Repository } from 'typeorm';
 import { dataproc } from 'googleapis/build/src/apis/dataproc';
-import { User } from 'output/entities/User';
+import { User } from '../../src/entities/user.entity';
 import { FocusedPomodoro, Project, ReportData, SummaryReportResponse } from './interfaces/index.interface';
 
 import * as moment from 'moment';
@@ -68,11 +68,11 @@ export class ReportService {
   async getSummaryReportByUserId(id: number): Promise<SummaryReportResponse> {
     const dataRaw = await this.userRepository.createQueryBuilder('user')
       .leftJoinAndSelect('user.projects', 'project')
-      .leftJoinAndSelect('user.focusedpomodoros', 'focusedPomodoro')
+      .leftJoinAndSelect('user.focusedPomodoros', 'focusedPomodoro')
       .where('user.userId = :id ', { id })
       .getMany();
 
-    const focusTime: FocusedPomodoro[] = dataRaw[0].focusedpomodoros;
+    const focusTime: FocusedPomodoro[] = dataRaw[0].focusedPomodoros;
     const projects: Project[] = dataRaw[0].projects;
 
     let totalMinutes: number = 0;
@@ -167,8 +167,9 @@ export class ReportService {
       // Tính tổng thời gian từ các task trong project
       let totalMinutes = 0;
       project.tasks.forEach(task => {
-        const [hours, minutes, seconds] = task.timeSpent.split(":");
-        totalMinutes += parseInt(hours) * 60 + parseInt(minutes);
+        // const [hours, minutes, seconds] = task.timeSpent.split(":");
+        // totalMinutes += parseInt(hours) * 60 + parseInt(minutes);
+        totalMinutes += +task.timeSpent;
       });
       const dateString: string = project.createdDate;
       // Tạo đối tượng Moment từ chuỗi ngày
@@ -186,12 +187,12 @@ export class ReportService {
     // Lặp qua các task không thuộc project
     dataRaw[0].tasks.forEach(task => {
       if (task.projectId === null) {
-        const [hours, minutes, seconds] = task.timeSpent.split(":");
+        // const [hours, minutes, seconds] = task.timeSpent.split(":");
         const taskName = task.taskName;
         const existingTask = result.find(item => item.task === taskName);
         if (existingTask) {
           // Cộng thời gian vào task đã tồn tại trong kết quả
-          existingTask.minutes += parseInt(hours) * 60 + parseInt(minutes);
+          existingTask.minutes += task.timeSpent;
         } else {
 
           const dateString: string = task.createdDate;
@@ -203,7 +204,7 @@ export class ReportService {
           result.push({
             date: formattedDate,
             task: taskName,
-            minutes: parseInt(hours) * 60 + parseInt(minutes)
+            minutes: task.timeSpent,
           });
         }
       }

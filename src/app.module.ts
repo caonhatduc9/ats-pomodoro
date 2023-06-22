@@ -11,7 +11,6 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { CorsInterceptor } from './cors.interceptor';
 import { SettingModule } from './setting/setting.module';
 import { ReportModule } from './report/report.module';
-import { TaskModule } from './task/task.module';
 import { ProjectModule } from './project/project.module';
 
 @Module({
@@ -27,7 +26,6 @@ import { ProjectModule } from './project/project.module';
     MailingModule,
     SettingModule,
     ReportModule,
-    TaskModule,
     ProjectModule,
   ],
   controllers: [AppController],

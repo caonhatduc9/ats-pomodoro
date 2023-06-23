@@ -3,6 +3,7 @@ import { ProjectService } from './project.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { JwtAuthGuard } from 'src/v1/auth/guards/auth.jwt.guard';
+
 @UseGuards(JwtAuthGuard)
 @Controller('/v1/task')
 export class ProjectController {
@@ -12,12 +13,13 @@ export class ProjectController {
   async create(@Req() req: any, @Body() body: any, @Query('project') project: string) {
     console.log("project ", project);
     return await this.projectService.createTask(req.user.userId, body, project);
-
   }
+
+  @Get()
+  async getByUserId(@Req() req: any) {
+    return this.projectService.findByUserId(req.user.userId);
+  }
+
 }
 
-  // @Get()
-  // findAll() {
-  //   return this.projectService.findAll();
-  // }
-
+  

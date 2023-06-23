@@ -57,18 +57,43 @@ export class ProjectService {
         // }
       }
     }
-    else {//day la trương hợp dễ hơ chỉ dùng table task thôi không cần project
+    else {
+      //day la trương hợp dễ hơ chỉ dùng table task thôi không cần project
       //implement here
+      const newTask = this.taskRepository.create(
+        {
+          taskName: createProjectTaskDto.task.taskName,
+          estimatePomodoro: createProjectTaskDto.task.estimatePomodoro,
+          note: createProjectTaskDto.task.note,
+          createdDate: new Date().toISOString().slice(0, 10),
+        })
+      const savedTask = await this.taskRepository.save(newTask);
+      return savedTask;
       // return {
       //   statusCode: 200,
       //   message: "create success"
       // };
     }
   }
+
+  async findByUserId(id: number) {
+    const data = await this.projectRepository.createQueryBuilder('project')
+      .leftJoinAndSelect('', '')
+      
+      .where('user.userId = :id', { id })
+      .getOne();
+
+    const listTask = await this.taskRepository.createQueryBuilder('task')
+    //   .select(['asset.assetId', 'asset.assetName', 'asset.author', 'asset.type', 'asset.assetUrl', 'asset.isFree'])
+    //   .getMany();
+
+    return {
+      status: 'success',
+      // data: cleanedData ? cleanedData : {},
+    }
+  }
 }
 
-  // findAll() {
-  //   return `This action returns all project`;
-  // }
+
 
 

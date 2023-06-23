@@ -12,25 +12,7 @@ export class ProjectService {
 
   async createTask(userId: number, body: any, project: string) {
     if (project === 'true') {
-      const foundProject = await this.projectRepository.findOne({ where: { projectId: body.project.projectId } });
-      if (foundProject) {
-        const newTask = this.taskRepository.create(
-          {
-            projectId: foundProject.projectId,
-            userId: foundProject.userId,
-            taskName: body.task.taskName,
-            estimatePomodoro: body.task.estimatePomodoro,
-            note: body.task.note,
-            createdDate: new Date().toISOString().slice(0, 10),
-          })
-        const savedTask = await this.taskRepository.save(newTask);
-        return savedTask;
-        // return {
-        //   "statusCode": 200,
-        //   "message": "create success"
-        // }
-      }
-      else {
+      if (body.project.projectId == null) {
         const newProject = this.projectRepository.create({
           userId: userId,
           projectName: body.project.projectName,
@@ -47,11 +29,53 @@ export class ProjectService {
             createdDate: new Date().toISOString().slice(0, 10),
           })
         const savedTask = await this.taskRepository.save(newTask);
-        return savedTask;
-        // return {
-        //   "statusCode": 200,
-        //   "message": "create success"
-        // }
+        return {
+          statusCode: 200,
+          message: "create success"
+        }
+      }
+      else {
+        const foundProject = await this.projectRepository.findOne({ where: { projectId: body.project.projectId } });
+        if (foundProject) {
+          const newTask = this.taskRepository.create(
+            {
+              projectId: foundProject.projectId,
+              userId: foundProject.userId,
+              taskName: body.task.taskName,
+              estimatePomodoro: body.task.estimatePomodoro,
+              note: body.task.note,
+              createdDate: new Date().toISOString().slice(0, 10),
+            })
+          const savedTask = await this.taskRepository.save(newTask);
+          return savedTask;
+          // return {
+          //   "statusCode": 200,
+          //   "message": "create success"
+          // }
+        }
+        else {
+          const newProject = this.projectRepository.create({
+            userId: userId,
+            projectName: body.project.projectName,
+            createdDate: new Date().toISOString().slice(0, 10),
+          })
+          const savedProject = await this.projectRepository.save(newProject);
+          const newTask = this.taskRepository.create(
+            {
+              projectId: savedProject.projectId,
+              userId: userId,
+              taskName: body.task.taskName,
+              estimatePomodoro: body.task.estimatePomodoro,
+              note: body.task.note,
+              createdDate: new Date().toISOString().slice(0, 10),
+            })
+          const savedTask = await this.taskRepository.save(newTask);
+          return savedTask;
+          // return {
+          //   "statusCode": 200,
+          //   "message": "create success"
+          // }
+        }
       }
     }
     else {
@@ -100,19 +124,24 @@ export class ProjectService {
           estimatePomodoro: body.estimatePomodoro,
           note: body.note,
           actualPomodoro: body.actualPomodoro,
+          modifiedDate: new Date().toISOString().slice(0, 10),
         })
         console.log(body.taskId);
         const savedTask = await this.taskRepository.save(newTask);
-        return savedTask;
+        return {
+          statusCode: 200,
+          message: "update success"
+        }
       }
       else {
         const foundProject = await this.projectRepository.findOne({ where: { projectId: body.projectId } });
-        
+
         if (foundProject) {
+          console.log("found project", foundProject);
           const newProject = this.projectRepository.create({
             projectId: body.projectId,
-            userId,
             projectName: body.projectName,
+            modifiedDate: new Date().toISOString().slice(0, 10)
           })
           const updatedProject = await this.projectRepository.save(newProject);
           // return savedProject;
@@ -122,14 +151,16 @@ export class ProjectService {
             {
               projectId: body.projectId,
               taskId: body.taskId,
-              // userId: body.userId,
               taskName: body.taskName,
               estimatePomodoro: body.estimatePomodoro,
               note: body.note,
-              // createdDate: new Date().toISOString().slice(0, 10),
+              modifiedDate: new Date().toISOString().slice(0, 10),
             })
           const savedTask = await this.taskRepository.save(newTask);
-          return savedTask;
+          return {
+            statusCode: 200,
+            message: "update success"
+          }
         }
       }
     }

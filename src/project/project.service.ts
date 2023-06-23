@@ -1,11 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CreateProjectDto } from './dto/create-project.dto';
-import { UpdateProjectDto } from './dto/update-project.dto';
 import { Project } from '../entities/project.entity';
 import { Task } from '../entities/task.entity';
 import { Repository } from 'typeorm';
-import { CreateProjectTaskDto } from './dto/createTask.dto';
-// import { CreateTaskDto } from './dto/createTask.dto';
 
 @Injectable()
 export class ProjectService {
@@ -13,17 +9,18 @@ export class ProjectService {
     @Inject('TASK_REPOSITORY') private taskRepository: Repository<Task>
   ) { }
 
-  async createTask(userId: number, createProjectTaskDto: CreateProjectTaskDto, project: string) {
+
+  async createTask(userId: number, body: any, project: string) {
     if (project === 'true') {
-      const foundProject = await this.projectRepository.findOne({ where: { projectId: createProjectTaskDto.project.projectId } });
+      const foundProject = await this.projectRepository.findOne({ where: { projectId: body.project.projectId } });
       if (foundProject) {
         const newTask = this.taskRepository.create(
           {
             projectId: foundProject.projectId,
             userId: foundProject.userId,
-            taskName: createProjectTaskDto.task.taskName,
-            estimatePomodoro: createProjectTaskDto.task.estimatePomodoro,
-            note: createProjectTaskDto.task.note,
+            taskName: body.task.taskName,
+            estimatePomodoro: body.task.estimatePomodoro,
+            note: body.task.note,
             createdDate: new Date().toISOString().slice(0, 10),
           })
         const savedTask = await this.taskRepository.save(newTask);
@@ -36,7 +33,7 @@ export class ProjectService {
       else {
         const newProject = this.projectRepository.create({
           userId: userId,
-          projectName: createProjectTaskDto.project.projectName,
+          projectName: body.project.projectName,
           createdDate: new Date().toISOString().slice(0, 10),
         })
         const savedProject = await this.projectRepository.save(newProject);
@@ -44,13 +41,13 @@ export class ProjectService {
           {
             projectId: savedProject.projectId,
             userId: userId,
-            taskName: createProjectTaskDto.task.taskName,
-            estimatePomodoro: createProjectTaskDto.task.estimatePomodoro,
-            note: createProjectTaskDto.task.note,
+            taskName: body.task.taskName,
+            estimatePomodoro: body.task.estimatePomodoro,
+            note: body.task.note,
             createdDate: new Date().toISOString().slice(0, 10),
           })
         const savedTask = await this.taskRepository.save(newTask);
-        return savedTask;//chỗ này return ra để xem test thôi chứ khi deloy thi return như ở dưới
+        return savedTask;
         // return {
         //   "statusCode": 200,
         //   "message": "create success"
@@ -62,9 +59,10 @@ export class ProjectService {
       //implement here
       const newTask = this.taskRepository.create(
         {
-          taskName: createProjectTaskDto.task.taskName,
-          estimatePomodoro: createProjectTaskDto.task.estimatePomodoro,
-          note: createProjectTaskDto.task.note,
+          userId,
+          taskName: body.taskName,
+          estimatePomodoro: body.estimatePomodoro,
+          note: body.note,
           createdDate: new Date().toISOString().slice(0, 10),
         })
       const savedTask = await this.taskRepository.save(newTask);
@@ -76,23 +74,68 @@ export class ProjectService {
     }
   }
 
-  async findByUserId(id: number) {
-    const data = await this.projectRepository.createQueryBuilder('project')
-      .leftJoinAndSelect('', '')
-      
-      .where('user.userId = :id', { id })
-      .getOne();
+  async findTaskByUserId(id: number) {
+    const data = await this.taskRepository.createQueryBuilder('task')
+      .leftJoinAndSelect('task.project', 'project')
 
-    const listTask = await this.taskRepository.createQueryBuilder('task')
-    //   .select(['asset.assetId', 'asset.assetName', 'asset.author', 'asset.type', 'asset.assetUrl', 'asset.isFree'])
-    //   .getMany();
+      .where('task.userId = :id', { id })
+      .getMany();
+
+    // return data;
 
     return {
-      status: 'success',
-      // data: cleanedData ? cleanedData : {},
+      statusCode: 200,
+      data: data ? data : {},
+    }
+  }
+
+  async updateTaskByUserId(body: any, userId: number) {
+    const foundTask = await this.taskRepository.findOne({ where: { taskId: body.taskId } });
+    if (foundTask) {
+      if (foundTask.projectId == null) {
+        const newTask = this.taskRepository.create({
+          // userId: foundTask.userId,
+          taskId: body.taskId,
+          taskName: body.taskName,
+          estimatePomodoro: body.estimatePomodoro,
+          note: body.note,
+          actualPomodoro: body.actualPomodoro,
+        })
+        console.log(body.taskId);
+        const savedTask = await this.taskRepository.save(newTask);
+        return savedTask;
+      }
+      else {
+        const foundProject = await this.projectRepository.findOne({ where: { projectId: body.projectId } });
+        
+        if (foundProject) {
+          const newProject = this.projectRepository.create({
+            projectId: body.projectId,
+            userId,
+            projectName: body.projectName,
+          })
+          const updatedProject = await this.projectRepository.save(newProject);
+          // return savedProject;
+          console.log(updatedProject);
+          console.log(body.taskName);
+          const newTask = this.taskRepository.create(
+            {
+              projectId: body.projectId,
+              taskId: body.taskId,
+              // userId: body.userId,
+              taskName: body.taskName,
+              estimatePomodoro: body.estimatePomodoro,
+              note: body.note,
+              // createdDate: new Date().toISOString().slice(0, 10),
+            })
+          const savedTask = await this.taskRepository.save(newTask);
+          return savedTask;
+        }
+      }
     }
   }
 }
+
 
 
 

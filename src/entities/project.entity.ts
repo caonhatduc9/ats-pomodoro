@@ -26,8 +26,8 @@ export class Project {
   @Column('text', { name: 'description', nullable: true })
   description: string | null;
 
-  @Column('date', { name: 'createdDate' })
-  createdDate: string;
+  @Column('date', { name: 'createdDate', nullable: true })
+  createdDate: string | null;
 
   @Column('date', { name: 'modifiedDate', nullable: true })
   modifiedDate: string | null;

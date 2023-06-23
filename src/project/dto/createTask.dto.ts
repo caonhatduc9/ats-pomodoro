@@ -1,14 +1,5 @@
-export class CreateProjectTaskDto {
-    project: {
-        userId: string;
-        projectId: number;
-        projectName: string;
-    };
-
-    task: {
-        taskName: string;
-        estimatePomodoro: number;
-        note: string;
-    };
+export class CreateTaskDto {
+    taskName: string;
+    estimatePomodoro: number;
+    note: string;
 }
-

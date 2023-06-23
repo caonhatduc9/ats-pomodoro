@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Req, UseGuards, Put } from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
@@ -17,7 +17,12 @@ export class ProjectController {
 
   @Get()
   async getByUserId(@Req() req: any) {
-    return this.projectService.findByUserId(req.user.userId);
+    return this.projectService.findTaskByUserId(req.user.userId);
+  }
+
+  @Put()
+  async updateTaskByUserId(@Body() body: any, @Req() req: any) {
+    return this.projectService.updateTaskByUserId(body, +req.user.userId);
   }
 
 }

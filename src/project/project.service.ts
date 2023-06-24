@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Project } from '../entities/project.entity';
-import { Task } from '../entities/task.entity';
+import { Task, TaskStatus } from '../entities/task.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -101,8 +101,8 @@ export class ProjectService {
   async findTaskByUserId(id: number) {
     const data = await this.taskRepository.createQueryBuilder('task')
       .leftJoinAndSelect('task.project', 'project')
-
       .where('task.userId = :id', { id })
+      .andWhere('task.status != :status', { status: TaskStatus.DELETE })
       .getMany();
 
     // return data;
@@ -162,6 +162,21 @@ export class ProjectService {
             message: "update success"
           }
         }
+      }
+    }
+  }
+  async deleteTaskByUserId(taskId: number, userId: number) {
+    const foundTask = await this.taskRepository.findOne({ where: { taskId: taskId } });
+    if (foundTask) {
+      const newTask = this.taskRepository.create({
+        taskId: taskId,
+        status: TaskStatus.DELETE,
+        modifiedDate: new Date().toISOString().slice(0, 10),
+      })
+      const savedTask = await this.taskRepository.save(newTask);
+      return {
+        statusCode: 200,
+        message: "delete success"
       }
     }
   }

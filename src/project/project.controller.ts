@@ -24,6 +24,10 @@ export class ProjectController {
   async updateTaskByUserId(@Body() body: any, @Req() req: any) {
     return this.projectService.updateTaskByUserId(body, +req.user.userId);
   }
+  @Delete()
+  async deleteTaskByUserId(@Body() body: any, @Req() req: any) {
+    return this.projectService.deleteTaskByUserId(+body.taskId, +req.user.userId);
+  }
 
 }
 

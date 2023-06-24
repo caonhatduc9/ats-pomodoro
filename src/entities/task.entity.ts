@@ -9,6 +9,12 @@ import {
 import { Project } from './project.entity';
 import { User } from './user.entity';
 
+export enum TaskStatus {
+  TODO = 'TODO',
+  DOING = 'DOING',
+  DONE = 'DONE',
+  DELETE = 'DELETE',
+}
 @Index('task_user_userId_idx', ['userId'], {})
 @Index('task_project_projectId_idx', ['projectId'], {})
 @Entity('task', { schema: 'ats_pomodoro' })
@@ -22,8 +28,12 @@ export class Task {
   @Column('int', { name: 'userId' })
   userId: number;
 
-  @Column('varchar', { name: 'status', length: 20, nullable: true })
-  status: string | null;
+  @Column({
+    type: 'enum',
+    enum: TaskStatus,
+    default: TaskStatus.TODO, name: 'status', nullable: true
+  })
+  status: TaskStatus;
 
   @Column('text', { name: 'taskName' })
   taskName: string;

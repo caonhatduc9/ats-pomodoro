@@ -29,6 +29,10 @@ export class ProjectController {
     return this.projectService.deleteTaskByUserId(+body.taskId, +req.user.userId);
   }
 
+  @Delete('/project')
+  async deleteProjectByUserId(@Body() body: any, @Req() req: any) {
+    return this.projectService.deleteProjectByUserId(+body.projectId, +req.user.userId);
+  }
 }
 
   

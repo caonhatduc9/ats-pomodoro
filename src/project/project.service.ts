@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Project } from '../entities/project.entity';
+import { Project, ProjectStatus } from '../entities/project.entity';
 import { Task, TaskStatus } from '../entities/task.entity';
 import { Repository } from 'typeorm';
 
@@ -177,6 +177,34 @@ export class ProjectService {
       return {
         statusCode: 200,
         message: "delete success"
+      }
+    }
+  }
+
+  async deleteProjectByUserId(projectId: number, userId: number) {
+    const project = await this.projectRepository.createQueryBuilder('project')
+    .leftJoinAndSelect('project.tasks', 'task')
+    .where('project.projectId = :id', { id: projectId })
+    .andWhere('task.status = :status', { status: 'DELETE' })
+    .getOne();
+    
+    if(project) {
+      const newProject = this.projectRepository.create({
+        projectId: projectId,
+        status: ProjectStatus.DELETE,
+        modifiedDate: new Date().toISOString().slice(0, 10),
+      })
+      const savedProject = await this.projectRepository.save(newProject);
+      return {
+        statusCode: 200,
+        message: "delete success"
+      }
+
+    }
+    else {
+      return {
+        statusCode: 409,
+        message: "delete failed because tasks are still in your project"
       }
     }
   }

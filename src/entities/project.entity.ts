@@ -10,6 +10,13 @@ import {
 import { User } from './user.entity';
 import { Task } from './task.entity';
 
+export enum ProjectStatus {
+  TODO = 'TODO',
+  DOING = 'DOING',
+  DONE = 'DONE',
+  DELETE = 'DELETE',
+}
+
 @Index('user_id_idx', ['userId'], {})
 @Index('project_user_userId_idx', ['userId'], {})
 @Entity('project', { schema: 'ats_pomodoro' })
@@ -19,6 +26,13 @@ export class Project {
 
   @Column('int', { name: 'userId' })
   userId: number;
+
+  @Column({
+    type: 'enum',
+    enum: ProjectStatus,
+    default: ProjectStatus.TODO, name: 'status', nullable: true
+  })
+  status: ProjectStatus;
 
   @Column('text', { name: 'projectName' })
   projectName: string;

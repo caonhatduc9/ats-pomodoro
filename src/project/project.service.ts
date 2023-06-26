@@ -185,10 +185,18 @@ export class ProjectService {
     const project = await this.projectRepository.createQueryBuilder('project')
     .leftJoinAndSelect('project.tasks', 'task')
     .where('project.projectId = :id', { id: projectId })
-    .andWhere('task.status = :status', { status: 'DELETE' })
-    .getOne();
+    .andWhere('task.status != :status', { status: 'DELETE' })
+    .getMany();
     
-    if(project) {
+    if(project.length > 0) {
+      return {
+        statusCode: 409,
+        message: "delete failed because tasks are still in your project"
+      }
+
+    }
+    else {
+      
       const newProject = this.projectRepository.create({
         projectId: projectId,
         status: ProjectStatus.DELETE,
@@ -198,13 +206,6 @@ export class ProjectService {
       return {
         statusCode: 200,
         message: "delete success"
-      }
-
-    }
-    else {
-      return {
-        statusCode: 409,
-        message: "delete failed because tasks are still in your project"
       }
     }
   }

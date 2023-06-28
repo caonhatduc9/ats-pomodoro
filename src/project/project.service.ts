@@ -102,7 +102,7 @@ export class ProjectService {
     const data = await this.taskRepository.createQueryBuilder('task')
       .leftJoinAndSelect('task.project', 'project')
       .where('task.userId = :id', { id })
-      .andWhere('task.status != :status', { status: TaskStatus.DELETE })
+      // .andWhere('task.status != :status', { status: TaskStatus.DELETE })
       .getMany();
 
     // return data;

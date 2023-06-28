@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Project, ProjectStatus } from '../entities/project.entity';
 import { Task, TaskStatus } from '../entities/task.entity';
 import { Repository } from 'typeorm';
@@ -182,30 +182,36 @@ export class ProjectService {
   }
 
   async deleteProjectByUserId(projectId: number, userId: number) {
-    const project = await this.projectRepository.createQueryBuilder('project')
-    .leftJoinAndSelect('project.tasks', 'task')
-    .where('project.projectId = :id', { id: projectId })
-    .andWhere('task.status != :status', { status: 'DELETE' })
-    .getMany();
-    
-    if(project.length > 0) {
-      return {
-        statusCode: 409,
-        message: "delete failed because tasks are still in your project"
-      }
+    const foundProject = await this.projectRepository.findOne({ where: { projectId: projectId } });
 
+    if (!foundProject) {
+      throw new NotFoundException(`Project with ID ${projectId} not found`);
     }
     else {
-      
-      const newProject = this.projectRepository.create({
-        projectId: projectId,
-        status: ProjectStatus.DELETE,
-        modifiedDate: new Date().toISOString().slice(0, 10),
-      })
-      const savedProject = await this.projectRepository.save(newProject);
-      return {
-        statusCode: 200,
-        message: "delete success"
+      const project = await this.projectRepository.createQueryBuilder('project')
+        .leftJoinAndSelect('project.tasks', 'task')
+        .where('project.projectId = :id', { id: projectId })
+        .andWhere('task.status != :status', { status: 'DELETE' })
+        .getMany();
+
+      if (project.length > 0) {
+        return {
+          statusCode: 409,
+          message: "delete failed because tasks are still in your project"
+        }
+
+      }
+      else {
+        const newProject = this.projectRepository.create({
+          projectId: projectId,
+          status: ProjectStatus.DELETE,
+          modifiedDate: new Date().toISOString().slice(0, 10),
+        })
+        const savedProject = await this.projectRepository.save(newProject);
+        return {
+          statusCode: 200,
+          message: "delete success"
+        }
       }
     }
   }

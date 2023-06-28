@@ -185,7 +185,11 @@ export class ProjectService {
     const foundProject = await this.projectRepository.findOne({ where: { projectId: projectId } });
 
     if (!foundProject) {
-      throw new NotFoundException(`Project with ID ${projectId} not found`);
+      return {
+        statusCode: 404,
+        message: `Project with ID ${projectId} not found`
+      }
+      // throw new NotFoundException(`Project with ID ${projectId} not found`);
     }
     else {
       const project = await this.projectRepository.createQueryBuilder('project')

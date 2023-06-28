@@ -50,7 +50,7 @@ export class AuthService {
       data: {
         access_token: this.jwtService.sign(payload),
         userId: user.userId,
-        username: user.username,
+        userName: user.username,
         email: user.email,
         avatarURL: user.avatarUrl,
         payment: 'free',

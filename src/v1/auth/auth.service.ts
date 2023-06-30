@@ -44,13 +44,13 @@ export class AuthService {
 
   //local strategy login
   async login(user: any) {
-    const payload = { username: user.username, sub: user.userId};
+    const payload = { username: user.username, sub: user.userId };
     return {
       statusCode: 200,
       data: {
         access_token: this.jwtService.sign(payload),
         userId: user.userId,
-        username: user.username,
+        userName: user.username,
         email: user.email,
         avatarURL: user.avatarUrl,
         payment: 'free',
@@ -163,6 +163,7 @@ export class AuthService {
           data: {
             userId: foundUser.userId,
             access_token: this.jwtService.sign(payload),
+            email: foundUser.email,
             userName: foundUser.username,
             avatarURL: foundUser.avatarUrl,
             payment: 'free',
@@ -186,6 +187,7 @@ export class AuthService {
           data: {
             userId: savedUser.userId,
             access_token: this.jwtService.sign(payload),
+            email: savedUser.email,
             userName: savedUser.username,
             avatarURL: savedUser.avatarUrl,
             payment: 'free',
@@ -327,6 +329,7 @@ export class AuthService {
           data: {
             userId: foundUser.userId,
             access_token: this.jwtService.sign(payload),
+            email: foundUser.email,
             userName: foundUser.username,
             avatarURL: foundUser.avatarUrl,
             payment: 'free',
@@ -350,6 +353,7 @@ export class AuthService {
           data: {
             userId: savedUser.userId,
             access_token: this.jwtService.sign(payload),
+            email: savedUser.email,
             userName: savedUser.username,
             avatarURL: savedUser.avatarUrl,
             payment: 'free',

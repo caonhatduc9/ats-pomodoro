@@ -125,6 +125,7 @@ export class ProjectService {
           note: body.note,
           actualPomodoro: body.actualPomodoro,
           modifiedDate: new Date().toISOString().slice(0, 10),
+          status: body.status,
         })
         console.log(body.taskId);
         const savedTask = await this.taskRepository.save(newTask);
@@ -141,7 +142,7 @@ export class ProjectService {
           const newProject = this.projectRepository.create({
             projectId: body.projectId,
             projectName: body.projectName,
-            modifiedDate: new Date().toISOString().slice(0, 10)
+            modifiedDate: new Date().toISOString().slice(0, 10), 
           })
           const updatedProject = await this.projectRepository.save(newProject);
           // return savedProject;
@@ -155,6 +156,7 @@ export class ProjectService {
               estimatePomodoro: body.estimatePomodoro,
               note: body.note,
               modifiedDate: new Date().toISOString().slice(0, 10),
+              status: body.status,
             })
           const savedTask = await this.taskRepository.save(newTask);
           return {
@@ -178,6 +180,21 @@ export class ProjectService {
         statusCode: 200,
         message: "delete success"
       }
+    }
+  }
+
+  async findProjectByUserId(id: number) {
+    const data = await this.projectRepository.createQueryBuilder('project')
+      .leftJoinAndSelect('project.tasks', 'task')
+      .where('project.userId = :id', { id })
+      .andWhere('project.status != :status', { status: ProjectStatus.DELETE })
+      .getMany();
+
+    // return data;
+
+    return {
+      statusCode: 200,
+      data: data ? data : {},
     }
   }
 

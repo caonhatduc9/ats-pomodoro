@@ -16,7 +16,7 @@ export class ProjectController {
   }
 
   @Get()
-  async getByUserId(@Req() req: any) {
+  async getTaskByUserId(@Req() req: any) {
     return this.projectService.findTaskByUserId(req.user.userId);
   }
 
@@ -29,7 +29,12 @@ export class ProjectController {
     return this.projectService.deleteTaskByUserId(+body.taskId, +req.user.userId);
   }
 
-  @Delete('/project')
+  @Get('/getProject')
+  async getProjectByUserId(@Req() req: any) {
+    return this.projectService.findProjectByUserId(req.user.userId);
+  }
+
+  @Delete('/deleteProject')
   async deleteProjectByUserId(@Body() body: any, @Req() req: any) {
     return this.projectService.deleteProjectByUserId(+body.projectId, +req.user.userId);
   }

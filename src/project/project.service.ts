@@ -28,6 +28,7 @@ export class ProjectService {
             estimatePomodoro: body.task.estimatePomodoro,
             note: body.task.note,
             createdDate: new Date().toISOString().slice(0, 10),
+            status: body.status,
           })
         const savedTask = await this.taskRepository.save(newTask);
         return {
@@ -69,6 +70,7 @@ export class ProjectService {
               estimatePomodoro: body.task.estimatePomodoro,
               note: body.task.note,
               createdDate: new Date().toISOString().slice(0, 10),
+              status: body.status,
             })
           const savedTask = await this.taskRepository.save(newTask);
           return savedTask;
@@ -89,6 +91,7 @@ export class ProjectService {
           estimatePomodoro: body.estimatePomodoro,
           note: body.note,
           createdDate: new Date().toISOString().slice(0, 10),
+          status: body.status,
         })
       const savedTask = await this.taskRepository.save(newTask);
       return savedTask;
@@ -188,10 +191,6 @@ export class ProjectService {
             message: "update success"
           }
         }
-      }
-      else {
-        // Trường hợp không hợp lệ, ném ra một ngoại lệ BadRequestException
-        throw new BadRequestException('Invalid request body');
       }
     }
   }

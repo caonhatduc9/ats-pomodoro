@@ -47,6 +47,7 @@ export class ProjectService {
               estimatePomodoro: body.task.estimatePomodoro,
               note: body.task.note,
               createdDate: new Date().toISOString().slice(0, 10),
+              status: body.task.status,
             })
           const savedTask = await this.taskRepository.save(newTask);
           return savedTask;

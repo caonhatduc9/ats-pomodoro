@@ -71,6 +71,8 @@ export class ReportService {
       .leftJoinAndSelect('user.focusedPomodoros', 'focusedPomodoro')
       .where('user.userId = :id ', { id })
       .getMany();
+    
+      
 
     const focusTime: FocusedPomodoro[] = dataRaw[0].focusedPomodoros;
     const projects: Project[] = dataRaw[0].projects;

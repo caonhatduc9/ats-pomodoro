@@ -157,7 +157,7 @@ export class AuthService {
           `email ${user.email} is already used by another auth provider`,
         );
       } else {
-        const payload = { username: foundUser.username, sub: 12 };
+        const payload = { username: foundUser.username, sub: foundUser.userId };
         return {
           statusCode: 200,
           data: {

@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Project, ProjectStatus } from '../entities/project.entity';
 import { Task, TaskStatus } from '../entities/task.entity';
 import { Repository } from 'typeorm';
@@ -16,6 +16,7 @@ export class ProjectService {
         const newProject = this.projectRepository.create({
           userId: userId,
           projectName: body.project.projectName,
+          description: body.project.description,
           createdDate: new Date().toISOString().slice(0, 10),
         })
         const savedProject = await this.projectRepository.save(newProject);
@@ -116,7 +117,30 @@ export class ProjectService {
   async updateTaskByUserId(body: any, userId: number) {
     const foundTask = await this.taskRepository.findOne({ where: { taskId: body.taskId } });
     if (foundTask) {
-      if (foundTask.projectId == null) {
+      if (Object.keys(body).length == 1) {
+        const newTask = this.taskRepository.create({
+          taskId: body.taskId,
+          projectId: null,
+        })
+        // console.log(body.taskId);
+        const savedTask = await this.taskRepository.save(newTask);
+        return {
+          statusCode: 200,
+          message: "update success"
+        }
+      }
+      if (Object.keys(body).length == 2) {
+        const newTask = this.taskRepository.create({
+          taskId: body.taskId,
+          projectId: body.projectId,
+        })
+        const savedTask = await this.taskRepository.save(newTask);
+        return {
+          statusCode: 200,
+          message: "update success"
+        }
+      }
+      else if (Object.keys(body).length >= 2 && foundTask.projectId === null) {
         const newTask = this.taskRepository.create({
           // userId: foundTask.userId,
           taskId: body.taskId,
@@ -134,7 +158,7 @@ export class ProjectService {
           message: "update success"
         }
       }
-      else {
+      else if (Object.keys(body).length >= 2 && foundTask.projectId != null) {
         const foundProject = await this.projectRepository.findOne({ where: { projectId: body.projectId } });
 
         if (foundProject) {
@@ -142,7 +166,7 @@ export class ProjectService {
           const newProject = this.projectRepository.create({
             projectId: body.projectId,
             projectName: body.projectName,
-            modifiedDate: new Date().toISOString().slice(0, 10), 
+            modifiedDate: new Date().toISOString().slice(0, 10),
           })
           const updatedProject = await this.projectRepository.save(newProject);
           // return savedProject;
@@ -165,6 +189,10 @@ export class ProjectService {
           }
         }
       }
+      else {
+        // Trường hợp không hợp lệ, ném ra một ngoại lệ BadRequestException
+        throw new BadRequestException('Invalid request body');
+      }
     }
   }
   async deleteTaskByUserId(taskId: number, userId: number) {
@@ -183,6 +211,29 @@ export class ProjectService {
     }
   }
 
+  async deleteAllTasksByUserId(userId: number) {
+    const foundTasks = await this.taskRepository.createQueryBuilder('task')
+      .leftJoinAndSelect('task.project', 'project')
+      .where('task.userId = :userId', { userId })
+      .andWhere('task.status != :status', { status: TaskStatus.DELETE })
+      .getMany()
+
+    foundTasks.forEach(item => {
+      if (item) {
+        const data = this.taskRepository.create({
+          taskId: item.taskId,
+          status: TaskStatus.DELETE,
+          modifiedDate: new Date().toISOString().slice(0, 10),
+        })
+        const savedTask = this.taskRepository.save(data);
+      }
+    })
+    return {
+      statusCode: 200,
+      message: "delete success"
+    }
+  }
+
   async findProjectByUserId(id: number) {
     const data = await this.projectRepository.createQueryBuilder('project')
       .leftJoinAndSelect('project.tasks', 'task')
@@ -195,6 +246,38 @@ export class ProjectService {
     return {
       statusCode: 200,
       data: data ? data : {},
+    }
+  }
+
+  async createProject(userId: number, body: any) {
+    const newProject = this.projectRepository.create({
+      userId: userId,
+      projectName: body.projectName,
+      description: body.description,
+      createdDate: new Date().toISOString().slice(0, 10),
+    })
+    const savedProject = await this.projectRepository.save(newProject);
+    return {
+      statusCode: 200,
+      message: "create success"
+    }
+  }
+
+  async updateProjectByUserId(body: any, userId: number) {
+    const foundProject = await this.projectRepository.findOne({ where: { projectId: body.projectId } });
+
+    if (foundProject) {
+      console.log("found project", foundProject);
+      const newProject = this.projectRepository.create({
+        projectId: body.projectId,
+        projectName: body.projectName,
+        modifiedDate: new Date().toISOString().slice(0, 10),
+      })
+      const updatedProject = await this.projectRepository.save(newProject);
+      return {
+        statusCode: 200,
+        message: "update success"
+      }
     }
   }
 

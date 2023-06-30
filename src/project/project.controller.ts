@@ -10,7 +10,7 @@ export class ProjectController {
   constructor(private readonly projectService: ProjectService) { }
 
   @Post()
-  async create(@Req() req: any, @Body() body: any, @Query('project') project: string) {
+  async createTask(@Req() req: any, @Body() body: any, @Query('project') project: string) {
     console.log("project ", project);
     return await this.projectService.createTask(req.user.userId, body, project);
   }
@@ -20,7 +20,7 @@ export class ProjectController {
     return this.projectService.findTaskByUserId(req.user.userId);
   }
 
-  @Put()
+  @Patch()
   async updateTaskByUserId(@Body() body: any, @Req() req: any) {
     return this.projectService.updateTaskByUserId(body, +req.user.userId);
   }
@@ -29,9 +29,24 @@ export class ProjectController {
     return this.projectService.deleteTaskByUserId(+body.taskId, +req.user.userId);
   }
 
-  @Get('/getProject')
+  @Delete('/empty')
+  async deleteAllTasks(@Req() req: any) {
+    return this.projectService.deleteAllTasksByUserId(+req.user.userId);
+  }
+
+  @Post('/createProject')
+  async createProject(@Req() req: any, @Body() body: any) {
+    return this.projectService.createProject(req.user.userId, body);
+  }
+
+  @Get('/getAllProject')
   async getProjectByUserId(@Req() req: any) {
     return this.projectService.findProjectByUserId(req.user.userId);
+  }
+
+  @Patch('/updateProject')
+  async updateProjectByUserId(@Body() body: any, @Req() req: any) {
+    return this.projectService.updateProjectByUserId(body, +req.user.userId);
   }
 
   @Delete('/deleteProject')

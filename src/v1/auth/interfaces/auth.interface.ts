@@ -1,5 +1,5 @@
 interface AuthResponse {
-  status: string;
+  statusCode: number;
   data: {
     userId: number;
     access_token: string;

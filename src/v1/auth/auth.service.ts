@@ -57,7 +57,7 @@ export class AuthService {
       },
     };
   }
-  async signup(userSignupDto: UserSignupDto): Promise<AuthResponse> {
+  async signup(userSignupDto: UserSignupDto): Promise<any> {
     const email = userSignupDto.email.toLowerCase();
     const foundUser = await this.userService.findUserByEmail(email);
     if (foundUser) {
@@ -84,14 +84,8 @@ export class AuthService {
       const content = `<p>this is default password: <b>${randomPassword}</b>. Please change password after login</p>`;
       this.maillingService.sendMail(user.email, subject, content);
       return {
-        status: 'success',
-        data: {
-          userId: savedUser.userId,
-          access_token: '',
-          userName: savedUser.username,
-          avatarURL: savedUser.avatarUrl,
-          payment: 'free',
-        },
+        statusCode: 200,
+        message: 'sign up success',
       };
     }
     else {
@@ -157,7 +151,7 @@ export class AuthService {
           `email ${user.email} is already used by another auth provider`,
         );
       } else {
-        const payload = { username: foundUser.username, sub: 12 };
+        const payload = { username: foundUser.username, sub: foundUser.userId };
         return {
           statusCode: 200,
           data: {

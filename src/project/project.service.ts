@@ -160,7 +160,6 @@ export class ProjectService {
       }
       else if (Object.keys(body).length >= 2 && foundTask.projectId != null) {
         const foundProject = await this.projectRepository.findOne({ where: { projectId: body.projectId } });
-
         if (foundProject) {
           console.log("found project", foundProject);
           const newProject = this.projectRepository.create({

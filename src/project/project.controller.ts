@@ -39,7 +39,7 @@ export class ProjectController {
     return this.projectService.createProject(req.user.userId, body);
   }
 
-  @Get('/getAllProject')
+  @Get('/getProjects')
   async getProjectByUserId(@Req() req: any) {
     return this.projectService.findProjectByUserId(req.user.userId);
   }

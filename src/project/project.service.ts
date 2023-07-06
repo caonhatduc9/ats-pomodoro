@@ -252,7 +252,6 @@ export class ProjectService {
     const newProject = this.projectRepository.create({
       userId: userId,
       projectName: body.projectName,
-      description: body.description,
       createdDate: new Date().toISOString().slice(0, 10),
     })
     const savedProject = await this.projectRepository.save(newProject);

@@ -9,6 +9,31 @@ import { JwtAuthGuard } from 'src/v1/auth/guards/auth.jwt.guard';
 export class ProjectController {
   constructor(private readonly projectService: ProjectService) { }
 
+  @Get('/getProjects')
+  async getProjectByUserId(@Req() req: any) {
+    return this.projectService.findProjectByUserId(+req.user.userId);
+  }
+
+  @Post('/createProject')
+  async createProject(@Req() req: any, @Body() body: any) {
+    return this.projectService.createProject(+req.user.userId, body);
+  }
+
+  @Patch('/updateProject')
+  async updateProjectByUserId(@Body() body: any, @Req() req: any) {
+    return this.projectService.updateProjectByUserId(body, +req.user.userId);
+  }
+
+  @Delete('/deleteProject')
+  async deleteProjectByUserId(@Body() body: any, @Req() req: any) {
+    return this.projectService.deleteProjectByUserId(+body.projectId, +req.user.userId);
+  }
+
+  @Delete('/empty')
+  async deleteAllTasks(@Req() req: any) {
+    return this.projectService.deleteAllTasksByUserId(+req.user.userId);
+  }
+
   @Post()
   async createTask(@Req() req: any, @Body() body: any, @Query('project') project: string) {
     console.log("project ", project);
@@ -27,31 +52,6 @@ export class ProjectController {
   @Delete()
   async deleteTaskByUserId(@Body() body: any, @Req() req: any) {
     return this.projectService.deleteTaskByUserId(+body.taskId, +req.user.userId);
-  }
-
-  @Delete('/empty')
-  async deleteAllTasks(@Req() req: any) {
-    return this.projectService.deleteAllTasksByUserId(+req.user.userId);
-  }
-
-  @Post('/createProject')
-  async createProject(@Req() req: any, @Body() body: any) {
-    return this.projectService.createProject(req.user.userId, body);
-  }
-
-  @Get('/getProjects')
-  async getProjectByUserId(@Req() req: any) {
-    return this.projectService.findProjectByUserId(req.user.userId);
-  }
-
-  @Patch('/updateProject')
-  async updateProjectByUserId(@Body() body: any, @Req() req: any) {
-    return this.projectService.updateProjectByUserId(body, +req.user.userId);
-  }
-
-  @Delete('/deleteProject')
-  async deleteProjectByUserId(@Body() body: any, @Req() req: any) {
-    return this.projectService.deleteProjectByUserId(+body.projectId, +req.user.userId);
   }
 }
 

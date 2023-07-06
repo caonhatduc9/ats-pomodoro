@@ -12,6 +12,7 @@ import { CorsInterceptor } from './cors.interceptor';
 import { SettingModule } from './setting/setting.module';
 import { ReportModule } from './report/report.module';
 import { ProjectModule } from './project/project.module';
+import { TaskModule } from './task/task.module';
 
 @Module({
   //fix error cors when frontend fetch API
@@ -27,6 +28,7 @@ import { ProjectModule } from './project/project.module';
     SettingModule,
     ReportModule,
     ProjectModule,
+    TaskModule,
   ],
   controllers: [AppController],
   providers: [

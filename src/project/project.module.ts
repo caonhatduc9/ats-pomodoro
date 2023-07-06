@@ -7,6 +7,7 @@ import { ProjectProvider } from './providers/project.providers';
 @Module({
   imports: [DatabaseModule],
   controllers: [ProjectController],
-  providers: [ProjectService, ...ProjectProvider]
+  providers: [ProjectService, ...ProjectProvider],
+  exports: [...ProjectProvider],
 })
 export class ProjectModule {}

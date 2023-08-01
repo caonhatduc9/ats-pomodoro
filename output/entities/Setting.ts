@@ -9,24 +9,17 @@ import {
 import { Asset } from "./Asset";
 import { User } from "./User";
 
-@Index("setting_ringSound_asserId_idx", ["ringSound"], {})
-@Index("setting_backgroundMusic_asserId_idx", ["backgroundMusic"], {})
-@Index("setting_pomodoroBackground_asserId_idx", ["pomodoroBackground"], {})
-@Index("setting_shortBreakBackground_asserId_idx", ["shortBreakBackground"], {})
-@Index("setting_longBreakBackground_asserId_idx", ["longBreakBackground"], {})
+@Index("setting_backgroundMusic_asserId_idx", ["backgroundMusicSelected"], {})
+@Index(
+  "setting_currentBackgroundSelected_asserId_idx",
+  ["currentBackgroundSelected"],
+  {}
+)
+@Index("setting_ringSound_asserId_idx", ["ringSoundSelected"], {})
 @Entity("setting", { schema: "ats_pomodoro" })
 export class Setting {
   @Column("int", { primary: true, name: "userId" })
   userId: number;
-
-  @Column("time", { name: "pomodoroTime", nullable: true })
-  pomodoroTime: string | null;
-
-  @Column("time", { name: "shortBreakTime", nullable: true })
-  shortBreakTime: string | null;
-
-  @Column("time", { name: "longBreakTime", nullable: true })
-  longBreakTime: string | null;
 
   @Column("tinyint", { name: "autoStartBreak", nullable: true })
   autoStartBreak: number | null;
@@ -40,8 +33,8 @@ export class Setting {
   @Column("tinyint", { name: "autoSwitchTask", nullable: true })
   autoSwitchTask: number | null;
 
-  @Column("int", { name: "ringSound", nullable: true })
-  ringSound: number | null;
+  @Column("int", { name: "ringSoundSelected", nullable: true })
+  ringSoundSelected: number | null;
 
   @Column("int", { name: "ringSoundVolumn", nullable: true })
   ringSoundVolumn: number | null;
@@ -49,62 +42,75 @@ export class Setting {
   @Column("int", { name: "ringSoundRepeat", nullable: true })
   ringSoundRepeat: number | null;
 
-  @Column("int", { name: "backgroundMusic", nullable: true })
-  backgroundMusic: number | null;
+  @Column("int", { name: "backgroundMusicSelected", nullable: true })
+  backgroundMusicSelected: number | null;
 
   @Column("int", { name: "backgroundMusicVolumn", nullable: true })
   backgroundMusicVolumn: number | null;
 
-  @Column("int", { name: "pomodoroBackground", nullable: true })
-  pomodoroBackground: number | null;
-
-  @Column("int", { name: "shortBreakBackground", nullable: true })
-  shortBreakBackground: number | null;
-
-  @Column("int", { name: "longBreakBackground", nullable: true })
-  longBreakBackground: number | null;
+  @Column("int", { name: "currentBackgroundSelected", nullable: true })
+  currentBackgroundSelected: number | null;
 
   @Column("tinyint", { name: "darkmodeWhenRunning", nullable: true })
   darkmodeWhenRunning: number | null;
+
+  @Column("varchar", {
+    name: "pomodoroColor",
+    nullable: true,
+    length: 12,
+    default: () => "'#d95550'",
+  })
+  pomodoroColor: string | null;
+
+  @Column("varchar", {
+    name: "shortBreakColor",
+    nullable: true,
+    length: 12,
+    default: () => "'#4c9195'",
+  })
+  shortBreakColor: string | null;
+
+  @Column("varchar", {
+    name: "longBreakColor",
+    nullable: true,
+    length: 12,
+    default: () => "'#457ca3'",
+  })
+  longBreakColor: string | null;
+
+  @Column("float", { name: "pomodoroTime", nullable: true, precision: 12 })
+  pomodoroTime: number | null;
+
+  @Column("float", { name: "shortBreakTime", nullable: true, precision: 12 })
+  shortBreakTime: number | null;
+
+  @Column("float", { name: "longBreakTime", nullable: true, precision: 12 })
+  longBreakTime: number | null;
 
   @ManyToOne(() => Asset, (asset) => asset.settings, {
     onDelete: "RESTRICT",
     onUpdate: "RESTRICT",
   })
-  @JoinColumn([{ name: "backgroundMusic", referencedColumnName: "assetId" }])
-  backgroundMusic2: Asset;
+  @JoinColumn([
+    { name: "backgroundMusicSelected", referencedColumnName: "assetId" },
+  ])
+  backgroundMusicSelected2: Asset;
 
   @ManyToOne(() => Asset, (asset) => asset.settings2, {
     onDelete: "RESTRICT",
     onUpdate: "RESTRICT",
   })
-  @JoinColumn([
-    { name: "longBreakBackground", referencedColumnName: "assetId" },
-  ])
-  longBreakBackground2: Asset;
+  @JoinColumn([{ name: "ringSoundSelected", referencedColumnName: "assetId" }])
+  ringSoundSelected2: Asset;
 
   @ManyToOne(() => Asset, (asset) => asset.settings3, {
     onDelete: "RESTRICT",
     onUpdate: "RESTRICT",
   })
-  @JoinColumn([{ name: "pomodoroBackground", referencedColumnName: "assetId" }])
-  pomodoroBackground2: Asset;
-
-  @ManyToOne(() => Asset, (asset) => asset.settings4, {
-    onDelete: "RESTRICT",
-    onUpdate: "RESTRICT",
-  })
-  @JoinColumn([{ name: "ringSound", referencedColumnName: "assetId" }])
-  ringSound2: Asset;
-
-  @ManyToOne(() => Asset, (asset) => asset.settings5, {
-    onDelete: "RESTRICT",
-    onUpdate: "RESTRICT",
-  })
   @JoinColumn([
-    { name: "shortBreakBackground", referencedColumnName: "assetId" },
+    { name: "currentBackgroundSelected", referencedColumnName: "assetId" },
   ])
-  shortBreakBackground2: Asset;
+  currentBackgroundSelected2: Asset;
 
   @OneToOne(() => User, (user) => user.setting, {
     onDelete: "RESTRICT",

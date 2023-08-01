@@ -1,5 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Setting } from "./Setting";
+import { Subcription } from "./Subcription";
 
 @Entity("asset", { schema: "ats_pomodoro" })
 export class Asset {
@@ -11,9 +12,6 @@ export class Asset {
 
   @Column("text", { name: "author" })
   author: string;
-
-  @Column("varchar", { name: "type", length: 10 })
-  type: string;
 
   @Column("text", { name: "assetURL" })
   assetUrl: string;
@@ -30,18 +28,21 @@ export class Asset {
   @Column("date", { name: "modifiedDate", nullable: true })
   modifiedDate: string | null;
 
-  @OneToMany(() => Setting, (setting) => setting.backgroundMusic2)
+  @Column("varchar", { name: "type", length: 20 })
+  type: string;
+
+  @Column("tinyint", { name: "isDefault", default: () => "'0'" })
+  isDefault: number;
+
+  @OneToMany(() => Setting, (setting) => setting.backgroundMusicSelected2)
   settings: Setting[];
 
-  @OneToMany(() => Setting, (setting) => setting.longBreakBackground2)
+  @OneToMany(() => Setting, (setting) => setting.ringSoundSelected2)
   settings2: Setting[];
 
-  @OneToMany(() => Setting, (setting) => setting.pomodoroBackground2)
+  @OneToMany(() => Setting, (setting) => setting.currentBackgroundSelected2)
   settings3: Setting[];
 
-  @OneToMany(() => Setting, (setting) => setting.ringSound2)
-  settings4: Setting[];
-
-  @OneToMany(() => Setting, (setting) => setting.shortBreakBackground2)
-  settings5: Setting[];
+  @OneToMany(() => Subcription, (subcription) => subcription.asset)
+  subcriptions: Subcription[];
 }

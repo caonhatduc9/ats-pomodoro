@@ -6,42 +6,54 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-} from 'typeorm';
-import { Price } from './price.entity';
-import { User } from './user.entity';
+} from "typeorm";
+import { Price } from "./price.entity";
+import { User } from "./user.entity";
+import { Asset } from "./asset.entity";
 
-@Index('subcription_user_userId_idx', ['userId'], {})
-@Index('subcription_price_priceId_idx', ['priceId'], {})
-@Entity('subcription', { schema: 'ats_pomodoro' })
+@Index("subcription_FK", ["assetId"], {})
+@Index("subcription_price_priceId_idx", ["priceId"], {})
+@Index("subcription_user_userId_idx", ["userId"], {})
+@Entity("subcription", { schema: "ats_pomodoro" })
 export class Subcription {
-  @PrimaryGeneratedColumn({ type: 'int', name: 'subcriptionId' })
+  @PrimaryGeneratedColumn({ type: "int", name: "subcriptionId" })
   subcriptionId: number;
 
-  @Column('int', { name: 'userId' })
+  @Column("int", { name: "userId" })
   userId: number;
 
-  @Column('int', { name: 'priceId' })
+  @Column("int", { name: "priceId" })
   priceId: number;
 
-  @Column('date', { name: 'createdDate' })
+  @Column("date", { name: "createdDate" })
   createdDate: string;
 
-  @Column('date', { name: 'endDate', nullable: true })
+  @Column("date", { name: "endDate", nullable: true })
   endDate: string | null;
 
+  @Column("int", { name: "assetId", nullable: true })
+  assetId: number | null;
+
   @ManyToOne(() => Price, (price) => price.subcriptions, {
-    onDelete: 'RESTRICT',
-    onUpdate: 'RESTRICT',
+    onDelete: "RESTRICT",
+    onUpdate: "RESTRICT",
   })
-  @JoinColumn([{ name: 'priceId', referencedColumnName: 'priceId' }])
+  @JoinColumn([{ name: "priceId", referencedColumnName: "priceId" }])
   price: Price;
 
   @ManyToOne(() => User, (user) => user.subcriptions, {
-    onDelete: 'RESTRICT',
-    onUpdate: 'RESTRICT',
+    onDelete: "RESTRICT",
+    onUpdate: "RESTRICT",
   })
-  @JoinColumn([{ name: 'userId', referencedColumnName: 'userId' }])
+  @JoinColumn([{ name: "userId", referencedColumnName: "userId" }])
   user2: User;
+
+  @ManyToOne(() => Asset, (asset) => asset.subcriptions, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
+  @JoinColumn([{ name: "assetId", referencedColumnName: "assetId" }])
+  asset: Asset;
 
   @OneToMany(() => User, (user) => user.currentSubcription)
   users: User[];

@@ -13,6 +13,7 @@ import { SettingModule } from './setting/setting.module';
 import { ReportModule } from './report/report.module';
 import { ProjectModule } from './project/project.module';
 import { TaskModule } from './task/task.module';
+import { PaymentModule } from './payment/payment.module';
 
 @Module({
   //fix error cors when frontend fetch API
@@ -29,6 +30,7 @@ import { TaskModule } from './task/task.module';
     ReportModule,
     ProjectModule,
     TaskModule,
+    PaymentModule,
   ],
   controllers: [AppController],
   providers: [

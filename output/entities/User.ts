@@ -8,7 +8,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Focusedpomodoro } from "./Focusedpomodoro";
+import { FocusedPomodoro } from "./FocusedPomodoro";
 import { Project } from "./Project";
 import { Setting } from "./Setting";
 import { Subcription } from "./Subcription";
@@ -21,7 +21,7 @@ export class User {
   userId: number;
 
   @Column("text", { name: "userName" })
-  username: string;
+  userName: string;
 
   @Column("text", { name: "password" })
   password: string;
@@ -41,8 +41,8 @@ export class User {
   @Column("text", { name: "email" })
   email: string;
 
-  @Column("varchar", { name: "phoneNumber", length: 12 })
-  phoneNumber: string;
+  @Column("varchar", { name: "phoneNumber", nullable: true, length: 12 })
+  phoneNumber: string | null;
 
   @Column("text", { name: "accessToken", nullable: true })
   accessToken: string | null;
@@ -51,10 +51,17 @@ export class User {
   paymentAccount: string | null;
 
   @Column("tinyint", { name: "active", nullable: true })
-  isActive: number | null;
+  active: number | null;
 
-  @OneToMany(() => Focusedpomodoro, (focusedpomodoro) => focusedpomodoro.user)
-  focusedpomodoros: Focusedpomodoro[];
+  @Column("enum", {
+    name: "authProvider",
+    enum: ["local", "google", "apple", "github"],
+    default: () => "'local'",
+  })
+  authProvider: "local" | "google" | "apple" | "github";
+
+  @OneToMany(() => FocusedPomodoro, (focusedPomodoro) => focusedPomodoro.user)
+  focusedPomodoros: FocusedPomodoro[];
 
   @OneToMany(() => Project, (project) => project.user)
   projects: Project[];

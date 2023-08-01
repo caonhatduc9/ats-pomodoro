@@ -2,12 +2,14 @@
   {
     "name": "default",
     "type": "mysql",
-    "host": "127.0.0.1",
-    "port": 3306,
-    "username": "root",
-    "password": "",
-    "database": "",
+    "host": "db-mysql-sgp1-95439-do-user-13533061-0.b.db.ondigitalocean.com",
+    "port": 25060,
+    "username": "duccao",
+    "password": "AVNS_0DlAkoOltYDWD0wPDzX",
+    "database": "ats_pomodoro",
     "synchronize": false,
-    "entities": ["entities/*.js"]
+    "entities": [
+      "entities/*.js"
+    ]
   }
 ]

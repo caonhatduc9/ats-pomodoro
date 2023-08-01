@@ -1,22 +1,29 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne } from "typeorm";
+import {
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { User } from "./User";
 
 @Index("dayFocus_user_userId_idx", ["userId"], {})
-@Entity("focusedpomodoro", { schema: "ats_pomodoro" })
-export class Focusedpomodoro {
-  @Column("int", { primary: true, name: "focusedPomodoroId" })
+@Entity("focusedPomodoro", { schema: "ats_pomodoro" })
+export class FocusedPomodoro {
+  @PrimaryGeneratedColumn({ type: "int", name: "focusedPomodoroId" })
   focusedPomodoroId: number;
 
   @Column("int", { name: "userId", nullable: true })
   userId: number | null;
 
-  @Column("time", { name: "timeFocus", nullable: true })
-  timeFocus: string | null;
+  @Column("float", { name: "timeFocus", nullable: true, precision: 12 })
+  timeFocus: number | null;
 
   @Column("date", { name: "createdDate", nullable: true })
   createdDate: string | null;
 
-  @ManyToOne(() => User, (user) => user.focusedpomodoros, {
+  @ManyToOne(() => User, (user) => user.focusedPomodoros, {
     onDelete: "RESTRICT",
     onUpdate: "RESTRICT",
   })

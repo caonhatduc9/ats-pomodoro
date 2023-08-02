@@ -14,6 +14,7 @@ import { ReportModule } from './report/report.module';
 import { ProjectModule } from './project/project.module';
 import { TaskModule } from './task/task.module';
 import { PaymentModule } from './payment/payment.module';
+import { SharedModule } from './shared/shared.module';
 
 @Module({
   //fix error cors when frontend fetch API
@@ -31,6 +32,7 @@ import { PaymentModule } from './payment/payment.module';
     ProjectModule,
     TaskModule,
     PaymentModule,
+    SharedModule,
   ],
   controllers: [AppController],
   providers: [

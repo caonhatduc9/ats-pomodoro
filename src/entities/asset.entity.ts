@@ -34,6 +34,9 @@ export class Asset {
   @Column('tinyint', { name: 'isDefault', nullable: false, default: 0 })
   isDefault: number | null;
 
+  @Column('float', { name: 'price', default: 0 })
+  price: number;
+
   @OneToMany(() => Setting, (setting) => setting.backgroundMusic2)
   settings: Setting[];
 

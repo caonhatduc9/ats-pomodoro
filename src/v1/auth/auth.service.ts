@@ -44,6 +44,9 @@ export class AuthService {
 
   //local strategy login
   async login(user: any) {
+    const foundUser = await this.userService.findUserByEmail(user.email);
+    foundUser.authProvider = AuthProvider.LOCAL;
+    await this.userService.create(foundUser);
     const payload = { username: user.username, sub: user.userId };
     return {
       statusCode: 200,
@@ -147,22 +150,24 @@ export class AuthService {
     const foundUser = await this.userService.findUserByEmail(user.email);
     if (foundUser) {
       if (foundUser.authProvider !== AuthProvider.GOOGLE) {
-        throw new BadRequestException(
-          `email ${user.email} is already used by another auth provider`,
-        );
-      } else {
-        const payload = { username: foundUser.username, sub: foundUser.userId };
-        return {
-          statusCode: 200,
-          data: {
-            userId: foundUser.userId,
-            access_token: this.jwtService.sign(payload),
-            email: foundUser.email,
-            userName: foundUser.username,
-            avatarURL: foundUser.avatarUrl,
-            payment: 'free',
-          },
-        };
+        // throw new BadRequestException(
+        //   `email ${user.email} is already used by another auth provider`,
+        // );
+        foundUser.authProvider = AuthProvider.GOOGLE;
+        await this.userService.create(foundUser);
+      }
+      const payload = { username: foundUser.username, sub: foundUser.userId };
+      return {
+        statusCode: 200,
+        data: {
+          userId: foundUser.userId,
+          access_token: this.jwtService.sign(payload),
+          email: foundUser.email,
+          userName: foundUser.username,
+          avatarURL: foundUser.avatarUrl,
+          payment: 'free',
+          // },
+        }
       }
     } else {
       const createUser = new User();
@@ -313,23 +318,25 @@ export class AuthService {
     const foundUser = await this.userService.findUserByEmail(user.email);
     if (foundUser) {
       if (foundUser.authProvider !== AuthProvider.GITHUB) {
-        throw new BadRequestException(
-          `email ${user.email} is already used by another auth provider`,
-        );
-      } else {
-        const payload = { username: foundUser.username, sub: foundUser.userId };
-        return {
-          statusCode: 200,
-          data: {
-            userId: foundUser.userId,
-            access_token: this.jwtService.sign(payload),
-            email: foundUser.email,
-            userName: foundUser.username,
-            avatarURL: foundUser.avatarUrl,
-            payment: 'free',
-          },
-        };
+        // throw new BadRequestException(
+        //   `email ${user.email} is already used by another auth provider`,
+        // );
+        foundUser.authProvider = AuthProvider.GITHUB;
+        await this.userService.create(foundUser);
       }
+      const payload = { username: foundUser.username, sub: foundUser.userId };
+      return {
+        statusCode: 200,
+        data: {
+          userId: foundUser.userId,
+          access_token: this.jwtService.sign(payload),
+          email: foundUser.email,
+          userName: foundUser.username,
+          avatarURL: foundUser.avatarUrl,
+          payment: 'free',
+        },
+      };
+      // }
     } else {
       const createUser = new User();
       createUser.email = user.email;

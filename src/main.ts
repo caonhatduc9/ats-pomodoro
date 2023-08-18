@@ -5,7 +5,7 @@ import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.int
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const corsOptions: CorsOptions = {
-    origin: ['http://localhost:3000'], // add rontend url here
+    origin: ['http://localhost:3000','http://pomodoro.atseeds.com', 'https://pomodoro.atseeds.com'], // add rontend url here
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     allowedHeaders: 'Content-Type, Accept',
     credentials: true,

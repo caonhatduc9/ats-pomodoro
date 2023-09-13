@@ -15,4 +15,8 @@ export class PaymentController {
     await this.paymentService.handleSuccessfulPayment(data.sessionId, data.assetId);
     return { message: 'Payment successful!' };
   }
+  @Post('createSubscription')
+  async createSubscription(@Body() data: any) {
+    return await this.paymentService.createSubscription(data);
+  }
 }

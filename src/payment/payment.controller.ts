@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, Post, Res } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 
 @Controller('v1/payment')
@@ -15,8 +15,16 @@ export class PaymentController {
     await this.paymentService.handleSuccessfulPayment(data.sessionId, data.assetId);
     return { message: 'Payment successful!' };
   }
+  // @Post('createSubscription')
+  // async createSubscription(@Body() data: any) {
+  //   return await this.paymentService.createSubscription(data);
+  // }
+  @Get('getListProduct')
+  async getListProduct() {
+    return await this.paymentService.getListProduct();
+  }
   @Post('createSubscription')
-  async createSubscription(@Body() data: any) {
-    return await this.paymentService.createSubscription(data);
+  async createSubscription(@Body() payload: any) {
+    return await this.paymentService.createSubscription(payload);
   }
 }

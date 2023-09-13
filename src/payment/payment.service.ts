@@ -10,32 +10,62 @@ export class PaymentService {
         const secretKey = 'sk_test_51NWarsExrxFsGEFSdKxVWjmeVUs209b0HigIAw5KVUclb2wfj0yVhfGP2YOfy9Q8sywYoUp90HvIkRXHb2rE91JT00T7yfnspt';
         this.stripe = new Stripe(secretKey, { apiVersion: '2022-11-15' });
     }
-    async createCheckoutSession(assetId: number): Promise<string> {
-        // Đầu tiên, bạn cần lấy thông tin về hình ảnh từ cơ sở dữ liệu của ứng dụng
-        const asset = await this.sharedService.getAssetById(assetId);
+    async createCheckoutSession(payload: any): Promise<any> {
+        // // Đầu tiên, bạn cần lấy thông tin về hình ảnh từ cơ sở dữ liệu của ứng dụng
+        // const asset = await this.sharedService.getAssetById(assetId);
 
-        // Tiếp theo, bạn tạo phiên thanh toán với thông tin hình ảnh và giá cả
-        const session = await this.stripe.checkout.sessions.create({
-            payment_method_types: ['card'],
-            line_items: [
-                {
-                    price_data: {
-                        currency: 'usd',
-                        product_data: {
-                            name: asset.assetName,
-                            images: [asset.assetUrl],
-                        },
-                        unit_amount: 900 || 0,
+        // // Tiếp theo, bạn tạo phiên thanh toán với thông tin hình ảnh và giá cả
+        // const session = await this.stripe.checkout.sessions.create({
+        //     payment_method_types: ['card'],
+        //     line_items: [
+        //         {
+        //             price_data: {
+        //                 currency: 'usd',
+        //                 product_data: {
+        //                     name: asset.assetName,
+        //                     images: [asset.assetUrl],
+        //                 },
+        //                 unit_amount: 900 || 0,
+        //             },
+        //             quantity: 1,
+        //         },
+        //     ],
+        //     mode: 'payment',
+        //     success_url: 'http://localhost:7200/payment/success',
+        //     cancel_url: 'http://localhost:7200',
+        // });
+
+        // return session.id;
+
+
+        try {
+            const session = await this.stripe.checkout.sessions.create({
+                payment_method_types: ['card'],
+                line_items: [
+                    {
+                        price: payload.priceId,
+                        quantity: 1,
                     },
-                    quantity: 1,
-                },
-            ],
-            mode: 'payment',
-            success_url: 'http://localhost:7200/payment/success',
-            cancel_url: 'http://localhost:7200',
-        });
+                ],
+                mode: 'subscription',
+                success_url: 'http://staging.pomodoro.atseeds.com',
+                cancel_url: 'http://staging.pomodoro.atseeds.com',
+            });
+            // console.log(session);
 
-        return session.id;
+            return {
+                statusCode: 200,
+                data: {
+                    url: session.url,
+                }
+            }
+        } catch (error) {
+            console.error(error);
+            //   res.status(500).json({ error: 'An error occurred.' });
+            // res.status(500).json({ error: JSON.stringify(error) });
+        }
+
+
     }
 
     async handleSuccessfulPayment(sessionId: string, assetId: number): Promise<any> {
@@ -84,6 +114,14 @@ export class PaymentService {
             clientSecret: (subscription.latest_invoice as any).payment_intent.client_secret,
             subscriptionId: subscription.id,
         };
+    }
+
+    async getListProduct(): Promise<any> {
+        const products = await this.stripe.products.list();
+        return {
+            statusCode: 200,
+            data: products.data.reverse()
+        }
     }
 
 }

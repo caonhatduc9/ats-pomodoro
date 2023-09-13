@@ -25,6 +25,6 @@ export class PaymentController {
   }
   @Post('createSubscription')
   async createSubscription(@Body() payload: any) {
-    return await this.paymentService.createSubscription(payload);
+    return await this.paymentService.createCheckoutSession(payload);
   }
 }

@@ -20,7 +20,7 @@ import { SettingModule } from 'src/setting/setting.module';
     PassportModule,
     JwtModule.register({
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '2h' },
+      signOptions: { expiresIn: '7d' },
     }),
     MailingModule,
   ],

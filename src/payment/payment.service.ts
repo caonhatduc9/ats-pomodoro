@@ -7,7 +7,7 @@ export class PaymentService {
 
     private stripe: Stripe;
     constructor(private readonly sharedService: SharedService) {
-        const secretKey = 'sk_test_51NXcYQKN36dse1aEviDU9Hfbkz3iBpNSfLeM8Iax1LYMNcS0xxRWAqp2kLvo7UKjKqTuFvvcFD4DJpTgMdJHh7aJ00YWMH0xx5';
+        const secretKey = 'sk_test_51NWarsExrxFsGEFSdKxVWjmeVUs209b0HigIAw5KVUclb2wfj0yVhfGP2YOfy9Q8sywYoUp90HvIkRXHb2rE91JT00T7yfnspt';
         this.stripe = new Stripe(secretKey, { apiVersion: '2022-11-15' });
     }
     async createCheckoutSession(payload: any): Promise<any> {

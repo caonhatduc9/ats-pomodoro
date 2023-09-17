@@ -6,9 +6,11 @@ import Stripe from 'stripe';
 export class PaymentService {
 
     private stripe: Stripe;
+    private endpointSecret: string;
     constructor(private readonly sharedService: SharedService) {
         const secretKey = 'sk_test_51NWarsExrxFsGEFSdKxVWjmeVUs209b0HigIAw5KVUclb2wfj0yVhfGP2YOfy9Q8sywYoUp90HvIkRXHb2rE91JT00T7yfnspt';
         this.stripe = new Stripe(secretKey, { apiVersion: '2022-11-15' });
+        this.endpointSecret = "whsec_5e6daec75027c2c0322c695568304e9a85bd9edb26e69ca5929e050cb69145f5";
     }
     async createCheckoutSession(payload: any): Promise<any> {
         // // Đầu tiên, bạn cần lấy thông tin về hình ảnh từ cơ sở dữ liệu của ứng dụng
@@ -123,5 +125,27 @@ export class PaymentService {
             data: prices.data.reverse()
         }
     }
+    public async constructEventFromPayload(signature: string, payload: any) {
+        // const webhookSecret = this.configService.get('STRIPE_WEBHOOK_SECRET');
+        const webhookSecret = this.endpointSecret;
+        return this.stripe.webhooks.constructEvent(
+            payload,
+            signature,
+            webhookSecret
+        );
+    }
 
+    async handleEvent(event: any): Promise<any> {
+        switch (event.type) {
+            case 'payment_intent.succeeded':
+                const paymentIntentSucceeded = event.data.object;
+                // Then define and call a function to handle the event payment_intent.succeeded
+                console.log("check paymentIntent", paymentIntentSucceeded);
+                break;
+            // ... handle other event types
+            default:
+                console.log(`Unhandled event type ${event.type}`);
+        }
+
+    }
 }

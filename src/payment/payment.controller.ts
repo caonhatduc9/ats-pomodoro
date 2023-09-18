@@ -1,7 +1,7 @@
 import { BadRequestException, Body, Controller, Get, Header, Headers, Post, RawBodyRequest, Req, Res } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 
-@Controller('v1/payment')
+@Controller('v2/payment')
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) { }
   @Post('create-checkout-session')

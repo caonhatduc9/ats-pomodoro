@@ -25,10 +25,10 @@ export class Subscription {
   // @Column("int", { name: "priceId" })
   // priceId: number;
 
-  @Column("date", { name: "createdDate" })
+  @Column("datetime", { name: "createdDate" })
   createdDate: string;
 
-  @Column("date", { name: "endDate", nullable: true })
+  @Column("datetime", { name: "endDate", nullable: true })
   endDate: string | null;
 
   @Column("int", { name: "assetId", nullable: true })

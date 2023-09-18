@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Subscription } from 'src/entities/subscription.entity';
 import { SharedService } from 'src/shared/shared.service';
+import { MailingService } from 'src/v1/mailing/mailing.service';
 import Stripe from 'stripe';
 import { Repository } from 'typeorm';
 
@@ -13,6 +14,7 @@ export class PaymentService {
     constructor(private readonly sharedService: SharedService,
         private configService: ConfigService,
         @Inject('SUBSCRIPTION_REPOSITORY') private subscriptionRepository: Repository<Subscription>,
+        private maillingService: MailingService,
     ) {
         const secretKey = this.configService.get('STRIPE_SECRET_KEY');
         this.stripe = new Stripe(secretKey, { apiVersion: '2022-11-15' });
@@ -53,7 +55,6 @@ export class PaymentService {
                 email: payload.email,
                 metadata: {
                     userId: payload.userId,
-                    assetId: payload.assetId,
                 }
             });
 
@@ -65,10 +66,13 @@ export class PaymentService {
                         quantity: 1,
                     },
                 ],
+                metadata: {
+                    assetId: payload.assetId,
+                },
                 mode: 'subscription',
                 customer: customer.id,
-                success_url: 'http://staging.pomodoro.atseeds.com',
-                cancel_url: 'http://staging.pomodoro.atseeds.com',
+                success_url: this.configService.get('STRIPE_SUCCESS_URL'),
+                cancel_url: this.configService.get('STRIPE_CANCEL_URL'),
             });
             // console.log(session);
 
@@ -87,14 +91,6 @@ export class PaymentService {
 
     }
 
-    async handleSuccessfulPayment(sessionId: string, assetId: number): Promise<any> {
-        // Ở đây, bạn có thể thực hiện các thao tác sau khi thanh toán thành công,
-        // chẳng hạn cập nhật cơ sở dữ liệu để đánh dấu rằng hình ảnh đã được mua.
-        console.log("payment success");
-        return {
-            message: 'Payment successful!',
-        }
-    }
 
 
     async getListProduct(): Promise<any> {
@@ -109,16 +105,14 @@ export class PaymentService {
 
     async saveSubscription(customer, data): Promise<any> {
         const newSub = new Subscription();
-
         newSub.userId = customer.metadata.userId;
-        newSub.assetId = customer.metadata.assetId;
-        newSub.priceId = data.object.lines.data[0].price.id;
-        newSub.createdDate = new Date().toISOString();
-        if (data.object.lines.data[0].price.recurring.interval === 'month') {
-            newSub.typeSubscription = 'monthly';
-        } else {
-            newSub.typeSubscription = 'annual';
-        }
+        newSub.customerId = customer.id;
+        newSub.createdDate = data.createdDate;
+        newSub.endDate = data.endDate;
+        newSub.assetId = data.assetId;
+        newSub.typeSubscription = data.typeSubscription === 'month' ? 'monthly' : 'annual';
+        newSub.priceId = data.priceId;
+        console.log("newSub", newSub);
         try {
             const savedSub = await this.subscriptionRepository.save(newSub);
             console.log("Processed Order:", savedSub);
@@ -140,16 +134,46 @@ export class PaymentService {
     async handleEvent(event: any): Promise<any> {
         switch (event.type) {
             case 'checkout.session.completed':
-                const paymentIntentSucceeded = event.data.object;
-                // Then define and call a function to handle the event payment_intent.succeeded
-                console.log("check checkout.session.completed", paymentIntentSucceeded);
+                const dataObject = event.data.object;
+                console.log("check checkout.session.completed", dataObject);
+                const payload: any = {}
+                const subscriptionId = dataObject.subscription;
+                const subscription: any = await this.stripe.subscriptions.retrieve(subscriptionId);
+                const subscriptionCreatedAt = new Date(subscription.created * 1000);
+                const subscriptionExpiresAt = new Date(subscription.current_period_end * 1000);
+                console.log("subscription", subscription);
+                console.log("===plan", subscription.plan);
+                console.log("subscriptionCreatedAt", subscriptionCreatedAt);
+                console.log("subscriptionExpiresAt", subscriptionExpiresAt);
 
+                payload.userId = dataObject.metadata.userId;
+                payload.createdDate = subscriptionCreatedAt.toISOString().slice(0, 19).replace('T', ' ');
+                payload.endDate = subscriptionExpiresAt.toISOString().slice(0, 19).replace('T', ' ');
+                payload.assetId = dataObject.metadata.assetId;
+                payload.priceId = subscription.plan.id;
+                payload.typeSubscription = subscription.plan.interval;
+
+                // const sessionWithLineItems = await this.stripe.checkout.sessions.retrieve(
+                //     event.data.object.id,
+                //     {
+                //         expand: ['line_items'],
+                //     }
+                // );
+                // const lineItems = sessionWithLineItems.line_items;
+                // console.log("sessionWithLineItems", sessionWithLineItems);
+                // console.log("lineItems", lineItems);
+                // return sessionWithLineItems;
                 this.stripe.customers
                     .retrieve(event.data.object.customer)
                     .then(async (customer) => {
                         try {
                             // CREATE ORDER
-                            this.saveSubscription(customer, event.data);
+                            console.log("customer", customer);
+                            this.saveSubscription(customer, payload);
+                            const email = dataObject.customer_details.email;
+                            const subject = 'Pomodoro - Payment Success';
+                            const content = 'Payment Success ' + `for  ${subscription.plan.interval} Id ${subscriptionId}`;
+                            this.maillingService.sendMail(email, subject, content);
                         } catch (err) {
                             console.log(err);
                         }

@@ -1,6 +1,6 @@
 import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { Project, ProjectStatus } from '../entities/project.entity';
-import { Task, TaskStatus } from '../entities/task.entity';
+import { Project, ProjectStatus } from '../../entities/project.entity';
+import { Task, TaskStatus } from '../../entities/task.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()

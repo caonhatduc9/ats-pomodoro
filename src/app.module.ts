@@ -12,8 +12,8 @@ import { CorsInterceptor } from './cors.interceptor';
 import { SettingModule } from './setting/setting.module';
 import { ReportModule } from './report/report.module';
 import { ProjectModule } from './project/project.module';
-import { TaskModule } from './task/task.module';
-import { PaymentModule } from './payment/payment.module';
+import { TaskModule } from './v1/task/task.module';
+import { PaymentModule } from './v2/payment/payment.module';
 import { SharedModule } from './shared/shared.module';
 
 @Module({
@@ -43,4 +43,4 @@ import { SharedModule } from './shared/shared.module';
     },
   ],
 })
-export class AppModule {}
+export class AppModule { }

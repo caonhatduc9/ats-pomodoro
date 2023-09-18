@@ -1,16 +1,23 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { Subscription } from 'src/entities/subscription.entity';
 import { SharedService } from 'src/shared/shared.service';
 import Stripe from 'stripe';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class PaymentService {
 
     private stripe: Stripe;
     private endpointSecret: string;
-    constructor(private readonly sharedService: SharedService) {
-        const secretKey = 'sk_test_51NWarsExrxFsGEFSdKxVWjmeVUs209b0HigIAw5KVUclb2wfj0yVhfGP2YOfy9Q8sywYoUp90HvIkRXHb2rE91JT00T7yfnspt';
+    constructor(private readonly sharedService: SharedService,
+        private configService: ConfigService,
+        @Inject('SUBSCRIPTION_REPOSITORY') private subscriptionRepository: Repository<Subscription>,
+    ) {
+        const secretKey = this.configService.get('STRIPE_SECRET_KEY');
         this.stripe = new Stripe(secretKey, { apiVersion: '2022-11-15' });
-        this.endpointSecret = "whsec_5e6daec75027c2c0322c695568304e9a85bd9edb26e69ca5929e050cb69145f5";
+        this.endpointSecret = this.configService.get('STRIPE_WEBHOOK_SECRET');
+        console.log("this.endpointSecret", this.endpointSecret);
     }
     async createCheckoutSession(payload: any): Promise<any> {
         // // Đầu tiên, bạn cần lấy thông tin về hình ảnh từ cơ sở dữ liệu của ứng dụng
@@ -41,6 +48,15 @@ export class PaymentService {
 
 
         try {
+            const customer = await this.stripe.customers.create({
+                name: payload.username,
+                email: payload.email,
+                metadata: {
+                    userId: payload.userId,
+                    assetId: payload.assetId,
+                }
+            });
+
             const session = await this.stripe.checkout.sessions.create({
                 payment_method_types: ['card'],
                 line_items: [
@@ -50,6 +66,7 @@ export class PaymentService {
                     },
                 ],
                 mode: 'subscription',
+                customer: customer.id,
                 success_url: 'http://staging.pomodoro.atseeds.com',
                 cancel_url: 'http://staging.pomodoro.atseeds.com',
             });
@@ -79,44 +96,6 @@ export class PaymentService {
         }
     }
 
-    async createSubscription(createSubscriptionRequest): Promise<any> {
-
-        // create a stripe customer
-        const customer = await this.stripe.customers.create({
-            name: createSubscriptionRequest.name,
-            email: createSubscriptionRequest.email,
-            payment_method: createSubscriptionRequest.paymentMethod,
-            invoice_settings: {
-                default_payment_method: createSubscriptionRequest.paymentMethod,
-            },
-        });
-
-
-        // get the price id from the front-end
-        const priceId = createSubscriptionRequest.priceId;
-
-        // create a stripe subscription
-        const subscription: any = await this.stripe.subscriptions.create({
-            customer: customer.id,
-            items: [{ price: priceId }],
-            payment_settings: {
-                payment_method_options: {
-                    card: {
-                        request_three_d_secure: 'any',
-                    },
-                },
-                payment_method_types: ['card'],
-                save_default_payment_method: 'on_subscription',
-            },
-            expand: ['latest_invoice.payment_intent'],
-        });
-
-        // return the client secret and subscription id
-        return {
-            clientSecret: (subscription.latest_invoice as any).payment_intent.client_secret,
-            subscriptionId: subscription.id,
-        };
-    }
 
     async getListProduct(): Promise<any> {
         const prices = await this.stripe.prices.list({ active: true });
@@ -125,6 +104,30 @@ export class PaymentService {
             data: prices.data.reverse()
         }
     }
+
+
+
+    async saveSubscription(customer, data): Promise<any> {
+        const newSub = new Subscription();
+
+        newSub.userId = customer.metadata.userId;
+        newSub.assetId = customer.metadata.assetId;
+        newSub.priceId = data.object.lines.data[0].price.id;
+        newSub.createdDate = new Date().toISOString();
+        if (data.object.lines.data[0].price.recurring.interval === 'month') {
+            newSub.typeSubscription = 'monthly';
+        } else {
+            newSub.typeSubscription = 'annual';
+        }
+        try {
+            const savedSub = await this.subscriptionRepository.save(newSub);
+            console.log("Processed Order:", savedSub);
+            return savedSub;
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
     public async constructEventFromPayload(signature: string, payload: any) {
         // const webhookSecret = this.configService.get('STRIPE_WEBHOOK_SECRET');
         const webhookSecret = this.endpointSecret;
@@ -134,13 +137,25 @@ export class PaymentService {
             webhookSecret
         );
     }
-
     async handleEvent(event: any): Promise<any> {
         switch (event.type) {
-            case 'payment_intent.succeeded':
+            case 'checkout.session.completed':
                 const paymentIntentSucceeded = event.data.object;
                 // Then define and call a function to handle the event payment_intent.succeeded
-                console.log("check paymentIntent", paymentIntentSucceeded);
+                console.log("check checkout.session.completed", paymentIntentSucceeded);
+
+                this.stripe.customers
+                    .retrieve(event.data.object.customer)
+                    .then(async (customer) => {
+                        try {
+                            // CREATE ORDER
+                            this.saveSubscription(customer, event.data);
+                        } catch (err) {
+                            console.log(err);
+                        }
+                    })
+                    .catch((err) => console.log(err.message));
+
                 break;
             // ... handle other event types
             default:

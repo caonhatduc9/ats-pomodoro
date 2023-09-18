@@ -54,7 +54,7 @@ export class Subscription {
   user2: User;
 
   @Column('enum', { name: 'typeSubscription', enum: ['monthly', 'annual'] })
-  typeVehicle: 'monthly' | 'annual';
+  typeSubscription: 'monthly' | 'annual';
 
   @ManyToOne(() => Asset, (asset) => asset.subscriptions, {
     onDelete: "NO ACTION",

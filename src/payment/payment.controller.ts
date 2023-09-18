@@ -46,8 +46,8 @@ export class PaymentController {
     try {
       // event = stripe.webhooks.constructEvent();
       event = await this.paymentService.constructEventFromPayload(sig, req.rawBody);
-      console.log("event", event);
-      console.log("req.rawBody", req.rawBody);
+      // console.log("event", event);
+      // console.log("req.rawBody", req.rawBody);
     } catch (err) {
       // response.status(400).send(`Webhook Error: ${err.message}`);
       return {

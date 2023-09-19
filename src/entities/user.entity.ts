@@ -11,7 +11,7 @@ import {
 import { FocusedPomodoro } from './focusedPomodoro.entity';
 import { Project } from './project.entity';
 import { Setting } from './setting.entity';
-import { Subcription } from './subcription.entity';
+import { Subscription } from './subscription.entity';
 import { Task } from './task.entity';
 import { Exclude } from 'class-transformer';
 
@@ -21,7 +21,7 @@ enum AuthProvider {
   APPLE = 'apple',
   GITHUB = 'github',
 }
-@Index('user_subcription_subcriptionId_idx', ['currentSubcriptionId'], {})
+@Index('user_subscription_subscriptionId_idx', ['currentSubscriptionId'], {})
 @Entity('user', { schema: 'ats_pomodoro' })
 export class User {
   @PrimaryGeneratedColumn({ type: 'int', name: 'userId' })
@@ -36,8 +36,8 @@ export class User {
   @Column('text', { name: 'avatarURL', nullable: true })
   avatarUrl: string | null;
 
-  @Column('int', { name: 'currentSubcriptionID', nullable: true })
-  currentSubcriptionId: number | null;
+  @Column('int', { name: 'currentSubscriptionID', nullable: true })
+  currentSubscriptionId: number | null;
 
   @Column('varchar', { name: 'gender', nullable: true, length: 10 })
   gender: string | null;
@@ -75,18 +75,18 @@ export class User {
   @OneToOne(() => Setting, (setting) => setting.user)
   setting: Setting;
 
-  @OneToMany(() => Subcription, (subcription) => subcription.user2)
-  subcriptions: Subcription[];
+  @OneToMany(() => Subscription, (subscription) => subscription.user2)
+  subscriptions: Subscription[];
 
   @OneToMany(() => Task, (task) => task.user)
   tasks: Task[];
 
-  @ManyToOne(() => Subcription, (subcription) => subcription.users, {
-    onDelete: 'RESTRICT', 
+  @ManyToOne(() => Subscription, (subscription) => subscription.users, {
+    onDelete: 'RESTRICT',
     onUpdate: 'RESTRICT',
   })
   @JoinColumn([
-    { name: 'currentSubcriptionID', referencedColumnName: 'subcriptionId' },
+    { name: 'currentSubscriptionID', referencedColumnName: 'subscriptionId' },
   ])
-  currentSubcription: Subcription;
+  currentSubscription: Subscription;
 }

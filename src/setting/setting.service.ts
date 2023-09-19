@@ -17,13 +17,26 @@ export class SettingService {
       // .leftJoinAndSelect('setting.longBreakBackground2', 'longBreakBackground2')
       .leftJoinAndSelect('setting.backgroundMusic2', 'backgroundMusic2')
       .leftJoinAndSelect('setting.currentBackgroundSelected2', 'currentBackgroundSelected2')
-      // .leftJoinAndSelect('setting.shortBreakBackground2', 'shortBreakBackground2')
+      .leftJoinAndSelect('user.subscriptions', 'subscriptions')
       .where('user.userId = :id', { id })
       .getOne();
+
 
     const listAsset = await this.assetRepository.createQueryBuilder('asset')
       .select(['asset.assetId', 'asset.assetName', 'asset.author', 'asset.type', 'asset.assetUrl', 'asset.isFree'])
       .getMany();
+
+
+    if (data && data.user.subscriptions) {
+      data.user.subscriptions.forEach(subscription => {
+        const matchingAssetIndex = listAsset.findIndex(asset => asset.assetId === subscription.assetId);
+        if (matchingAssetIndex !== -1 && new Date(subscription.endDate) > new Date()) {
+          listAsset[matchingAssetIndex].isFree = 1;
+        }
+      });
+    }
+
+
 
     const ringSounds = [];
     const backgroundMusics = [];

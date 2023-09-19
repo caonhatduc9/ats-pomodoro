@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Setting } from './setting.entity';
-import { Subcription } from './subcription.entity';
+import { Subscription } from './subscription.entity';
 
 @Entity('asset', { schema: 'ats_pomodoro' })
 export class Asset {
@@ -52,8 +52,8 @@ export class Asset {
   // @OneToMany(() => Setting, (setting) => setting.shortBreakBackground2)
   // settings5: Setting[];
 
-  @OneToMany(() => Subcription, (subcription) => subcription.asset)
-  subcriptions: Subcription[];
+  @OneToMany(() => Subscription, (subscription) => subscription.asset)
+  subscriptions: Subscription[];
 }
 
 
@@ -97,7 +97,7 @@ export class Asset {
 //   settings: Setting[];
 
 //   @OneToMany(() => Setting, (setting) => setting.ringSoundSelected2)
-//   settings2: Setting[];
+  // settings2: Setting[];
 
 //   @OneToMany(() => Setting, (setting) => setting.currentBackgroundSelected2)
 //   settings3: Setting[];

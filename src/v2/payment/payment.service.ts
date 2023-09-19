@@ -1,5 +1,6 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { StripeEvent } from 'src/entities/stripeEvent.entity';
 import { Subscription } from 'src/entities/subscription.entity';
 import { SharedService } from 'src/shared/shared.service';
 import { MailingService } from 'src/v1/mailing/mailing.service';
@@ -14,6 +15,7 @@ export class PaymentService {
     constructor(private readonly sharedService: SharedService,
         private configService: ConfigService,
         @Inject('SUBSCRIPTION_REPOSITORY') private subscriptionRepository: Repository<Subscription>,
+        @Inject('STRIPE_EVENT_REPOSITORY') private stripeEventRepository: Repository<StripeEvent>,
         private maillingService: MailingService,
     ) {
         const secretKey = this.configService.get('STRIPE_SECRET_KEY');
@@ -21,34 +23,13 @@ export class PaymentService {
         this.endpointSecret = this.configService.get('STRIPE_WEBHOOK_SECRET');
         console.log("this.endpointSecret", this.endpointSecret);
     }
+
+    createEvent(eventId: string) {
+        return this.stripeEventRepository.insert({ eventId });
+    }
+
+
     async createCheckoutSession(payload: any): Promise<any> {
-        // // Đầu tiên, bạn cần lấy thông tin về hình ảnh từ cơ sở dữ liệu của ứng dụng
-        // const asset = await this.sharedService.getAssetById(assetId);
-
-        // // Tiếp theo, bạn tạo phiên thanh toán với thông tin hình ảnh và giá cả
-        // const session = await this.stripe.checkout.sessions.create({
-        //     payment_method_types: ['card'],
-        //     line_items: [
-        //         {
-        //             price_data: {
-        //                 currency: 'usd',
-        //                 product_data: {
-        //                     name: asset.assetName,
-        //                     images: [asset.assetUrl],
-        //                 },
-        //                 unit_amount: 900 || 0,
-        //             },
-        //             quantity: 1,
-        //         },
-        //     ],
-        //     mode: 'payment',
-        //     success_url: 'http://localhost:7200/payment/success',
-        //     cancel_url: 'http://localhost:7200',
-        // });
-
-        // return session.id;
-
-
         try {
             const customer = await this.stripe.customers.create({
                 name: payload.username,
@@ -132,6 +113,13 @@ export class PaymentService {
         );
     }
     async handleEvent(event: any): Promise<any> {
+        try {
+            await this.createEvent(event.id);
+        } catch (error) {
+            console.log("error", error);
+            throw new BadRequestException('This event was already processed');
+        }
+
         switch (event.type) {
             case 'checkout.session.completed':
                 const dataObject = event.data.object;

@@ -7,9 +7,5 @@ export const SharedProviders = [
         useFactory: (dataSource: DataSource) => dataSource.getRepository(Asset),
         inject: ['DATA_SOURCE'],
     },
-    {
-        provide: 'SUBSCRIPTION_REPOSITORY',
-        useFactory: (dataSource: DataSource) => dataSource.getRepository(Subscription),
-        inject: ['DATA_SOURCE'],
-    },
+    
 ];

@@ -35,7 +35,6 @@ export class PaymentController {
     let event;
 
     try {
-      // event = stripe.webhooks.constructEvent();
       event = await this.paymentService.constructEventFromPayload(sig, req.rawBody);
     } catch (err) {
       return {

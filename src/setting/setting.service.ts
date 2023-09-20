@@ -6,43 +6,58 @@ import { Setting } from '../entities/setting.entity';
 import { Asset } from '../entities/asset.entity';
 @Injectable()
 export class SettingService {
-  constructor(@Inject('SETTING_REPOSITORY') private settingRepository: Repository<Setting>,
-    @Inject('ASSET_REPOSITORY') private assetRepository: Repository<Asset>
-  ) { }
+  constructor(
+    @Inject('SETTING_REPOSITORY')
+    private settingRepository: Repository<Setting>,
+    @Inject('ASSET_REPOSITORY') private assetRepository: Repository<Asset>,
+  ) {}
 
   async findByUserId(id: number) {
-    const data = await this.settingRepository.createQueryBuilder('setting')
+    const data = await this.settingRepository
+      .createQueryBuilder('setting')
       .leftJoinAndSelect('setting.user', 'user')
       .leftJoinAndSelect('setting.ringSound2', 'ringSound')
       // .leftJoinAndSelect('setting.longBreakBackground2', 'longBreakBackground2')
       .leftJoinAndSelect('setting.backgroundMusic2', 'backgroundMusic2')
-      .leftJoinAndSelect('setting.currentBackgroundSelected2', 'currentBackgroundSelected2')
+      .leftJoinAndSelect(
+        'setting.currentBackgroundSelected2',
+        'currentBackgroundSelected2',
+      )
       .leftJoinAndSelect('user.subscriptions', 'subscriptions')
       .where('user.userId = :id', { id })
       .getOne();
 
-
-    const listAsset = await this.assetRepository.createQueryBuilder('asset')
-      .select(['asset.assetId', 'asset.assetName', 'asset.author', 'asset.type', 'asset.assetUrl', 'asset.isFree'])
+    const listAsset = await this.assetRepository
+      .createQueryBuilder('asset')
+      .select([
+        'asset.assetId',
+        'asset.assetName',
+        'asset.author',
+        'asset.type',
+        'asset.assetUrl',
+        'asset.isFree',
+      ])
       .getMany();
 
-
     if (data && data.user.subscriptions) {
-      data.user.subscriptions.forEach(subscription => {
-        const matchingAssetIndex = listAsset.findIndex(asset => asset.assetId === subscription.assetId);
-        if (matchingAssetIndex !== -1 && new Date(subscription.endDate) > new Date()) {
+      data.user.subscriptions.forEach((subscription) => {
+        const matchingAssetIndex = listAsset.findIndex(
+          (asset) => asset.assetId === subscription.assetId,
+        );
+        if (
+          matchingAssetIndex !== -1 &&
+          new Date(subscription.endDate) > new Date()
+        ) {
           listAsset[matchingAssetIndex].isFree = 1;
         }
       });
     }
 
-
-
     const ringSounds = [];
     const backgroundMusics = [];
     const backgroundImages = [];
 
-    listAsset.forEach(item => {
+    listAsset.forEach((item) => {
       if (item.type === 'AUDIO') {
         ringSounds.push(item);
       }
@@ -52,54 +67,53 @@ export class SettingService {
       if (item.type === 'IMAGE') {
         backgroundImages.push(item);
       }
-    }
-    )
+    });
     const assets = {
       ringSounds,
       backgroundMusics,
       backgroundImages,
-    }
+    };
     const cleanedData = {
-      userId: data["userId"],
-      pomodoroTime: data["pomodoroTime"],
-      shortBreakTime: data["shortBreakTime"],
-      longBreakTime: data["longBreakTime"],
-      autoStartBreak: data["autoStartBreak"],
-      autoStartPomodoro: data["autoStartPomodoro"],
-      longBreakInterval: data["longBreakInterval"],
-      autoSwitchTask: data["autoSwitchTask"],
+      userId: data['userId'],
+      pomodoroTime: data['pomodoroTime'],
+      shortBreakTime: data['shortBreakTime'],
+      longBreakTime: data['longBreakTime'],
+      autoStartBreak: data['autoStartBreak'],
+      autoStartPomodoro: data['autoStartPomodoro'],
+      longBreakInterval: data['longBreakInterval'],
+      autoSwitchTask: data['autoSwitchTask'],
       ringSound: {
-        assetId: data["ringSound2"]["assetId"],
-        assetName: data["ringSound2"]["assetName"],
-        type: data["ringSound2"]["type"],
-        assetUrl: data["ringSound2"]["assetUrl"]
+        assetId: data['ringSound2']['assetId'],
+        assetName: data['ringSound2']['assetName'],
+        type: data['ringSound2']['type'],
+        assetUrl: data['ringSound2']['assetUrl'],
       },
-      ringSoundVolumn: data["ringSoundVolumn"],
-      ringSoundRepeat: data["ringSoundRepeat"],
+      ringSoundVolumn: data['ringSoundVolumn'],
+      ringSoundRepeat: data['ringSoundRepeat'],
       backgroundMusic: {
-        assetId: data["backgroundMusic2"]["assetId"],
-        assetName: data["backgroundMusic2"]["assetName"],
-        type: data["backgroundMusic2"]["type"],
-        assetUrl: data["backgroundMusic2"]["assetUrl"],
+        assetId: data['backgroundMusic2']['assetId'],
+        assetName: data['backgroundMusic2']['assetName'],
+        type: data['backgroundMusic2']['type'],
+        assetUrl: data['backgroundMusic2']['assetUrl'],
       },
-      backgroundMusicVolumn: data["backgroundMusicVolumn"],
+      backgroundMusicVolumn: data['backgroundMusicVolumn'],
       currentBackground: {
-        assetId: data["currentBackgroundSelected2"]["assetId"],
-        assetName: data["currentBackgroundSelected2"]["assetName"],
-        type: data["currentBackgroundSelected2"]["type"],
-        assetUrl: data["currentBackgroundSelected2"]["assetUrl"]
+        assetId: data['currentBackgroundSelected2']['assetId'],
+        assetName: data['currentBackgroundSelected2']['assetName'],
+        type: data['currentBackgroundSelected2']['type'],
+        assetUrl: data['currentBackgroundSelected2']['assetUrl'],
       },
-      darkmodeWhenRunning: data["darkmodeWhenRunning"],
-      pomodoroColor: data["pomodoroColor"],
-      shortBreakColor: data["shortBreakColor"],
-      longBreakColor: data["longBreakColor"],
+      darkmodeWhenRunning: data['darkmodeWhenRunning'],
+      pomodoroColor: data['pomodoroColor'],
+      shortBreakColor: data['shortBreakColor'],
+      longBreakColor: data['longBreakColor'],
       assets,
-    }
+    };
 
     return {
       status: 'success',
       data: cleanedData ? cleanedData : {},
-    }
+    };
   }
 
   async create(userId: number, createSettingDto: CreateSettingDto) {
@@ -110,7 +124,8 @@ export class SettingService {
       setting.pomodoroTime = createSettingDto.pomodoroTime || 25;
       setting.ringSoundVolumn = createSettingDto.ringSoundVolumn || 50;
       setting.ringSoundRepeat = createSettingDto.ringSoundRepeat || 1;
-      setting.backgroundMusicVolumn = createSettingDto.backgroundMusicVolumn || 50;
+      setting.backgroundMusicVolumn =
+        createSettingDto.backgroundMusicVolumn || 50;
       setting.shortBreakTime = createSettingDto.shortBreakTime || 5;
       setting.longBreakTime = createSettingDto.longBreakTime || 15;
       setting.autoStartBreak = createSettingDto.autoStartBreak || 0;
@@ -124,30 +139,41 @@ export class SettingService {
 
       // Kiểm tra và cập nhật ringSound nếu ringSoundId được cung cấp và tồn tại trong bảng Asset
       if (createSettingDto.ringSoundId) {
-        const ringSoundExists = await this.assetRepository.findOne({ where: { assetId: createSettingDto.ringSoundId } });
-        setting.ringSound = ringSoundExists ? createSettingDto.ringSoundId : null;
+        const ringSoundExists = await this.assetRepository.findOne({
+          where: { assetId: createSettingDto.ringSoundId },
+        });
+        setting.ringSound = ringSoundExists
+          ? createSettingDto.ringSoundId
+          : null;
       }
 
       // Kiểm tra và cập nhật backgroundMusic nếu backgroundMusicId được cung cấp và tồn tại trong bảng Asset
       if (createSettingDto.backgroundMusicId) {
-        const backgroundMusicExists = await this.assetRepository.findOne({ where: { assetId: createSettingDto.backgroundMusicId } });
-        setting.backgroundMusic = backgroundMusicExists ? createSettingDto.backgroundMusicId : null;
+        const backgroundMusicExists = await this.assetRepository.findOne({
+          where: { assetId: createSettingDto.backgroundMusicId },
+        });
+        setting.backgroundMusic = backgroundMusicExists
+          ? createSettingDto.backgroundMusicId
+          : null;
       }
 
       // Kiểm tra và cập nhật pomodoroBackground nếu pomodoroBackgroundId được cung cấp và tồn tại trong bảng Asset
       if (createSettingDto.currentBackgroundId) {
-        const pomodoroBackgroundExists = await this.assetRepository.findOne({ where: { assetId: createSettingDto.currentBackgroundId } });
-        setting.currentBackgroundSelected = pomodoroBackgroundExists ? createSettingDto.currentBackgroundId : null;
+        const pomodoroBackgroundExists = await this.assetRepository.findOne({
+          where: { assetId: createSettingDto.currentBackgroundId },
+        });
+        setting.currentBackgroundSelected = pomodoroBackgroundExists
+          ? createSettingDto.currentBackgroundId
+          : null;
       }
-
 
       // Lưu setting đã cập nhật
       const updatedSetting = await this.settingRepository.save(setting);
 
-      console.log("updatedSetting");
+      console.log('updatedSetting');
       return {
         statusCode: 200,
-        meesage: "update success",
+        meesage: 'update success',
       };
     } else {
       const newSetting = this.settingRepository.create({
@@ -169,28 +195,40 @@ export class SettingService {
       });
       // Kiểm tra và cập nhật ringSound nếu ringSoundId được cung cấp và tồn tại trong bảng Asset
       if (createSettingDto.ringSoundId) {
-        const ringSoundExists = await this.assetRepository.findOne({ where: { assetId: createSettingDto.ringSoundId } });
-        newSetting.ringSound = ringSoundExists ? createSettingDto.ringSoundId : null;
+        const ringSoundExists = await this.assetRepository.findOne({
+          where: { assetId: createSettingDto.ringSoundId },
+        });
+        newSetting.ringSound = ringSoundExists
+          ? createSettingDto.ringSoundId
+          : null;
       }
 
       // Kiểm tra và cập nhật backgroundMusic nếu backgroundMusicId được cung cấp và tồn tại trong bảng Asset
       if (createSettingDto.backgroundMusicId) {
-        const backgroundMusicExists = await this.assetRepository.findOne({ where: { assetId: createSettingDto.backgroundMusicId } });
-        newSetting.backgroundMusic = backgroundMusicExists ? createSettingDto.backgroundMusicId : null;
+        const backgroundMusicExists = await this.assetRepository.findOne({
+          where: { assetId: createSettingDto.backgroundMusicId },
+        });
+        newSetting.backgroundMusic = backgroundMusicExists
+          ? createSettingDto.backgroundMusicId
+          : null;
       }
 
       // Kiểm tra và cập nhật pomodoroBackground nếu pomodoroBackgroundId được cung cấp và tồn tại trong bảng Asset
       if (createSettingDto.currentBackgroundId) {
-        const pomodoroBackgroundExists = await this.assetRepository.findOne({ where: { assetId: createSettingDto.currentBackgroundId } });
-        newSetting.currentBackgroundSelected = pomodoroBackgroundExists ? createSettingDto.currentBackgroundId : null;
+        const pomodoroBackgroundExists = await this.assetRepository.findOne({
+          where: { assetId: createSettingDto.currentBackgroundId },
+        });
+        newSetting.currentBackgroundSelected = pomodoroBackgroundExists
+          ? createSettingDto.currentBackgroundId
+          : null;
       }
 
       const createdSetting = await this.settingRepository.save(newSetting);
 
-      console.log("createdSetting");
+      console.log('createdSetting');
       return {
         statusCode: 200,
-        meesage: "create success",
+        meesage: 'create success',
       };
     }
   }
@@ -200,10 +238,16 @@ export class SettingService {
       .where('asset.isDefault = :value', { value: 1 })
       .getMany();
 
-    const defaultMusic = assets.find(item => item.type === 'MUSIC' && item.isDefault === 1);
-    const defaultAudio = assets.find(item => item.type === 'AUDIO' && item.isDefault === 1);
-    const defaultImage = assets.find(item => item.type === 'IMAGE' && item.isDefault === 1);
-    console.log("default music ", defaultMusic);
+    const defaultMusic = assets.find(
+      (item) => item.type === 'MUSIC' && item.isDefault === 1,
+    );
+    const defaultAudio = assets.find(
+      (item) => item.type === 'AUDIO' && item.isDefault === 1,
+    );
+    const defaultImage = assets.find(
+      (item) => item.type === 'IMAGE' && item.isDefault === 1,
+    );
+    console.log('default music ', defaultMusic);
     const defaultPomodoroTime = 25;
     const defaultRingSoundVolumn = 50;
     const defaultRingSoundRepeat = 1;
@@ -238,13 +282,11 @@ export class SettingService {
       // longBreakColor: createSettingDto.longBreakColor,
     });
 
-
     const createdSetting = await this.settingRepository.save(newSetting);
-    console.log("createdSetting");
+    console.log('createdSetting');
     return {
       statusCode: 200,
-      meesage: "create success",
+      meesage: 'create success',
     };
   }
 }
-

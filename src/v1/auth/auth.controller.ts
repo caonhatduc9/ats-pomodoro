@@ -23,7 +23,7 @@ import { request } from 'http';
 
 @Controller('v1/auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) { }
+  constructor(private readonly authService: AuthService) {}
   @UseGuards(LocalAuthGuard)
   @Post('login')
   async login(@Request() req: any) {
@@ -40,7 +40,7 @@ export class AuthController {
   //   return HttpStatus.OK;
   // }
   async google(@Body() user: any): Promise<any> {
-    console.log("BODY", user);
+    console.log('BODY', user);
     return this.authService.googleLogin(user);
   }
 
@@ -86,7 +86,6 @@ export class AuthController {
   async githubAuth(@Body() user: any): Promise<any> {
     return this.authService.githubLogin(user);
   }
-
 
   // @Get('github/callback')
   // @UseGuards(AuthGuard('github'))

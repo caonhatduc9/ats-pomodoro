@@ -1,5 +1,5 @@
 export class CreateTaskDto {
-    taskName: string;
-    estimatePomodoro: number;
-    note: string;
+  taskName: string;
+  estimatePomodoro: number;
+  note: string;
 }

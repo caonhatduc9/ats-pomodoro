@@ -56,7 +56,6 @@ export class Asset {
   subscriptions: Subscription[];
 }
 
-
 // import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 // import { Setting } from "./Setting";
 // import { Subcription } from "./Subcription";
@@ -97,7 +96,7 @@ export class Asset {
 //   settings: Setting[];
 
 //   @OneToMany(() => Setting, (setting) => setting.ringSoundSelected2)
-  // settings2: Setting[];
+// settings2: Setting[];
 
 //   @OneToMany(() => Setting, (setting) => setting.currentBackgroundSelected2)
 //   settings3: Setting[];

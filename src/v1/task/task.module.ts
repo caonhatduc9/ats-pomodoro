@@ -4,8 +4,8 @@ import { TaskController } from './task.controller';
 import { ProjectModule } from 'src/project/project.module';
 
 @Module({
-  imports : [ProjectModule],
+  imports: [ProjectModule],
   controllers: [TaskController],
-  providers: [TaskService, ]
+  providers: [TaskService],
 })
 export class TaskModule {}

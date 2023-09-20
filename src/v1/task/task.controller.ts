@@ -1,11 +1,21 @@
-import { Body, Controller, Delete, Get, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Patch,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { TaskService } from './task.service';
 import { JwtAuthGuard } from 'src/v1/auth/guards/auth.jwt.guard';
 
 @UseGuards(JwtAuthGuard)
 @Controller('v1/task')
 export class TaskController {
-  constructor(private readonly taskService: TaskService) { }
+  constructor(private readonly taskService: TaskService) {}
 
   @Delete('/empty')
   async deleteAllTasks(@Req() req: any) {
@@ -13,8 +23,12 @@ export class TaskController {
   }
 
   @Post()
-  async createTask(@Req() req: any, @Body() body: any, @Query('project') project: string) {
-    console.log("project ", project);
+  async createTask(
+    @Req() req: any,
+    @Body() body: any,
+    @Query('project') project: string,
+  ) {
+    console.log('project ', project);
     return await this.taskService.createTask(req.user.userId, body, project);
   }
 

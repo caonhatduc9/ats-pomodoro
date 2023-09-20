@@ -5,15 +5,21 @@ import { Report } from './entities/report.entity';
 import { Repository } from 'typeorm';
 import { dataproc } from 'googleapis/build/src/apis/dataproc';
 import { User } from '../../src/entities/user.entity';
-import { FocusedPomodoro, Project, ReportData, SummaryReportResponse } from './interfaces/index.interface';
+import {
+  FocusedPomodoro,
+  Project,
+  ReportData,
+  SummaryReportResponse,
+} from './interfaces/index.interface';
 
 import * as moment from 'moment';
 
 @Injectable()
 export class ReportService {
-  constructor(@Inject('PROJECT_REPOSITORY') private reportRepository: Repository<Report>,
-    @Inject('USER_REPOSITORY') private userRepository: Repository<User>
-  ) { }
+  constructor(
+    @Inject('PROJECT_REPOSITORY') private reportRepository: Repository<Report>,
+    @Inject('USER_REPOSITORY') private userRepository: Repository<User>,
+  ) {}
 
   // calculateStreakDay(focusedPomodoros) {
   //   const sortedPomodoros = focusedPomodoros.sort((a, b) => new Date(a.createdDate) - new Date(b.createdDate));
@@ -64,15 +70,13 @@ export class ReportService {
     return count + 1;
   }
 
-
   async getSummaryReportByUserId(id: number): Promise<SummaryReportResponse> {
-    const dataRaw = await this.userRepository.createQueryBuilder('user')
+    const dataRaw = await this.userRepository
+      .createQueryBuilder('user')
       .leftJoinAndSelect('user.projects', 'project')
       .leftJoinAndSelect('user.focusedPomodoros', 'focusedPomodoro')
       .where('user.userId = :id ', { id })
       .getMany();
-    
-      
 
     const focusTime: FocusedPomodoro[] = dataRaw[0].focusedPomodoros;
     const projects: Project[] = dataRaw[0].projects;
@@ -100,7 +104,6 @@ export class ReportService {
     const streak = this.countConsecutiveDays(focusTimeCreatedDates);
     const accessedDates = new Set();
 
-
     // Thêm các giá trị createdDate từ focusTime vào Set va tinh total minutes
     focusTime.forEach((item) => {
       totalMinutes += +item.timeFocus;
@@ -114,7 +117,7 @@ export class ReportService {
       activitySummary: {
         focusedHours: totalMinutes,
         accessedDays: accessedDay,
-        streakDays: streak
+        streakDays: streak,
       },
       focusHours: focusTime,
       projects,
@@ -141,10 +144,14 @@ export class ReportService {
   filterDataByDate(
     focusTime: FocusedPomodoro[],
     projects: Project[],
-    startDate: Date
+    startDate: Date,
   ): { focusTime: FocusedPomodoro[]; projects: Project[] } {
-    const filteredFocusTime = focusTime.filter((item) => new Date(item.createdDate) >= startDate);
-    const filteredProjects = projects.filter((item) => new Date(item.createdDate) >= startDate);
+    const filteredFocusTime = focusTime.filter(
+      (item) => new Date(item.createdDate) >= startDate,
+    );
+    const filteredProjects = projects.filter(
+      (item) => new Date(item.createdDate) >= startDate,
+    );
 
     return {
       focusTime: filteredFocusTime,
@@ -153,22 +160,22 @@ export class ReportService {
   }
 
   async getDetailReportByUserId(id: number): Promise<any> {
-    const dataRaw = await this.userRepository.createQueryBuilder('user')
+    const dataRaw = await this.userRepository
+      .createQueryBuilder('user')
       .leftJoinAndSelect('user.projects', 'project')
       .leftJoinAndSelect('user.tasks', 'task')
       .leftJoinAndSelect('project.tasks', 'taskProject')
       .where('user.userId = :id ', { id })
       .getMany();
 
-
     // Biến lưu trữ kết quả
     let result = [];
 
     // Lặp qua các project
-    dataRaw[0].projects.forEach(project => {
+    dataRaw[0].projects.forEach((project) => {
       // Tính tổng thời gian từ các task trong project
       let totalMinutes = 0;
-      project.tasks.forEach(task => {
+      project.tasks.forEach((task) => {
         // const [hours, minutes, seconds] = task.timeSpent.split(":");
         // totalMinutes += parseInt(hours) * 60 + parseInt(minutes);
         totalMinutes += +task.timeSpent;
@@ -182,21 +189,20 @@ export class ReportService {
       result.push({
         date: formattedDate,
         project: project.projectName,
-        minutes: totalMinutes
+        minutes: totalMinutes,
       });
     });
 
     // Lặp qua các task không thuộc project
-    dataRaw[0].tasks.forEach(task => {
+    dataRaw[0].tasks.forEach((task) => {
       if (task.projectId === null) {
         // const [hours, minutes, seconds] = task.timeSpent.split(":");
         const taskName = task.taskName;
-        const existingTask = result.find(item => item.task === taskName);
+        const existingTask = result.find((item) => item.task === taskName);
         if (existingTask) {
           // Cộng thời gian vào task đã tồn tại trong kết quả
           existingTask.minutes += task.timeSpent;
         } else {
-
           const dateString: string = task.createdDate;
           // Tạo đối tượng Moment từ chuỗi ngày
           const date: moment.Moment = moment(dateString);
@@ -216,7 +222,7 @@ export class ReportService {
 
     return {
       statusCode: 200,
-      data: result ? result : {}
-    }
+      data: result ? result : {},
+    };
   }
 }

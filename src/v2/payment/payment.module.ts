@@ -9,6 +9,6 @@ import { DatabaseModule } from 'src/database/database.module';
 @Module({
   imports: [SharedModule, MailingModule, DatabaseModule],
   controllers: [PaymentController],
-  providers: [PaymentService, ...PaymentProvider]
+  providers: [PaymentService, ...PaymentProvider],
 })
-export class PaymentModule { }
+export class PaymentModule {}

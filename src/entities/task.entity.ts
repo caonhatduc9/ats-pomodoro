@@ -31,7 +31,9 @@ export class Task {
   @Column({
     type: 'enum',
     enum: TaskStatus,
-    default: TaskStatus.TODO, name: 'status', nullable: true
+    default: TaskStatus.TODO,
+    name: 'status',
+    nullable: true,
   })
   status: TaskStatus;
 

@@ -10,4 +10,4 @@ import { UserModule } from 'src/v1/user/user.module';
   controllers: [ReportController],
   providers: [ReportService, ...ReportProviders],
 })
-export class ReportModule { }
+export class ReportModule {}

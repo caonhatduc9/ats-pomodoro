@@ -31,8 +31,8 @@ import { SettingModule } from 'src/setting/setting.module';
     JwtStrategy,
     GoogleStrategy,
     AppleStrategy,
-    GithubStrategy
+    GithubStrategy,
   ],
   exports: [AuthService],
 })
-export class AuthModule { }
+export class AuthModule {}

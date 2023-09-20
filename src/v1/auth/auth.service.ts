@@ -25,7 +25,7 @@ export class AuthService {
     private jwtService: JwtService,
     private maillingService: MailingService,
     private settingService: SettingService,
-  ) { }
+  ) {}
 
   async validateUser(email: string, password: string): Promise<any> {
     console.log('check user', email, password);
@@ -90,8 +90,7 @@ export class AuthService {
         statusCode: 200,
         message: 'sign up success',
       };
-    }
-    else {
+    } else {
       throw new InternalServerErrorException();
     }
   }
@@ -167,8 +166,8 @@ export class AuthService {
           avatarURL: foundUser.avatarUrl,
           payment: 'free',
           // },
-        }
-      }
+        },
+      };
     } else {
       const createUser = new User();
       createUser.email = user.email;
@@ -192,8 +191,7 @@ export class AuthService {
             payment: 'free',
           },
         };
-      }
-      else {
+      } else {
         throw new InternalServerErrorException();
       }
     }
@@ -261,7 +259,6 @@ export class AuthService {
       throw new InternalServerErrorException();
     }
   }
-
 
   //github strategy login
   // async githubLogin(req: any) {
@@ -360,8 +357,7 @@ export class AuthService {
             payment: 'free',
           },
         };
-      }
-      else {
+      } else {
         throw new InternalServerErrorException();
       }
     }

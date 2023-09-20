@@ -57,6 +57,7 @@ export class AuthService {
         email: user.email,
         avatarURL: user.avatarUrl,
         payment: 'free',
+        isPremium: user.isPremium,
       },
     };
   }

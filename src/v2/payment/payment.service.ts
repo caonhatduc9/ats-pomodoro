@@ -1,3 +1,4 @@
+import { UserService } from './../../v1/user/user.service';
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { StripeEvent } from 'src/entities/stripeEvent.entity';
@@ -12,6 +13,7 @@ export class PaymentService {
   private stripe: Stripe;
   private endpointSecret: string;
   constructor(
+    private userService: UserService,
     private readonly sharedService: SharedService,
     private configService: ConfigService,
     @Inject('SUBSCRIPTION_REPOSITORY')
@@ -129,10 +131,6 @@ export class PaymentService {
         const subscriptionExpiresAt = new Date(
           subscription.current_period_end * 1000,
         );
-        console.log('subscription', subscription);
-        console.log('===plan', subscription.plan);
-        console.log('subscriptionCreatedAt', subscriptionCreatedAt);
-        console.log('subscriptionExpiresAt', subscriptionExpiresAt);
 
         payload.userId = dataObject.metadata.userId;
         payload.createdDate = subscriptionCreatedAt
@@ -146,17 +144,6 @@ export class PaymentService {
         payload.assetId = dataObject.metadata.assetId;
         payload.priceId = subscription.plan.id;
         payload.typeSubscription = subscription.plan.interval;
-
-        // const sessionWithLineItems = await this.stripe.checkout.sessions.retrieve(
-        //     event.data.object.id,
-        //     {
-        //         expand: ['line_items'],
-        //     }
-        // );
-        // const lineItems = sessionWithLineItems.line_items;
-        // console.log("sessionWithLineItems", sessionWithLineItems);
-        // console.log("lineItems", lineItems);
-        // return sessionWithLineItems;
         this.stripe.customers
           .retrieve(event.data.object.customer)
           .then(async (customer) => {
@@ -164,6 +151,11 @@ export class PaymentService {
               // CREATE ORDER
               console.log('customer', customer);
               this.saveSubscription(customer, payload);
+              const userId = (customer as Stripe.Customer).metadata?.userId;
+              const updateFields = {
+                isPremium: 1,
+              };
+              this.userService.updateUserFields(+userId, updateFields);
               const email = dataObject.customer_details.email;
               const subject = 'Pomodoro - Payment Success';
               const content =

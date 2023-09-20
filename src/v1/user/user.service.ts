@@ -29,4 +29,18 @@ export class UserService {
   async updatePasswordById(id: number, newPassword: string): Promise<any> {
     return this.userRepository.update(id, { password: newPassword });
   }
+
+  async updateUserFields(
+    userId: number,
+    updateFields: Record<string, any>,
+  ): Promise<any> {
+    const foundUser = await this.userRepository.findOneBy({ userId });
+    // Lặp qua các trường cần cập nhật và áp dụng chúng vào foundUser
+    for (const field in updateFields) {
+      if (updateFields.hasOwnProperty(field)) {
+        foundUser[field] = updateFields[field];
+      }
+    }
+    return await this.userRepository.save(foundUser);
+  }
 }

@@ -60,6 +60,9 @@ export class User {
   @Column('tinyint', { name: 'active', nullable: true })
   isActive: number | null;
 
+  @Column('tinyint', { name: 'isPremium', nullable: false })
+  isPremium: number | null;
+
   @Column({
     type: 'enum',
     enum: AuthProvider,

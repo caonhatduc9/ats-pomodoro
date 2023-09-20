@@ -133,9 +133,9 @@ export class SettingService {
       setting.longBreakInterval = createSettingDto.longBreakInterval || 4;
       setting.autoSwitchTask = createSettingDto.autoSwitchTask || 0;
       setting.darkmodeWhenRunning = createSettingDto.darkmodeWhenRunning || 0;
-      // setting.pomodoroColor = createSettingDto.pomodoroColor || '#ff0000';
-      // setting.shortBreakColor = createSettingDto.shortBreakColor || '#00ff00';
-      // setting.longBreakColor = createSettingDto.longBreakColor || '#0000ff';
+      setting.pomodoroColor = createSettingDto.pomodoroColor || '#ff0000';
+      setting.shortBreakColor = createSettingDto.shortBreakColor || '#00ff00';
+      setting.longBreakColor = createSettingDto.longBreakColor || '#0000ff';
 
       // Kiểm tra và cập nhật ringSound nếu ringSoundId được cung cấp và tồn tại trong bảng Asset
       if (createSettingDto.ringSoundId) {

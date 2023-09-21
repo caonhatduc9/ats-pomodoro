@@ -252,37 +252,18 @@ export class PaymentService {
           .catch((err) => console.log(err.message));
 
         break;
-      // ... handle other event types
-
-      // case 'customer.subscription.trial_will_end':
-      //   subscriptio = event.data.object;
-      //   status = subscriptio.status;
-      //   console.log(`Subscription status is ${status}.`);
-      //   // Then define and call a method to handle the subscription trial ending.
-      //   // handleSubscriptionTrialEnding(subscription);
-      //   break;
-      // case 'customer.subscription.deleted':
-      //   subscriptio = event.data.object;
-      //   status = subscriptio.status;
-      //   console.log(`Subscription status is ${status}.`);
-      //   // Then define and call a method to handle the subscription deleted.
-      //   // handleSubscriptionDeleted(subscriptionDeleted);
-      //   break;
-      // case 'customer.subscription.created':
-      //   subscriptio = event.data.object;
-      //   status = subscriptio.status;
-      //   console.log(`Subscription status is ${status}.`);
-      //   // Then define and call a method to handle the subscription created.
-      //   // handleSubscriptionCreated(subscription);
-      //   break;
       case 'customer.subscription.deleted':
-        subscriptio = event.data.object;
+        const subscriptionDeletedObject = event.data.object;
 
         console.log(
           '🚀 ~ file: payment.service.ts:286 ~ PaymentService ~ handleEvent ~ subscriptio:',
-          subscriptio,
+          subscription,
         );
-
+        const stripeSubscriptionId = subscriptionDeletedObject.id;
+        const foundSubscription = await this.subscriptionRepository.delete({
+          stripeSubscriptionId,
+        });
+        console.log("foundSubscription", foundSubscription);
         status = subscriptio.status;
         console.log(`Subscription status is ${status}.`);
         // Then define and call a method to handle the subscription update.

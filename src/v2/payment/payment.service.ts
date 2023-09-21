@@ -257,7 +257,7 @@ export class PaymentService {
 
         console.log(
           '🚀 ~ file: payment.service.ts:286 ~ PaymentService ~ handleEvent ~ subscriptio:',
-          subscription,
+          subscriptionDeletedObject,
         );
         const stripeSubscriptionId = subscriptionDeletedObject.id;
         const foundSubscription = await this.subscriptionRepository.delete({

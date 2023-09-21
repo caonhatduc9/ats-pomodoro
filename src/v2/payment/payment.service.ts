@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { Console, log } from 'console';
 import { StripeEvent } from 'src/entities/stripeEvent.entity';
 import { Subscription } from 'src/entities/subscription.entity';
+import { SettingService } from 'src/setting/setting.service';
 import { SharedService } from 'src/shared/shared.service';
 import { MailingService } from 'src/v1/mailing/mailing.service';
 import Stripe from 'stripe';
@@ -15,6 +16,7 @@ export class PaymentService {
   private endpointSecret: string;
   constructor(
     private userService: UserService,
+    private settingService: SettingService,
     private readonly sharedService: SharedService,
     private configService: ConfigService,
     @Inject('SUBSCRIPTION_REPOSITORY')
@@ -260,18 +262,37 @@ export class PaymentService {
           subscriptionDeletedObject,
         );
         const stripeSubscriptionId = subscriptionDeletedObject.id;
-        const foundSubscription = await this.subscriptionRepository.delete({
+        const foundSubscription = await this.subscriptionRepository.findOneBy({
           stripeSubscriptionId,
         });
-        console.log("foundSubscription", foundSubscription);
-        status = subscriptio.status;
+
+        const userId = foundSubscription.userId;
+        const updateFields = {
+          isPremium: 0,
+        };
+        this.userService.updateUserFields(+userId, updateFields);
+
+        const listAssetDefault = await this.sharedService.getAssetDefaults();
+
+        const imageIndex = listAssetDefault.findIndex(asset => asset.type === "IMAGE");
+        const audioIndex = listAssetDefault.findIndex(asset => asset.type === "AUDIO");
+        const musicIndex = listAssetDefault.findIndex(asset => asset.type === "MUSIC");
+        const settingUpdateFields = {
+          currentBackgroundSelected: listAssetDefault[imageIndex].assetId,
+          backgroundMusic: listAssetDefault[musicIndex].assetId,
+          ringSound: listAssetDefault[audioIndex].assetId,
+        };
+        this.settingService.updateSettingFields(+userId, settingUpdateFields);
+
+        const deletedSubscription = await this.subscriptionRepository.delete({
+          stripeSubscriptionId,
+        });
+        console.log("deletedSubscription", deletedSubscription);
+        status = subscriptionDeletedObject.status;
         console.log(`Subscription status is ${status}.`);
-        // Then define and call a method to handle the subscription update.
-        // handleSubscriptionUpdated(subscription);
         break;
       default:
         console.log(`Unhandled event type ${event.type}`);
-      // console.log('==EVENT', event.data.object);
     }
   }
 }

@@ -10,7 +10,7 @@ export class SettingService {
     @Inject('SETTING_REPOSITORY')
     private settingRepository: Repository<Setting>,
     @Inject('ASSET_REPOSITORY') private assetRepository: Repository<Asset>,
-  ) {}
+  ) { }
 
   async findByUserId(id: number) {
     const data = await this.settingRepository
@@ -282,5 +282,19 @@ export class SettingService {
       statusCode: 200,
       meesage: 'create success',
     };
+  }
+
+  async updateSettingFields(
+    userId: number,
+    updateFields: Record<string, any>,
+  ): Promise<any> {
+    const foundSetting = await this.settingRepository.findOneBy({ userId });
+    // Lặp qua các trường cần cập nhật và áp dụng chúng vào foundUser
+    for (const field in updateFields) {
+      if (updateFields.hasOwnProperty(field)) {
+        foundSetting[field] = updateFields[field];
+      }
+    }
+    return await this.settingRepository.save(foundSetting);
   }
 }

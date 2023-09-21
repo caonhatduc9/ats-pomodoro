@@ -27,7 +27,7 @@ export class SettingService {
       .where('user.userId = :id', { id })
       .getOne();
 
-    const listAsset = await this.assetRepository
+    let listAsset = await this.assetRepository
       .createQueryBuilder('asset')
       .select([
         'asset.assetId',
@@ -41,14 +41,8 @@ export class SettingService {
 
     if (data && data.user.subscriptions) {
       data.user.subscriptions.forEach((subscription) => {
-        const matchingAssetIndex = listAsset.findIndex(
-          (asset) => asset.assetId === subscription.assetId,
-        );
-        if (
-          matchingAssetIndex !== -1 &&
-          new Date(subscription.endDate) > new Date()
-        ) {
-          listAsset[matchingAssetIndex].isFree = 1;
+        if (new Date(subscription.endDate) > new Date()) {
+          listAsset = listAsset.map((asset) => ({ ...asset, isFree: 1 }));
         }
       });
     }

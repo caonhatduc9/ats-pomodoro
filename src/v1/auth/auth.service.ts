@@ -43,7 +43,7 @@ export class AuthService {
   }
 
   //local strategy login
-  async login(user: any) {
+  async login(user: User) {
     const foundUser = await this.userService.findUserByEmail(user.email);
     foundUser.authProvider = AuthProvider.LOCAL;
     await this.userService.create(foundUser);
@@ -58,6 +58,7 @@ export class AuthService {
         avatarURL: user.avatarUrl,
         payment: 'free',
         isPremium: user.isPremium,
+        // currentSubscription: user.ubscriptions,
       },
     };
   }

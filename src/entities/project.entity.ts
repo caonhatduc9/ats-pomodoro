@@ -30,7 +30,9 @@ export class Project {
   @Column({
     type: 'enum',
     enum: ProjectStatus,
-    default: ProjectStatus.TODO, name: 'status', nullable: true
+    default: ProjectStatus.TODO,
+    name: 'status',
+    nullable: true,
   })
   status: ProjectStatus;
 

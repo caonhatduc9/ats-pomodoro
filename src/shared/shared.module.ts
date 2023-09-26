@@ -5,11 +5,9 @@ import { SharedProviders } from './provider/shared.providers';
 import { DatabaseModule } from 'src/database/database.module';
 
 @Module({
-  imports: [
-    DatabaseModule,
-  ],
+  imports: [DatabaseModule],
   controllers: [SharedController],
   providers: [SharedService, ...SharedProviders],
   exports: [SharedService, ...SharedProviders],
 })
-export class SharedModule { }
+export class SharedModule {}

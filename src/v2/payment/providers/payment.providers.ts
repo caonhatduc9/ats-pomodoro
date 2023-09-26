@@ -4,12 +4,14 @@ import { Subscription } from 'src/entities/subscription.entity';
 export const PaymentProvider = [
   {
     provide: 'STRIPE_EVENT_REPOSITORY',
-    useFactory: (dataSource: DataSource) => dataSource.getRepository(StripeEvent),
+    useFactory: (dataSource: DataSource) =>
+      dataSource.getRepository(StripeEvent),
     inject: ['DATA_SOURCE'],
   },
   {
     provide: 'SUBSCRIPTION_REPOSITORY',
-    useFactory: (dataSource: DataSource) => dataSource.getRepository(Subscription),
+    useFactory: (dataSource: DataSource) =>
+      dataSource.getRepository(Subscription),
     inject: ['DATA_SOURCE'],
   },
 ];

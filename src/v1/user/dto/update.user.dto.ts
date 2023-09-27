@@ -13,6 +13,10 @@ export class UpdateUserDto {
   @IsOptional()
   gender: string;
 
+  @IsString()
+  @IsOptional()
+  birthDate: string;
+
   @IsOptional()
   avatar: Express.Multer.File; // This field will hold the uploaded avatar file
 }

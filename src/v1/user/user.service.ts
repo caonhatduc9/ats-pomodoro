@@ -69,8 +69,13 @@ export class UserService {
     userId: number,
     updateFields: Record<string, any>,
   ): Promise<any> {
+    console.log(
+      '🚀 ~ file: user.service.ts:72 ~ UserService ~ updateFields:',
+      updateFields,
+    );
     const foundUser = await this.userRepository.findOneBy({ userId });
     // Lặp qua các trường cần cập nhật và áp dụng chúng vào foundUser
+
     for (const field in updateFields) {
       if (updateFields.hasOwnProperty(field)) {
         foundUser[field] = updateFields[field];

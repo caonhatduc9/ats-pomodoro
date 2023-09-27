@@ -37,6 +37,9 @@ export class Asset {
   @Column('float', { name: 'price', default: 0 })
   price: number;
 
+  @Column('text', { name: 'thumbnail' })
+  thumbnail: string;
+
   @OneToMany(() => Setting, (setting) => setting.backgroundMusic2)
   settings: Setting[];
 

@@ -10,7 +10,7 @@ export class SettingService {
     @Inject('SETTING_REPOSITORY')
     private settingRepository: Repository<Setting>,
     @Inject('ASSET_REPOSITORY') private assetRepository: Repository<Asset>,
-  ) { }
+  ) {}
 
   async findByUserId(id: number) {
     const data = await this.settingRepository
@@ -36,6 +36,7 @@ export class SettingService {
         'asset.type',
         'asset.assetUrl',
         'asset.isFree',
+        'asset.thumbnail',
       ])
       .getMany();
 

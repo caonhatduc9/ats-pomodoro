@@ -50,7 +50,7 @@ export class Task {
   })
   actualPomodoro: number | null;
 
-  @Column('float', { name: 'timeSpent', nullable: true })
+  @Column('float', { name: 'timeSpent', nullable: true, default: 0 })
   timeSpent: number | null;
 
   @Column('text', { name: 'note', nullable: true })

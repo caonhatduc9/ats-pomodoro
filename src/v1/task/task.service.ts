@@ -159,6 +159,7 @@ export class TaskService {
           note: body.note,
           actualPomodoro: body.actualPomodoro,
           modifiedDate: new Date().toISOString().slice(0, 10),
+          timeSpent: body.timeSpent,
           status: body.status,
         });
         console.log(body.taskId);

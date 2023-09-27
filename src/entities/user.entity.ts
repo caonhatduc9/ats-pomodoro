@@ -57,7 +57,7 @@ export class User {
   @Column('tinyint', { name: 'active', nullable: true })
   isActive: number | null;
 
-  @Column('tinyint', { name: 'isPremium', nullable: true })
+  @Column('tinyint', { name: 'isPremium', nullable: true, default: 0 })
   isPremium: number | null;
 
   @Column({

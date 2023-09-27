@@ -229,6 +229,10 @@ export class PaymentService {
               );
 
               const savedSub = await this.saveSubscription(customer, payload);
+              console.log(
+                '🚀 ~ file: payment.service.ts:232 ~ PaymentService ~ .then ~ savedSub:',
+                savedSub,
+              );
 
               // const foundUser = await this.userService.findOne(+userId);
 
@@ -274,9 +278,15 @@ export class PaymentService {
 
         const listAssetDefault = await this.sharedService.getAssetDefaults();
 
-        const imageIndex = listAssetDefault.findIndex(asset => asset.type === "IMAGE");
-        const audioIndex = listAssetDefault.findIndex(asset => asset.type === "AUDIO");
-        const musicIndex = listAssetDefault.findIndex(asset => asset.type === "MUSIC");
+        const imageIndex = listAssetDefault.findIndex(
+          (asset) => asset.type === 'IMAGE',
+        );
+        const audioIndex = listAssetDefault.findIndex(
+          (asset) => asset.type === 'AUDIO',
+        );
+        const musicIndex = listAssetDefault.findIndex(
+          (asset) => asset.type === 'MUSIC',
+        );
         const settingUpdateFields = {
           currentBackgroundSelected: listAssetDefault[imageIndex].assetId,
           backgroundMusic: listAssetDefault[musicIndex].assetId,
@@ -287,7 +297,7 @@ export class PaymentService {
         const deletedSubscription = await this.subscriptionRepository.delete({
           stripeSubscriptionId,
         });
-        console.log("deletedSubscription", deletedSubscription);
+        console.log('deletedSubscription', deletedSubscription);
         status = subscriptionDeletedObject.status;
         console.log(`Subscription status is ${status}.`);
         break;

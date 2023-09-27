@@ -56,6 +56,8 @@ export class AuthService {
         userName: user.username,
         email: user.email,
         avatarURL: user.avatarUrl,
+        gender: user.gender,
+        birthDate: user.birthDate,
         payment: 'free',
         isPremium: user.isPremium,
         // currentSubscription: user.ubscriptions,
@@ -165,8 +167,10 @@ export class AuthService {
           access_token: this.jwtService.sign(payload),
           email: foundUser.email,
           userName: foundUser.username,
+          gender: foundUser.gender,
           avatarURL: foundUser.avatarUrl,
           payment: 'free',
+          isPremium: foundUser.isPremium,
           // },
         },
       };
@@ -332,6 +336,8 @@ export class AuthService {
           email: foundUser.email,
           userName: foundUser.username,
           avatarURL: foundUser.avatarUrl,
+          gender: foundUser.gender,
+          birthDate: foundUser.birthDate,
           payment: 'free',
         },
       };

@@ -1,0 +1,28 @@
+name: Build and Deploy
+on:
+  push:
+    branches:
+      - v2_dev
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout V2_dev Branch
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: v2_dev
+      - name: executing remote ssh
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }} # \
+          username: ${{ secrets.SSH_USERNAME }} # |-> login to server
+          key: ${{ secrets.SSH_PRIVATE_KEY }} # password login to server
+          script: |
+            cd ${{secrets.PATH_BE}}
+            ls -la
+            git status
+            git pull
+            npm i
+            npm run build
+            pm2 reload ${{ secrets.PM2_PROCESS_NAME_V2DEV}}

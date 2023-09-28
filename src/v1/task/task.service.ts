@@ -127,6 +127,11 @@ export class TaskService {
   }
 
   async updateTaskByUserId(body: any, userId: number) {
+    console.log(
+      '🚀 ~ file: task.service.ts:130 ~ TaskService ~ updateTaskByUserId ~ body:',
+      body,
+    );
+
     const foundTask = await this.taskRepository.findOne({
       where: { taskId: body.taskId },
     });
@@ -197,6 +202,7 @@ export class TaskService {
             note: body.note,
             modifiedDate: new Date().toISOString().slice(0, 10),
             status: body.status,
+            timeSpent: body.timeSpent,
           });
           const savedTask = await this.taskRepository.save(newTask);
           return {

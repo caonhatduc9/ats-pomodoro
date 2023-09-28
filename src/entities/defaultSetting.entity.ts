@@ -82,6 +82,9 @@ export class DefaultSetting {
   @Column('float', { name: 'longBreakTime', nullable: true, precision: 12 })
   longBreakTime: number | null;
 
+  @Column('tinyint', { name: 'isAceptAds', nullable: true, default: 0 })
+  isAceptAds: number | null;
+
   @ManyToOne(() => Asset, (asset) => asset.defaultSettings, {
     onDelete: 'NO ACTION',
     onUpdate: 'NO ACTION',

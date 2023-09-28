@@ -82,6 +82,9 @@ export class Setting {
   })
   shortBreakColor: string | null;
 
+  @Column('tinyint', { name: 'isAceptAds', nullable: true, default: 0 })
+  isAceptAds: number | null;
+
   @Column('varchar', {
     name: 'longBreakColor',
     nullable: true,

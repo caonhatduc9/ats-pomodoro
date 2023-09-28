@@ -105,6 +105,7 @@ export class SettingService {
       pomodoroColor: data['pomodoroColor'],
       shortBreakColor: data['shortBreakColor'],
       longBreakColor: data['longBreakColor'],
+      isAceptAds: data['isAceptAds'],
       assets,
     };
 
@@ -386,6 +387,7 @@ export class SettingService {
       pomodoroColor: data['pomodoroColor'],
       shortBreakColor: data['shortBreakColor'],
       longBreakColor: data['longBreakColor'],
+      isAceptAds: data['isAceptAds'],
       assets,
     };
 

@@ -235,6 +235,7 @@ export class SettingService {
       .createQueryBuilder('asset')
       .where('asset.isDefault = :value', { value: 1 })
       .getMany();
+    const defaultSetting = await this.defaultSettingRepository.find();
 
     const defaultMusic = assets.find(
       (item) => item.type === 'MUSIC' && item.isDefault === 1,
@@ -246,7 +247,7 @@ export class SettingService {
       (item) => item.type === 'IMAGE' && item.isDefault === 1,
     );
     console.log('default music ', defaultMusic);
-    const defaultPomodoroTime = 25;
+    const defaultPomodoroTime = 10;
     const defaultRingSoundVolumn = 50;
     const defaultRingSoundRepeat = 1;
     const defaultBackgroundMusicVolumn = 50;
@@ -302,7 +303,95 @@ export class SettingService {
     return await this.settingRepository.save(foundSetting);
   }
   async findDefaultSetting(): Promise<any> {
-    const data = await this.defaultSettingRepository.find();
-    return data;
+    const data = await this.defaultSettingRepository
+      .createQueryBuilder('defaultSetting')
+      .leftJoinAndSelect(
+        'defaultSetting.ringSoundSelected2',
+        'ringSoundSelected2',
+      )
+      // .leftJoinAndSelect('setting.longBreakBackground2', 'longBreakBackground2')
+      .leftJoinAndSelect(
+        'defaultSetting.backgroundMusicSelected2',
+        'backgroundMusicSelected2',
+      )
+      .leftJoinAndSelect(
+        'defaultSetting.currentBackgroundSelected2',
+        'currentBackgroundSelected2',
+      )
+      .getOne();
+    // return data;
+    let listAsset = await this.assetRepository
+      .createQueryBuilder('asset')
+      .select([
+        'asset.assetId',
+        'asset.assetName',
+        'asset.author',
+        'asset.type',
+        'asset.assetUrl',
+        'asset.isFree',
+        'asset.thumbnail',
+      ])
+      .getMany();
+
+    const ringSounds = [];
+    const backgroundMusics = [];
+    const backgroundImages = [];
+
+    listAsset.forEach((item) => {
+      if (item.type === 'AUDIO') {
+        ringSounds.push(item);
+      }
+      if (item.type === 'MUSIC') {
+        backgroundMusics.push(item);
+      }
+      if (item.type === 'IMAGE') {
+        backgroundImages.push(item);
+      }
+    });
+    const assets = {
+      ringSounds,
+      backgroundMusics,
+      backgroundImages,
+    };
+    const cleanedData = {
+      pomodoroTime: data['pomodoroTime'],
+      shortBreakTime: data['shortBreakTime'],
+      longBreakTime: data['longBreakTime'],
+      autoStartBreak: data['autoStartBreak'],
+      autoStartPomodoro: data['autoStartPomodoro'],
+      longBreakInterval: data['longBreakInterval'],
+      autoSwitchTask: data['autoSwitchTask'],
+      ringSound: {
+        assetId: data['ringSoundSelected2']['assetId'],
+        assetName: data['ringSoundSelected2']['assetName'],
+        type: data['ringSoundSelected2']['type'],
+        assetUrl: data['ringSoundSelected2']['assetUrl'],
+      },
+      ringSoundVolumn: data['ringSoundVolumn'],
+      ringSoundRepeat: data['ringSoundRepeat'],
+      backgroundMusic: {
+        assetId: data['backgroundMusicSelected2']['assetId'],
+        assetName: data['backgroundMusicSelected2']['assetName'],
+        type: data['backgroundMusicSelected2']['type'],
+        assetUrl: data['backgroundMusicSelected2']['assetUrl'],
+      },
+      backgroundMusicVolumn: data['backgroundMusicVolumn'],
+      currentBackground: {
+        assetId: data['currentBackgroundSelected2']['assetId'],
+        assetName: data['currentBackgroundSelected2']['assetName'],
+        type: data['currentBackgroundSelected2']['type'],
+        assetUrl: data['currentBackgroundSelected2']['assetUrl'],
+      },
+      darkmodeWhenRunning: data['darkmodeWhenRunning'],
+      pomodoroColor: data['pomodoroColor'],
+      shortBreakColor: data['shortBreakColor'],
+      longBreakColor: data['longBreakColor'],
+      assets,
+    };
+
+    return {
+      status: 'success',
+      data: cleanedData ? cleanedData : {},
+    };
   }
 }

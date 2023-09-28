@@ -4,11 +4,14 @@ import { UpdateSettingDto } from './dto/update-setting.dto';
 import { Repository } from 'typeorm';
 import { Setting } from '../entities/setting.entity';
 import { Asset } from '../entities/asset.entity';
+import { DefaultSetting } from 'src/entities/defaultSetting.entity';
 @Injectable()
 export class SettingService {
   constructor(
     @Inject('SETTING_REPOSITORY')
     private settingRepository: Repository<Setting>,
+    @Inject('DEFAULT_SETTING_REPOSITORY')
+    private defaultSettingRepository: Repository<DefaultSetting>,
     @Inject('ASSET_REPOSITORY') private assetRepository: Repository<Asset>,
   ) {}
 
@@ -297,5 +300,9 @@ export class SettingService {
       }
     }
     return await this.settingRepository.save(foundSetting);
+  }
+  async findDefaultSetting(): Promise<any> {
+    const data = await this.defaultSettingRepository.find();
+    return data;
   }
 }

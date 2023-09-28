@@ -109,7 +109,7 @@ export class SettingService {
     };
 
     return {
-      status: 'success',
+      statusCode: 200,
       data: cleanedData ? cleanedData : {},
     };
   }
@@ -390,7 +390,7 @@ export class SettingService {
     };
 
     return {
-      status: 'success',
+      statusCode: 200,
       data: cleanedData ? cleanedData : {},
     };
   }

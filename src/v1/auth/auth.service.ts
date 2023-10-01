@@ -60,6 +60,7 @@ export class AuthService {
         birthDate: user.birthDate,
         payment: 'free',
         isPremium: user.isPremium,
+        phoneNumber: user.phoneNumber,
         // currentSubscription: user.ubscriptions,
       },
     };
@@ -171,6 +172,7 @@ export class AuthService {
           avatarURL: foundUser.avatarUrl,
           payment: 'free',
           isPremium: foundUser.isPremium,
+          phoneNumber: foundUser.phoneNumber,
           // },
         },
       };
@@ -339,6 +341,7 @@ export class AuthService {
           gender: foundUser.gender,
           birthDate: foundUser.birthDate,
           payment: 'free',
+          phoneNumber: foundUser.phoneNumber,
         },
       };
       // }

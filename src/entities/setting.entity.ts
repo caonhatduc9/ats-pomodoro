@@ -93,6 +93,46 @@ export class Setting {
   })
   longBreakColor: string | null;
 
+  @Column('tinyint', {
+    name: 'isPlayBackgroundMusic',
+    nullable: true,
+    default: () => 1,
+  })
+  isPlayBackgroundMusic: number | null;
+
+  @Column('varchar', {
+    name: 'pomodoroStrokerColor',
+    nullable: true,
+    length: 10,
+    default: () => '#ffffffff',
+  })
+  pomodoroStrokerColor: string | null;
+
+  @Column('varchar', {
+    name: 'shortBreakStrokerColor',
+    nullable: true,
+    length: 10,
+    default: () => '#ffffffff',
+  })
+  shortBreakStrokerColor: string | null;
+
+  @Column('varchar', {
+    name: 'longBreakStrokerColor',
+    nullable: true,
+    length: 10,
+    default: () => '#ffffffff',
+  })
+  longBreakStrokerColor: string | null;
+
+  @Column('varchar', {
+    name: 'backgroundColorLinear',
+    nullable: true,
+    length: 100,
+    default: () =>
+      '{"begin":[-0.97,-0.81],"end":[1,1.02],"colors":["#0cfafafa","#19000000"],"stops":[0,1]}',
+  })
+  backgroundColorLinear: string | null;
+
   @ManyToOne(() => Asset, (asset) => asset.settings, {
     onDelete: 'RESTRICT',
     onUpdate: 'RESTRICT',
@@ -101,15 +141,6 @@ export class Setting {
     { name: 'backgroundMusicSelected', referencedColumnName: 'assetId' },
   ])
   backgroundMusic2: Asset;
-
-  // @ManyToOne(() => Asset, (asset) => asset.settings2, {
-  //   onDelete: 'RESTRICT',
-  //   onUpdate: 'RESTRICT',
-  // })
-  // @JoinColumn([
-  //   { name: 'longBreakBackgroundSelected', referencedColumnName: 'assetId' },
-  // ])
-  // longBreakBackground2: Asset;
 
   @ManyToOne(() => Asset, (asset) => asset.settings3, {
     onDelete: 'RESTRICT',

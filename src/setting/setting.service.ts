@@ -106,6 +106,11 @@ export class SettingService {
       shortBreakColor: data['shortBreakColor'],
       longBreakColor: data['longBreakColor'],
       isAceptAds: data['isAceptAds'],
+      isPlaybackgroundMusic: data['isPlaybackgroundMusic'],
+      pomodoroStrokerColor: data['pomodoroStrokerColor'],
+      shortBreakStrokerColor: data['shortBreakStrokerColor'],
+      longBreakStrokerColor: data['longBreakStrokerColor'],
+      backgroundColorLinear: JSON.parse(data['backgroundColorLinear']),
       assets,
     };
 
@@ -135,6 +140,17 @@ export class SettingService {
       setting.pomodoroColor = createSettingDto.pomodoroColor || '#ff0000';
       setting.shortBreakColor = createSettingDto.shortBreakColor || '#00ff00';
       setting.longBreakColor = createSettingDto.longBreakColor || '#0000ff';
+      setting.isAceptAds = createSettingDto.isAceptAds || 0;
+      setting.isPlayBackgroundMusic =
+        createSettingDto.isPlayBackgroundMusic || 0;
+      setting.pomodoroStrokerColor =
+        createSettingDto.pomodoroStrokerColor || '#ff0000';
+      setting.shortBreakStrokerColor =
+        createSettingDto.shortBreakStrokerColor || '#ffffffff';
+      setting.longBreakStrokerColor =
+        createSettingDto.longBreakStrokerColor || '#ffffffff';
+      setting.backgroundColorLinear =
+        JSON.stringify(createSettingDto.backgroundColorLinear) || '#0000ff';
 
       // Kiểm tra và cập nhật ringSound nếu ringSoundId được cung cấp và tồn tại trong bảng Asset
       if (createSettingDto.ringSoundId) {
@@ -237,6 +253,10 @@ export class SettingService {
       .where('asset.isDefault = :value', { value: 1 })
       .getMany();
     const defaultSetting = await this.defaultSettingRepository.find();
+    console.log(
+      '🚀 ~ file: setting.service.ts:256 ~ SettingService ~ createDefaultSetting ~ defaultSetting:',
+      defaultSetting,
+    );
 
     const defaultMusic = assets.find(
       (item) => item.type === 'MUSIC' && item.isDefault === 1,
@@ -263,17 +283,17 @@ export class SettingService {
     // return assets;
     const newSetting = this.settingRepository.create({
       userId,
-      pomodoroTime: defaultPomodoroTime,
-      ringSoundVolumn: defaultRingSoundVolumn,
-      ringSoundRepeat: defaultRingSoundRepeat,
-      backgroundMusicVolumn: defaultBackgroundMusicVolumn,
-      shortBreakTime: defaultShortBreakTime,
-      longBreakTime: defaultLongBreakTime,
-      autoStartBreak: defaultAutoStartBreak,
-      autoStartPomodoro: defaultAutoStartPomodoro,
-      longBreakInterval: defaultLongBreakInterval,
-      autoSwitchTask: defaultAutoSwitchTask,
-      darkmodeWhenRunning: defaultDarkmodeWhenRunning,
+      pomodoroTime: defaultSetting[0].pomodoroTime, //
+      ringSoundVolumn: defaultSetting[0].ringSoundVolumn,
+      ringSoundRepeat: defaultSetting[0].ringSoundRepeat,
+      backgroundMusicVolumn: defaultSetting[0].backgroundMusicVolumn,
+      shortBreakTime: defaultSetting[0].shortBreakTime,
+      longBreakTime: defaultSetting[0].longBreakTime,
+      autoStartBreak: defaultSetting[0].autoStartBreak,
+      autoStartPomodoro: defaultSetting[0].autoStartPomodoro,
+      longBreakInterval: defaultSetting[0].longBreakInterval,
+      autoSwitchTask: defaultSetting[0].autoSwitchTask,
+      darkmodeWhenRunning: defaultSetting[0].darkmodeWhenRunning,
       ringSound: defaultAudio.assetId,
       backgroundMusic: defaultMusic.assetId,
       currentBackgroundSelected: defaultImage.assetId,
@@ -388,6 +408,11 @@ export class SettingService {
       shortBreakColor: data['shortBreakColor'],
       longBreakColor: data['longBreakColor'],
       isAceptAds: data['isAceptAds'],
+      isPlaybackgroundMusic: data['isPlaybackgroundMusic'],
+      pomodoroStrokerColor: data['pomodoroStrokerColor'],
+      shortBreakStrokerColor: data['shortBreakStrokerColor'],
+      longBreakStrokerColor: data['longBreakStrokerColor'],
+      backgroundColorLinear: JSON.parse(data['backgroundColorLinear']),
       assets,
     };
 

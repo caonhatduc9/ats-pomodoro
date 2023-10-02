@@ -30,6 +30,15 @@ export class SettingController {
     // return req.user;
     return this.settingService.create(req.user.userId, body);
   }
+  @UseGuards(JwtAuthGuard)
+  @Patch('updateSettingByUserId')
+  updateSettingByUserId(@Req() req: any, @Body() body: any) {
+    const updateSettingField = { ...body };
+    return this.settingService.updateSettingFields(
+      req.user.userId,
+      updateSettingField,
+    );
+  }
   @Get('getSetting')
   getDefaultSetting() {
     return this.settingService.findDefaultSetting();

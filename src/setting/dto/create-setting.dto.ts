@@ -16,4 +16,10 @@ export class CreateSettingDto {
   pomodoroColor: string;
   shortBreakColor: string;
   longBreakColor: string;
+  isAceptAds: number;
+  isPlayBackgroundMusic: number;
+  pomodoroStrokerColor: string;
+  shortBreakStrokerColor: string;
+  longBreakStrokerColor: string;
+  backgroundColorLinear: any;
 }

@@ -81,6 +81,7 @@ export class ReportService {
     const focusTime: FocusedPomodoro[] = dataRaw[0].focusedPomodoros;
     const projects: Project[] = dataRaw[0].projects;
 
+    // eslint-disable-next-line @typescript-eslint/no-inferrable-types
     let totalMinutes: number = 0;
 
     // Lọc dữ liệu theo tuần

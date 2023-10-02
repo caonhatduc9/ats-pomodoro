@@ -85,6 +85,46 @@ export class DefaultSetting {
   @Column('tinyint', { name: 'isAceptAds', nullable: true, default: 0 })
   isAceptAds: number | null;
 
+  @Column('tinyint', {
+    name: 'isPlayBackgroundMusic',
+    nullable: true,
+    default: () => 1,
+  })
+  isPlayBackgroundMusic: number | null;
+
+  @Column('varchar', {
+    name: 'pomodoroStrokerColor',
+    nullable: true,
+    length: 10,
+    default: () => '#ffffffff',
+  })
+  pomodoroStrokerColor: string | null;
+
+  @Column('varchar', {
+    name: 'shortBreakStrokerColor',
+    nullable: true,
+    length: 10,
+    default: () => '#ffffffff',
+  })
+  shortBreakStrokerColor: string | null;
+
+  @Column('varchar', {
+    name: 'longBreakStrokerColor',
+    nullable: true,
+    length: 10,
+    default: () => '#ffffffff',
+  })
+  longBreakStrokerColor: string | null;
+
+  @Column('varchar', {
+    name: 'backgroundColorLinear',
+    nullable: true,
+    length: 100,
+    default: () =>
+      '{"begin":[-0.97,-0.81],"end":[1,1.02],"colors":["#0cfafafa","#19000000"],"stops":[0,1]}',
+  })
+  backgroundColorLinear: string | null;
+
   @ManyToOne(() => Asset, (asset) => asset.defaultSettings, {
     onDelete: 'NO ACTION',
     onUpdate: 'NO ACTION',

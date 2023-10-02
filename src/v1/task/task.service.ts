@@ -7,6 +7,8 @@ import {
 import { Project, ProjectStatus } from '../../entities/project.entity';
 import { Task, TaskStatus } from '../../entities/task.entity';
 import { Repository } from 'typeorm';
+import { async } from 'rxjs';
+import { Category } from 'src/entities/category.entity';
 
 @Injectable()
 export class TaskService {
@@ -14,6 +16,8 @@ export class TaskService {
     @Inject('PROJECT_REPOSITORY')
     private projectRepository: Repository<Project>,
     @Inject('TASK_REPOSITORY') private taskRepository: Repository<Task>,
+    @Inject('CATEGORY_REPOSITORY')
+    private categoryRepository: Repository<Category>,
   ) {}
 
   async createTask(userId: number, body: any, project: string) {
@@ -94,6 +98,7 @@ export class TaskService {
         note: body.note,
         createdDate: new Date().toISOString().slice(0, 10),
         status: body.status,
+        categoryId: body.categoryId,
       });
       const savedTask = await this.taskRepository.save(newTask);
       return savedTask;
@@ -108,6 +113,7 @@ export class TaskService {
     const data = await this.taskRepository
       .createQueryBuilder('task')
       .leftJoinAndSelect('task.project', 'project')
+      .leftJoinAndSelect('task.category', 'category')
       .where('task.userId = :id', { id })
       // .andWhere('task.status != :status', { status: TaskStatus.DELETE })
       .getMany();
@@ -121,6 +127,11 @@ export class TaskService {
   }
 
   async updateTaskByUserId(body: any, userId: number) {
+    console.log(
+      '🚀 ~ file: task.service.ts:130 ~ TaskService ~ updateTaskByUserId ~ body:',
+      body,
+    );
+
     const foundTask = await this.taskRepository.findOne({
       where: { taskId: body.taskId },
     });
@@ -159,6 +170,7 @@ export class TaskService {
           note: body.note,
           actualPomodoro: body.actualPomodoro,
           modifiedDate: new Date().toISOString().slice(0, 10),
+          timeSpent: body.timeSpent,
           status: body.status,
         });
         console.log(body.taskId);
@@ -190,6 +202,7 @@ export class TaskService {
             note: body.note,
             modifiedDate: new Date().toISOString().slice(0, 10),
             status: body.status,
+            timeSpent: body.timeSpent,
           });
           const savedTask = await this.taskRepository.save(newTask);
           return {
@@ -239,6 +252,14 @@ export class TaskService {
     return {
       statusCode: 200,
       message: 'delete success',
+    };
+  }
+  async getListCategory(): Promise<any> {
+    const data = await this.categoryRepository.find();
+    // return data;
+    return {
+      statusCode: 200,
+      data: data ? data : [],
     };
   }
 }

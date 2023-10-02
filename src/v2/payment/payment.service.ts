@@ -1,7 +1,9 @@
+import { UserService } from './../../v1/user/user.service';
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { StripeEvent } from 'src/entities/stripeEvent.entity';
 import { Subscription } from 'src/entities/subscription.entity';
+import { SettingService } from 'src/setting/setting.service';
 import { SharedService } from 'src/shared/shared.service';
 import { MailingService } from 'src/v1/mailing/mailing.service';
 import Stripe from 'stripe';
@@ -12,6 +14,8 @@ export class PaymentService {
   private stripe: Stripe;
   private endpointSecret: string;
   constructor(
+    private userService: UserService,
+    private settingService: SettingService,
     private readonly sharedService: SharedService,
     private configService: ConfigService,
     @Inject('SUBSCRIPTION_REPOSITORY')
@@ -31,26 +35,70 @@ export class PaymentService {
   }
 
   async createCheckoutSession(payload: any): Promise<any> {
-    try {
-      const customer = await this.stripe.customers.create({
-        name: payload.username,
-        email: payload.email,
-        metadata: {
-          userId: payload.userId,
-        },
-      });
+    console.log('payload', payload);
+    const currentSubscription = payload?.currentSubscription ?? null;
 
+    console.log(
+      '🚀 ~ file: payment.service.ts:45 ~ PaymentService ~ createCheckoutSession ~ currentSubscription:',
+      currentSubscription,
+    );
+
+    const { username, email, userId, priceId } = payload;
+
+    console.log(
+      '🚀 ~ file: payment.service.ts:46 ~ PaymentService ~ createCheckoutSession ~ { email, userId }:',
+      { email, userId },
+    );
+    try {
+      let customer: Stripe.Response<Stripe.Customer | Stripe.DeletedCustomer>;
+      if (payload && currentSubscription) {
+        const foundSubscription = await this.subscriptionRepository.findOne({
+          where: { subscriptionId: currentSubscription },
+        });
+
+        console.log(
+          '🚀 ~ file: payment.service.ts:57 ~ PaymentService ~ createCheckoutSession ~ foundSubscription:',
+          foundSubscription,
+        );
+
+        const customerId = foundSubscription.customerId;
+        console.log('customerId after found 53', customerId);
+
+        if (customerId) {
+          customer = await this.stripe.customers.retrieve(customerId);
+
+          console.log(
+            '🚀 ~ file: payment.service.ts:74 ~ PaymentService ~ createCheckoutSession ~ customer:',
+            customer,
+          );
+        }
+      } else {
+        customer = await this.stripe.customers.create({
+          name: username,
+          email: email,
+          metadata: {
+            userId: userId,
+          },
+        });
+
+        console.log(
+          '🚀 ~ file: payment.service.ts:79 ~ PaymentService ~ createCheckoutSession ~ customer:',
+          customer,
+        );
+      }
+      // return 0;
       const session = await this.stripe.checkout.sessions.create({
         payment_method_types: ['card'],
         line_items: [
           {
-            price: payload.priceId,
+            price: priceId,
             quantity: 1,
           },
         ],
-        metadata: {
-          assetId: payload.assetId,
-        },
+        //if want to sub for a specific asset
+        // metadata: {
+        //   assetId: payload.assetId,
+        // },
         mode: 'subscription',
         customer: customer.id,
         success_url: this.configService.get('STRIPE_SUCCESS_URL'),
@@ -79,9 +127,8 @@ export class PaymentService {
     };
   }
 
-  async saveSubscription(customer, data): Promise<any> {
+  async saveSubscription(customer: any, data: any): Promise<Subscription> {
     const newSub = new Subscription();
-    newSub.userId = customer.metadata.userId;
     newSub.customerId = customer.id;
     newSub.createdDate = data.createdDate;
     newSub.endDate = data.endDate;
@@ -89,10 +136,17 @@ export class PaymentService {
     newSub.typeSubscription =
       data.typeSubscription === 'month' ? 'monthly' : 'annual';
     newSub.priceId = data.priceId;
+    newSub.stripeSubscriptionId = data.subscriptionId;
+    newSub.userId = data.userId;
     console.log('newSub', newSub);
     try {
       const savedSub = await this.subscriptionRepository.save(newSub);
-      console.log('Processed Order:', savedSub);
+
+      console.log(
+        '🚀 ~ file: payment.service.ts:149 ~ PaymentService ~ saveSubscription ~ savedSub:',
+        savedSub,
+      );
+
       return savedSub;
     } catch (err) {
       console.log(err);
@@ -115,26 +169,32 @@ export class PaymentService {
       console.log('error', error);
       throw new BadRequestException('This event was already processed');
     }
-
+    let status;
     switch (event.type) {
       case 'checkout.session.completed':
         const dataObject = event.data.object;
-        console.log('check checkout.session.completed', dataObject);
-        const payload: any = {};
         const subscriptionId = dataObject.subscription;
+
+        console.log(
+          '🚀 ~ file: payment.service.ts:177 ~ PaymentService ~ handleEvent ~ subscriptionId:',
+          subscriptionId,
+        );
+
+        console.log(
+          '🚀 ~ file: payment.service.ts:176 ~ PaymentService ~ handleEvent ~ dataObject:',
+          dataObject,
+        );
+
+        const payload: any = {};
+
         const subscription: any = await this.stripe.subscriptions.retrieve(
           subscriptionId,
         );
+
         const subscriptionCreatedAt = new Date(subscription.created * 1000);
         const subscriptionExpiresAt = new Date(
           subscription.current_period_end * 1000,
         );
-        console.log('subscription', subscription);
-        console.log('===plan', subscription.plan);
-        console.log('subscriptionCreatedAt', subscriptionCreatedAt);
-        console.log('subscriptionExpiresAt', subscriptionExpiresAt);
-
-        payload.userId = dataObject.metadata.userId;
         payload.createdDate = subscriptionCreatedAt
           .toISOString()
           .slice(0, 19)
@@ -146,24 +206,42 @@ export class PaymentService {
         payload.assetId = dataObject.metadata.assetId;
         payload.priceId = subscription.plan.id;
         payload.typeSubscription = subscription.plan.interval;
+        payload.subscriptionId = dataObject.subscription;
 
-        // const sessionWithLineItems = await this.stripe.checkout.sessions.retrieve(
-        //     event.data.object.id,
-        //     {
-        //         expand: ['line_items'],
-        //     }
-        // );
-        // const lineItems = sessionWithLineItems.line_items;
-        // console.log("sessionWithLineItems", sessionWithLineItems);
-        // console.log("lineItems", lineItems);
-        // return sessionWithLineItems;
         this.stripe.customers
           .retrieve(event.data.object.customer)
           .then(async (customer) => {
+            console.log(
+              '🚀 ~ file: payment.service.ts:216 ~ PaymentService ~ .then ~ customer:',
+              customer,
+            );
+
             try {
               // CREATE ORDER
-              console.log('customer', customer);
-              this.saveSubscription(customer, payload);
+              const userId = (customer as Stripe.Customer).metadata?.userId;
+              payload.userId = userId;
+              console.log(
+                '🚀 ~ file: payment.service.ts:224 ~ PaymentService ~ .then ~ userId:',
+                userId,
+              );
+
+              const savedSub = await this.saveSubscription(customer, payload);
+              console.log(
+                '🚀 ~ file: payment.service.ts:232 ~ PaymentService ~ .then ~ savedSub:',
+                savedSub,
+              );
+
+              // const foundUser = await this.userService.findOne(+userId);
+
+              // foundUser.currentSubscriptionId = savedSub.subscriptionId;
+              // await this.userService.create(foundUser);
+
+              const updateFields = {
+                isPremium: 1,
+                // currentSubscriptionId: savedSub.subscriptionId,
+              };
+
+              this.userService.updateUserFields(+userId, updateFields);
               const email = dataObject.customer_details.email;
               const subject = 'Pomodoro - Payment Success';
               const content =
@@ -177,7 +255,49 @@ export class PaymentService {
           .catch((err) => console.log(err.message));
 
         break;
-      // ... handle other event types
+      case 'customer.subscription.deleted':
+        const subscriptionDeletedObject = event.data.object;
+
+        console.log(
+          '🚀 ~ file: payment.service.ts:286 ~ PaymentService ~ handleEvent ~ subscriptio:',
+          subscriptionDeletedObject,
+        );
+        const stripeSubscriptionId = subscriptionDeletedObject.id;
+        const foundSubscription = await this.subscriptionRepository.findOneBy({
+          stripeSubscriptionId,
+        });
+
+        const userId = foundSubscription.userId;
+        const updateFields = {
+          isPremium: 0,
+        };
+        this.userService.updateUserFields(+userId, updateFields);
+
+        const listAssetDefault = await this.sharedService.getAssetDefaults();
+
+        const imageIndex = listAssetDefault.findIndex(
+          (asset) => asset.type === 'IMAGE',
+        );
+        const audioIndex = listAssetDefault.findIndex(
+          (asset) => asset.type === 'AUDIO',
+        );
+        const musicIndex = listAssetDefault.findIndex(
+          (asset) => asset.type === 'MUSIC',
+        );
+        const settingUpdateFields = {
+          currentBackgroundSelected: listAssetDefault[imageIndex].assetId,
+          backgroundMusic: listAssetDefault[musicIndex].assetId,
+          ringSound: listAssetDefault[audioIndex].assetId,
+        };
+        this.settingService.updateSettingFields(+userId, settingUpdateFields);
+
+        const deletedSubscription = await this.subscriptionRepository.delete({
+          stripeSubscriptionId,
+        });
+        console.log('deletedSubscription', deletedSubscription);
+        status = subscriptionDeletedObject.status;
+        console.log(`Subscription status is ${status}.`);
+        break;
       default:
         console.log(`Unhandled event type ${event.type}`);
     }

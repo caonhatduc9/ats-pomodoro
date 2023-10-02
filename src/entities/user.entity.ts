@@ -21,7 +21,7 @@ enum AuthProvider {
   APPLE = 'apple',
   GITHUB = 'github',
 }
-@Index('user_subscription_subscriptionId_idx', ['currentSubscriptionId'], {})
+// @Index('user_subscription_subscriptionId_idx', ['currentSubscriptionId'], {})
 @Entity('user', { schema: 'ats_pomodoro' })
 export class User {
   @PrimaryGeneratedColumn({ type: 'int', name: 'userId' })
@@ -35,9 +35,6 @@ export class User {
 
   @Column('text', { name: 'avatarURL', nullable: true })
   avatarUrl: string | null;
-
-  @Column('int', { name: 'currentSubscriptionID', nullable: true })
-  currentSubscriptionId: number | null;
 
   @Column('varchar', { name: 'gender', nullable: true, length: 10 })
   gender: string | null;
@@ -60,6 +57,9 @@ export class User {
   @Column('tinyint', { name: 'active', nullable: true })
   isActive: number | null;
 
+  @Column('tinyint', { name: 'isPremium', nullable: true, default: 0 })
+  isPremium: number | null;
+
   @Column({
     type: 'enum',
     enum: AuthProvider,
@@ -75,18 +75,9 @@ export class User {
   @OneToOne(() => Setting, (setting) => setting.user)
   setting: Setting;
 
-  @OneToMany(() => Subscription, (subscription) => subscription.user2)
-  subscriptions: Subscription[];
-
   @OneToMany(() => Task, (task) => task.user)
   tasks: Task[];
 
-  @ManyToOne(() => Subscription, (subscription) => subscription.users, {
-    onDelete: 'RESTRICT',
-    onUpdate: 'RESTRICT',
-  })
-  @JoinColumn([
-    { name: 'currentSubscriptionID', referencedColumnName: 'subscriptionId' },
-  ])
-  currentSubscription: Subscription;
+  @OneToMany(() => Subscription, (subscription) => subscription.user)
+  subscriptions: Subscription[];
 }

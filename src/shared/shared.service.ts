@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { asyncScheduler } from 'rxjs';
 import { Asset } from 'src/entities/asset.entity';
 import { Repository } from 'typeorm';
 
@@ -10,5 +11,8 @@ export class SharedService {
 
   async getAssetById(id: number): Promise<Asset> {
     return await this.reportRepository.findOne({ where: { assetId: id } });
+  }
+  async getAssetDefaults(): Promise<Asset[]> {
+    return await this.reportRepository.find({ where: { isDefault: 1 } });
   }
 }

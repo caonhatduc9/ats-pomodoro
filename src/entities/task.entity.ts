@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { Project } from './project.entity';
 import { User } from './user.entity';
+import { Category } from './category.entity';
 
 export enum TaskStatus {
   TODO = 'TODO',
@@ -17,6 +18,7 @@ export enum TaskStatus {
 }
 @Index('task_user_userId_idx', ['userId'], {})
 @Index('task_project_projectId_idx', ['projectId'], {})
+@Index('task_FK', ['categoryId'], {})
 @Entity('task', { schema: 'ats_pomodoro' })
 export class Task {
   @PrimaryGeneratedColumn({ type: 'int', name: 'taskId' })
@@ -50,7 +52,7 @@ export class Task {
   })
   actualPomodoro: number | null;
 
-  @Column('float', { name: 'timeSpent', nullable: true })
+  @Column('float', { name: 'timeSpent', nullable: true, default: 0 })
   timeSpent: number | null;
 
   @Column('text', { name: 'note', nullable: true })
@@ -61,6 +63,9 @@ export class Task {
 
   @Column('date', { name: 'modifiedDate', nullable: true })
   modifiedDate: string | null;
+
+  @Column('int', { name: 'categoryId', nullable: true })
+  categoryId: number | null;
 
   @ManyToOne(() => Project, (project) => project.tasks, {
     onDelete: 'RESTRICT',
@@ -75,4 +80,11 @@ export class Task {
   })
   @JoinColumn([{ name: 'userId', referencedColumnName: 'userId' }])
   user: User;
+
+  @ManyToOne(() => Category, (category) => category.tasks, {
+    onDelete: 'NO ACTION',
+    onUpdate: 'NO ACTION',
+  })
+  @JoinColumn([{ name: 'categoryId', referencedColumnName: 'categoryId' }])
+  category: Category;
 }

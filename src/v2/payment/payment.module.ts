@@ -5,9 +5,11 @@ import { SharedModule } from 'src/shared/shared.module';
 import { MailingModule } from 'src/v1/mailing/mailing.module';
 import { PaymentProvider } from './providers/payment.providers';
 import { DatabaseModule } from 'src/database/database.module';
+import { UserModule } from 'src/v1/user/user.module';
+import { SettingModule } from 'src/setting/setting.module';
 
 @Module({
-  imports: [SharedModule, MailingModule, DatabaseModule],
+  imports: [SharedModule, MailingModule, DatabaseModule, UserModule, SettingModule,],
   controllers: [PaymentController],
   providers: [PaymentService, ...PaymentProvider],
 })

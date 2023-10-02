@@ -254,7 +254,6 @@ export class TaskService {
       message: 'delete success',
     };
   }
-
   async getListCategory(): Promise<any> {
     const data = await this.categoryRepository.find();
     // return data;

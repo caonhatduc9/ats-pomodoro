@@ -7,14 +7,12 @@ import { Repository } from 'typeorm';
 export class SharedService {
   constructor(
     @Inject('ASSET_REPOSITORY') private reportRepository: Repository<Asset>,
-  ) { }
+  ) {}
 
   async getAssetById(id: number): Promise<Asset> {
     return await this.reportRepository.findOne({ where: { assetId: id } });
   }
   async getAssetDefaults(): Promise<Asset[]> {
-    return await this.reportRepository.find(
-      { where: { isDefault: 1 } },
-    );
+    return await this.reportRepository.find({ where: { isDefault: 1 } });
   }
 }

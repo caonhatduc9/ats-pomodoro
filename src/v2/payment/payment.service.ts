@@ -1,7 +1,6 @@
 import { UserService } from './../../v1/user/user.service';
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Console, log } from 'console';
 import { StripeEvent } from 'src/entities/stripeEvent.entity';
 import { Subscription } from 'src/entities/subscription.entity';
 import { SettingService } from 'src/setting/setting.service';
@@ -170,7 +169,6 @@ export class PaymentService {
       console.log('error', error);
       throw new BadRequestException('This event was already processed');
     }
-    let subscriptio;
     let status;
     switch (event.type) {
       case 'checkout.session.completed':
@@ -197,7 +195,6 @@ export class PaymentService {
         const subscriptionExpiresAt = new Date(
           subscription.current_period_end * 1000,
         );
-
         payload.createdDate = subscriptionCreatedAt
           .toISOString()
           .slice(0, 19)

@@ -321,7 +321,7 @@ export class SettingService {
       )
       .getOne();
     // return data;
-    let listAsset = await this.assetRepository
+    const listAsset = await this.assetRepository
       .createQueryBuilder('asset')
       .select([
         'asset.assetId',

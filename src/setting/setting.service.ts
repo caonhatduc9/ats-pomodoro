@@ -106,7 +106,7 @@ export class SettingService {
       shortBreakColor: data['shortBreakColor'],
       longBreakColor: data['longBreakColor'],
       isAceptAds: data['isAceptAds'],
-      isPlaybackgroundMusic: data['isPlaybackgroundMusic'],
+      isPlayBackgroundMusic: data['isPlayBackgroundMusic'],
       pomodoroStrokerColor: data['pomodoroStrokerColor'],
       shortBreakStrokerColor: data['shortBreakStrokerColor'],
       longBreakStrokerColor: data['longBreakStrokerColor'],
@@ -374,6 +374,7 @@ export class SettingService {
       backgroundMusics,
       backgroundImages,
     };
+
     const cleanedData = {
       pomodoroTime: data['pomodoroTime'],
       shortBreakTime: data['shortBreakTime'],
@@ -408,13 +409,17 @@ export class SettingService {
       shortBreakColor: data['shortBreakColor'],
       longBreakColor: data['longBreakColor'],
       isAceptAds: data['isAceptAds'],
-      isPlaybackgroundMusic: data['isPlaybackgroundMusic'],
+      isPlayBackgroundMusic: data['isPlayBackgroundMusic'],
       pomodoroStrokerColor: data['pomodoroStrokerColor'],
       shortBreakStrokerColor: data['shortBreakStrokerColor'],
       longBreakStrokerColor: data['longBreakStrokerColor'],
       backgroundColorLinear: JSON.parse(data['backgroundColorLinear']),
       assets,
     };
+    console.log(
+      "🚀 ~ file: setting.service.ts:419 ~ SettingService ~ findDefaultSetting ~ cleanedData.data['isPlayBackgroundMusic']:",
+      data['isPlayBackgroundMusic'],
+    );
 
     return {
       statusCode: 200,

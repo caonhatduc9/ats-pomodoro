@@ -150,7 +150,8 @@ export class SettingService {
       setting.longBreakStrokerColor =
         createSettingDto.longBreakStrokerColor || '#ffffffff';
       setting.backgroundColorLinear =
-        JSON.stringify(createSettingDto.backgroundColorLinear) || '#0000ff';
+        JSON.stringify(createSettingDto.backgroundColorLinear) ||
+        '{"begin":[-0.97,-0.81],"end":[1,1.02],"colors":["#0cfafafa","#19000000"],"stops":[0,1]}';
 
       // Kiểm tra và cập nhật ringSound nếu ringSoundId được cung cấp và tồn tại trong bảng Asset
       if (createSettingDto.ringSoundId) {

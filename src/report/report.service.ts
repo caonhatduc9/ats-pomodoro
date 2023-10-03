@@ -70,70 +70,117 @@ export class ReportService {
     return count + 1;
   }
 
-  async getSummaryReportByUserId(id: number): Promise<SummaryReportResponse> {
+  async getSummaryReportByUserId(id: number): Promise<any> {
+    // const dataRaw = await this.userRepository
+    //   .createQueryBuilder('user')
+    //   .leftJoinAndSelect('user.projects', 'project')
+    //   .leftJoinAndSelect('user.focusedPomodoros', 'focusedPomodoro')
+    //   .where('user.userId = :id ', { id })
+    //   .getMany();
+
+    // const focusTime: FocusedPomodoro[] = dataRaw[0].focusedPomodoros;
+    // const projects: Project[] = dataRaw[0].projects;
+
+    // // eslint-disable-next-line @typescript-eslint/no-inferrable-types
+    // let totalMinutes: number = 0;
+
+    // // Lọc dữ liệu theo tuần
+    // const weekStart = new Date();
+    // weekStart.setDate(weekStart.getDate() - 7);
+    // const weekData = this.filterDataByDate(focusTime, projects, weekStart);
+
+    // // Lọc dữ liệu theo tháng
+    // const monthStart = new Date();
+    // monthStart.setDate(monthStart.getDate() - 30);
+    // const monthData = this.filterDataByDate(focusTime, projects, monthStart);
+
+    // // Lọc dữ liệu theo năm
+    // const yearStart = new Date();
+    // yearStart.setDate(yearStart.getDate() - 365);
+    // const yearData = this.filterDataByDate(focusTime, projects, yearStart);
+
+    // // const projects = dataRaw[0].projects;
+
+    // const focusTimeCreatedDates = focusTime.map((item) => item.createdDate);
+    // const streak = this.countConsecutiveDays(focusTimeCreatedDates);
+    // const accessedDates = new Set();
+
+    // // Thêm các giá trị createdDate từ focusTime vào Set va tinh total minutes
+    // focusTime.forEach((item) => {
+    //   totalMinutes += +item.timeFocus;
+    //   accessedDates.add(item.createdDate);
+    // });
+
+    // // Đếm số ngày truy cập
+    // const accessedDay = accessedDates.size;
+
+    // const dateReturn: ReportData = {
+    //   activitySummary: {
+    //     focusedHours: totalMinutes,
+    //     accessedDays: accessedDay,
+    //     streakDays: streak,
+    //   },
+    //   focusHours: focusTime,
+    //   projects,
+    //   // week: {
+    //   //   focusHours: weekData.focusTime,
+    //   //   projects: weekData.projects,
+    //   // },
+    //   // month: {
+    //   //   focusHours: monthData.focusTime,
+    //   //   projects: monthData.projects,
+    //   // },
+    //   // year: {
+    //   //   focusHours: yearData.focusTime,
+    //   //   projects: yearData.projects,
+    //   // },
+    // };
+
+    // return {
+    //   statusCode: 200,
+    //   data: dateReturn,
+    // };
+
     const dataRaw = await this.userRepository
       .createQueryBuilder('user')
-      .leftJoinAndSelect('user.projects', 'project')
-      .leftJoinAndSelect('user.focusedPomodoros', 'focusedPomodoro')
+      .leftJoinAndSelect('user.projects', 'projects')
+      .leftJoinAndSelect('user.tasks', 'tasks')
       .where('user.userId = :id ', { id })
       .getMany();
+    const focusHours = [];
 
-    const focusTime: FocusedPomodoro[] = dataRaw[0].focusedPomodoros;
-    const projects: Project[] = dataRaw[0].projects;
-
-    // eslint-disable-next-line @typescript-eslint/no-inferrable-types
-    let totalMinutes: number = 0;
-
-    // Lọc dữ liệu theo tuần
-    const weekStart = new Date();
-    weekStart.setDate(weekStart.getDate() - 7);
-    const weekData = this.filterDataByDate(focusTime, projects, weekStart);
-
-    // Lọc dữ liệu theo tháng
-    const monthStart = new Date();
-    monthStart.setDate(monthStart.getDate() - 30);
-    const monthData = this.filterDataByDate(focusTime, projects, monthStart);
-
-    // Lọc dữ liệu theo năm
-    const yearStart = new Date();
-    yearStart.setDate(yearStart.getDate() - 365);
-    const yearData = this.filterDataByDate(focusTime, projects, yearStart);
-
-    // const projects = dataRaw[0].projects;
-
-    const focusTimeCreatedDates = focusTime.map((item) => item.createdDate);
-    const streak = this.countConsecutiveDays(focusTimeCreatedDates);
+    const tasks = dataRaw[0].tasks;
+    const projects = dataRaw[0].projects;
+    let totalTimeSpent = 0;
+    const focusTimeCreatedDates: string[] = [];
     const accessedDates = new Set();
-
-    // Thêm các giá trị createdDate từ focusTime vào Set va tinh total minutes
-    focusTime.forEach((item) => {
-      totalMinutes += +item.timeFocus;
-      accessedDates.add(item.createdDate);
+    tasks.forEach((task) => {
+      totalTimeSpent += task.timeSpent;
+      const focusHour = {
+        timeFocus: task.timeSpent,
+        createdDate: task.createdDate,
+      };
+      focusHours.push(focusHour);
+      focusTimeCreatedDates.push(task.createdDate);
+      accessedDates.add(task.createdDate);
     });
 
-    // Đếm số ngày truy cập
+    // return {
+    //   dataRaw,
+    //   totalTimeSpent,
+    //   focusHours,
+    // };
+    const streak = this.countConsecutiveDays(focusTimeCreatedDates);
+    // Thêm các giá trị createdDate từ focusTime vào Set va tinh total minutes
     const accessedDay = accessedDates.size;
-
     const dateReturn: ReportData = {
       activitySummary: {
-        focusedHours: totalMinutes,
+        focusedHours: totalTimeSpent,
         accessedDays: accessedDay,
         streakDays: streak,
       },
-      focusHours: focusTime,
+      focusHours,
       projects,
-      // week: {
-      //   focusHours: weekData.focusTime,
-      //   projects: weekData.projects,
-      // },
-      // month: {
-      //   focusHours: monthData.focusTime,
-      //   projects: monthData.projects,
-      // },
-      // year: {
-      //   focusHours: yearData.focusTime,
-      //   projects: yearData.projects,
-      // },
     };
 
     return {

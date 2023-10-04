@@ -40,117 +40,63 @@ export class ReportService {
   // }
 
   countConsecutiveDays(dates: string[]): number {
-    let count = 0;
-    let consecutiveCount = 0;
+    console.log(
+      '🚀 ~ file: report.service.ts:43 ~ ReportService ~ countConsecutiveDays ~ dates:',
+      dates,
+    );
+    dates.sort();
+
+    let maxConsecutiveDays = 1;
+    let currentConsecutiveDays = 1;
 
     for (let i = 1; i < dates.length; i++) {
       const currentDate = new Date(dates[i]);
       const previousDate = new Date(dates[i - 1]);
-
-      // Chuyển đổi ngày thành timestamp để so sánh
       const currentTimestamp = currentDate.getTime();
       const previousTimestamp = previousDate.getTime();
+      const timeDifference = currentTimestamp - previousTimestamp;
 
-      // Kiểm tra xem ngày hiện tại có liền kề ngày trước đó hay không
-      if (currentTimestamp - previousTimestamp === 24 * 60 * 60 * 1000) {
-        consecutiveCount++;
-      } else {
-        // Ngày không liền kề, cập nhật lại consecutiveCount nếu cần
-        if (consecutiveCount > 0) {
-          count += 1; // Đếm ngày liên tục đã tìm thấy
-          consecutiveCount = 0; // Reset consecutiveCount
+      if (timeDifference === 86400000) {
+        // 86400000 milliseconds = 1 day
+        currentConsecutiveDays++;
+        if (currentConsecutiveDays > maxConsecutiveDays) {
+          maxConsecutiveDays = currentConsecutiveDays;
         }
+      } else {
+        currentConsecutiveDays = 1;
       }
     }
 
-    // Kiểm tra xem có ngày liên tục ở cuối mảng không
-    if (consecutiveCount > 0) {
-      count += 1;
-    }
-    return count + 1;
+    return maxConsecutiveDays;
   }
 
   async getSummaryReportByUserId(id: number): Promise<any> {
-    // const dataRaw = await this.userRepository
-    //   .createQueryBuilder('user')
-    //   .leftJoinAndSelect('user.projects', 'project')
-    //   .leftJoinAndSelect('user.focusedPomodoros', 'focusedPomodoro')
-    //   .where('user.userId = :id ', { id })
-    //   .getMany();
-
-    // const focusTime: FocusedPomodoro[] = dataRaw[0].focusedPomodoros;
-    // const projects: Project[] = dataRaw[0].projects;
-
-    // // eslint-disable-next-line @typescript-eslint/no-inferrable-types
-    // let totalMinutes: number = 0;
-
-    // // Lọc dữ liệu theo tuần
-    // const weekStart = new Date();
-    // weekStart.setDate(weekStart.getDate() - 7);
-    // const weekData = this.filterDataByDate(focusTime, projects, weekStart);
-
-    // // Lọc dữ liệu theo tháng
-    // const monthStart = new Date();
-    // monthStart.setDate(monthStart.getDate() - 30);
-    // const monthData = this.filterDataByDate(focusTime, projects, monthStart);
-
-    // // Lọc dữ liệu theo năm
-    // const yearStart = new Date();
-    // yearStart.setDate(yearStart.getDate() - 365);
-    // const yearData = this.filterDataByDate(focusTime, projects, yearStart);
-
-    // // const projects = dataRaw[0].projects;
-
-    // const focusTimeCreatedDates = focusTime.map((item) => item.createdDate);
-    // const streak = this.countConsecutiveDays(focusTimeCreatedDates);
-    // const accessedDates = new Set();
-
-    // // Thêm các giá trị createdDate từ focusTime vào Set va tinh total minutes
-    // focusTime.forEach((item) => {
-    //   totalMinutes += +item.timeFocus;
-    //   accessedDates.add(item.createdDate);
-    // });
-
-    // // Đếm số ngày truy cập
-    // const accessedDay = accessedDates.size;
-
-    // const dateReturn: ReportData = {
-    //   activitySummary: {
-    //     focusedHours: totalMinutes,
-    //     accessedDays: accessedDay,
-    //     streakDays: streak,
-    //   },
-    //   focusHours: focusTime,
-    //   projects,
-    //   // week: {
-    //   //   focusHours: weekData.focusTime,
-    //   //   projects: weekData.projects,
-    //   // },
-    //   // month: {
-    //   //   focusHours: monthData.focusTime,
-    //   //   projects: monthData.projects,
-    //   // },
-    //   // year: {
-    //   //   focusHours: yearData.focusTime,
-    //   //   projects: yearData.projects,
-    //   // },
-    // };
-
-    // return {
-    //   statusCode: 200,
-    //   data: dateReturn,
-    // };
-
-    const dataRaw = await this.userRepository
-      .createQueryBuilder('user')
-      .leftJoinAndSelect('user.projects', 'projects')
-      .leftJoinAndSelect('user.tasks', 'tasks')
-      .where('user.userId = :id ', { id })
-      .getMany();
+    const [projectDataRaw, taskDataRaw] = await Promise.all([
+      this.userRepository
+        .createQueryBuilder('user')
+        .leftJoinAndSelect('user.projects', 'projects')
+        .leftJoinAndSelect('user.tasks', 'tasks')
+        .where('user.userId = :id ', { id })
+        .andWhere('projects.status != :status', { status: 'DELETE' })
+        .getMany(),
+      this.userRepository
+        .createQueryBuilder('user')
+        .leftJoinAndSelect('user.tasks', 'tasks')
+        .where('user.userId = :id ', { id })
+        .andWhere('tasks.status != :status', { status: 'DELETE' })
+        .getMany(),
+    ]);
+    // return [taskDataRaw, projectDataRaw];
     const focusHours = [];
+    let projects = [];
+    projects = projectDataRaw.length > 0 ? projectDataRaw[0].projects : [];
 
-    const tasks = dataRaw[0].tasks;
-    const projects = dataRaw[0].projects;
+    let tasks = [];
+    tasks = taskDataRaw.length > 0 ? taskDataRaw[0].tasks : [];
+    // const dateReturn: ReportData = {};
+
+    // if (tasks.length > 0) {
+    // const tasks = taskDataRaw[0].tasks;
     let totalTimeSpent = 0;
     const focusTimeCreatedDates: string[] = [];
     const accessedDates = new Set();
@@ -164,16 +110,10 @@ export class ReportService {
       focusTimeCreatedDates.push(task.createdDate);
       accessedDates.add(task.createdDate);
     });
-
-    // return {
-    //   dataRaw,
-    //   totalTimeSpent,
-    //   focusHours,
-    // };
     const streak = this.countConsecutiveDays(focusTimeCreatedDates);
     // Thêm các giá trị createdDate từ focusTime vào Set va tinh total minutes
     const accessedDay = accessedDates.size;
-    const dateReturn: ReportData = {
+    const dataReturn: ReportData = {
       activitySummary: {
         focusedHours: totalTimeSpent,
         accessedDays: accessedDay,
@@ -185,7 +125,13 @@ export class ReportService {
 
     return {
       statusCode: 200,
-      data: dateReturn,
+      data: dataReturn,
+    };
+    // }
+    // if()
+    return {
+      statusCode: 204,
+      data: { tasks, projects },
     };
   }
 

@@ -42,9 +42,9 @@ export class PaymentController {
     @Headers('stripe-signature') sig: string,
     @Req() req: RawBodyRequest<Request>,
   ) {
-    // if (!signature) {
-    //   throw new BadRequestException('Missing stripe-signature header');
-    // }
+    if (!sig) {
+      throw new BadRequestException('Missing stripe-signature header');
+    }
     let event;
 
     try {

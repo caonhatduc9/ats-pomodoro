@@ -9,7 +9,13 @@ import { UserModule } from 'src/v1/user/user.module';
 import { SettingModule } from 'src/setting/setting.module';
 
 @Module({
-  imports: [SharedModule, MailingModule, DatabaseModule, UserModule, SettingModule,],
+  imports: [
+    SharedModule,
+    MailingModule,
+    DatabaseModule,
+    UserModule,
+    SettingModule,
+  ],
   controllers: [PaymentController],
   providers: [PaymentService, ...PaymentProvider],
 })

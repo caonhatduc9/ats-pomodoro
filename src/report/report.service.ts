@@ -217,7 +217,7 @@ export class ReportService {
       .getMany();
 
     // Biến lưu trữ kết quả
-    let result = [];
+    const result = [];
 
     // Lặp qua các project
     dataRaw[0].projects.forEach((project) => {

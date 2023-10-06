@@ -126,19 +126,20 @@ export class TaskService {
     };
   }
 
-  async updateTaskByUserId(body: any, userId: number) {
+  async updateTaskByUserId(updateFields: Record<string, any>, userId: number) {
     console.log(
       '🚀 ~ file: task.service.ts:130 ~ TaskService ~ updateTaskByUserId ~ body:',
-      body,
+      updateFields,
     );
 
     const foundTask = await this.taskRepository.findOne({
-      where: { taskId: body.taskId },
+      where: { taskId: updateFields.taskId },
     });
     if (foundTask) {
-      if (Object.keys(body).length == 1) {
+      //delete project of task
+      if (Object.keys(updateFields).length == 1) {
         const newTask = this.taskRepository.create({
-          taskId: body.taskId,
+          taskId: updateFields.taskId,
           projectId: null,
         });
         // console.log(body.taskId);
@@ -148,61 +149,40 @@ export class TaskService {
           message: 'update success',
         };
       }
-      if (Object.keys(body).length == 2) {
-        const newTask = this.taskRepository.create({
-          taskId: body.taskId,
-          projectId: body.projectId,
-        });
-        const savedTask = await this.taskRepository.save(newTask);
+      if (Object.keys(updateFields).length >= 2) {
+        console.log(updateFields.taskId);
+        const savedTask = await this.taskRepository.save(updateFields);
         return {
           statusCode: 200,
           message: 'update success',
         };
       } else if (
-        Object.keys(body).length >= 2 &&
-        foundTask.projectId === null
+        Object.keys(updateFields).length >= 2 &&
+        foundTask.projectId != null
       ) {
-        const newTask = this.taskRepository.create({
-          // userId: foundTask.userId,
-          taskId: body.taskId,
-          taskName: body.taskName,
-          estimatePomodoro: body.estimatePomodoro,
-          note: body.note,
-          actualPomodoro: body.actualPomodoro,
-          modifiedDate: new Date().toISOString().slice(0, 10),
-          timeSpent: body.timeSpent,
-          status: body.status,
-        });
-        console.log(body.taskId);
-        const savedTask = await this.taskRepository.save(newTask);
-        return {
-          statusCode: 200,
-          message: 'update success',
-        };
-      } else if (Object.keys(body).length >= 2 && foundTask.projectId != null) {
         const foundProject = await this.projectRepository.findOne({
-          where: { projectId: body.projectId },
+          where: { projectId: updateFields.projectId },
         });
         if (foundProject) {
           console.log('found project', foundProject);
           const newProject = this.projectRepository.create({
-            projectId: body.projectId,
-            projectName: body.projectName,
+            projectId: updateFields.projectId,
+            projectName: updateFields.projectName,
             modifiedDate: new Date().toISOString().slice(0, 10),
           });
           const updatedProject = await this.projectRepository.save(newProject);
           // return savedProject;
           console.log(updatedProject);
-          console.log(body.taskName);
+          console.log(updateFields.taskName);
           const newTask = this.taskRepository.create({
-            projectId: body.projectId,
-            taskId: body.taskId,
-            taskName: body.taskName,
-            estimatePomodoro: body.estimatePomodoro,
-            note: body.note,
+            projectId: updateFields.projectId,
+            taskId: updateFields.taskId,
+            taskName: updateFields.taskName,
+            estimatePomodoro: updateFields.estimatePomodoro,
+            note: updateFields.note,
             modifiedDate: new Date().toISOString().slice(0, 10),
-            status: body.status,
-            timeSpent: body.timeSpent,
+            status: updateFields.status,
+            timeSpent: updateFields.timeSpent,
           });
           const savedTask = await this.taskRepository.save(newTask);
           return {

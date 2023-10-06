@@ -50,10 +50,14 @@ export class AuthController {
   //   return this.authService.googleLogin(req);
   // }
 
-  @Get('apple')
-  @UseGuards(AuthGuard('apple'))
-  async appleAuth(@Request() req): Promise<any> {
-    return HttpStatus.OK;
+  @Post('apple')
+  // @UseGuards(AuthGuard('apple'))
+  async appleAuth(@Body() user: any): Promise<any> {
+    console.log(
+      '🚀 ~ file: auth.controller.ts:56 ~ AuthController ~ appleAuth ~ user:',
+      user,
+    );
+    return this.authService.appleLogin(user);
   }
 
   @Get('apple/redirect')

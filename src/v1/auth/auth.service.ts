@@ -100,53 +100,6 @@ export class AuthService {
     }
   }
 
-  //google strategy login
-  // async googleLogin(req: any) {
-  //   if (!req.user) {
-  //     throw new BadRequestException('No user from google');
-  //   }
-  //   const foundUser = await this.userService.findUserByEmail(req.user.email);
-  //   if (foundUser) {
-  //     if (foundUser.authProvider !== AuthProvider.GOOGLE) {
-  //       throw new BadRequestException(
-  //         `email ${req.user.email} is already used by another auth provider`,
-  //       );
-  //     } else {
-  //       const payload = { username: foundUser.username, sub: 12 };
-  //       return {
-  //         status: 'success',
-  //         data: {
-  //           userId: foundUser.userId,
-  //           access_token: this.jwtService.sign(payload),
-  //           userName: foundUser.username,
-  //           avatarURL: foundUser.avatarUrl,
-  //           payment: 'free',
-  //         },
-  //       };
-  //     }
-  //   } else {
-  //     const user = new User();
-  //     user.email = req.user.email;
-  //     user.username = req.user.email.split('@')[0];
-  //     // user.password = 'google_auth';
-  //     user.avatarUrl = req.user.avatarUrl;
-  //     user.isActive = 1;
-  //     user.authProvider = AuthProvider.GOOGLE;
-  //     const savedUser = await this.userService.create(user);
-  //     const payload = { username: savedUser.username, sub: savedUser.userId };
-  //     return {
-  //       status: 'success',
-  //       data: {
-  //         userId: savedUser.userId,
-  //         access_token: this.jwtService.sign(payload),
-  //         userName: savedUser.username,
-  //         avatarURL: savedUser.avatarUrl,
-  //         payment: 'free',
-  //       },
-  //     };
-  //   }
-  // }
-
   async googleLogin(user: any) {
     if (!user) {
       throw new BadRequestException('No user from google');
@@ -195,6 +148,9 @@ export class AuthService {
             access_token: this.jwtService.sign(payload),
             email: savedUser.email,
             userName: savedUser.username,
+            gender: savedUser.gender,
+            isPremium: savedUser.isPremium,
+            phoneNumber: savedUser.phoneNumber,
             avatarURL: savedUser.avatarUrl,
             payment: 'free',
           },
@@ -205,8 +161,66 @@ export class AuthService {
     }
   }
 
-  async appleLogin(req: any): Promise<void> {
-    console.log('applelogin servide: ', req);
+  async appleLogin(user: any): Promise<any> {
+    console.log('applelogin servide: ', user);
+    if (!user) {
+      throw new BadRequestException('No user from apple');
+    }
+    const foundUser = await this.userService.findUserByEmail(user.email);
+    if (foundUser) {
+      if (foundUser.authProvider !== AuthProvider.APPLE) {
+        // throw new BadRequestException(
+        //   `email ${user.email} is already used by another auth provider`,
+        // );
+        foundUser.authProvider = AuthProvider.APPLE;
+        await this.userService.create(foundUser);
+      }
+      const payload = { username: foundUser.username, sub: foundUser.userId };
+      return {
+        statusCode: 200,
+        data: {
+          userId: foundUser.userId,
+          access_token: this.jwtService.sign(payload),
+          email: foundUser.email,
+          userName: foundUser.username,
+          gender: foundUser.gender,
+          avatarURL: foundUser.avatarUrl,
+          payment: 'free',
+          isPremium: foundUser.isPremium,
+          phoneNumber: foundUser.phoneNumber,
+          // },
+        },
+      };
+    } else {
+      const createUser = new User();
+      createUser.email = user.email;
+      createUser.username = user.email.split('@')[0];
+      createUser.password = 'apple_auth';
+      createUser.avatarUrl = user.image || null;
+      createUser.isActive = 1;
+      createUser.authProvider = AuthProvider.APPLE;
+      const savedUser = await this.userService.create(createUser);
+      if (savedUser) {
+        await this.settingService.createDefaultSetting(savedUser.userId);
+        const payload = { username: savedUser.username, sub: savedUser.userId };
+        return {
+          statusCode: 200,
+          data: {
+            userId: savedUser.userId,
+            access_token: this.jwtService.sign(payload),
+            email: savedUser.email,
+            userName: savedUser.username,
+            gender: savedUser.gender,
+            isPremium: savedUser.isPremium,
+            phoneNumber: savedUser.phoneNumber,
+            avatarURL: savedUser.avatarUrl,
+            payment: 'free',
+          },
+        };
+      } else {
+        throw new InternalServerErrorException();
+      }
+    }
   }
 
   async changePassword(changePassDto: ChangePassDto): Promise<any> {
@@ -364,6 +378,9 @@ export class AuthService {
             access_token: this.jwtService.sign(payload),
             email: savedUser.email,
             userName: savedUser.username,
+            gender: savedUser.gender,
+            isPremium: savedUser.isPremium,
+            phoneNumber: savedUser.phoneNumber,
             avatarURL: savedUser.avatarUrl,
             payment: 'free',
           },

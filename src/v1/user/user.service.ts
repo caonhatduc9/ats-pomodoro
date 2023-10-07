@@ -31,6 +31,15 @@ export class UserService {
   async findUserByEmail(email: string): Promise<User> {
     return await this.userRepository.findOne({ where: { email } });
   }
+  //find user follow optiona field
+  async findUserByField(option: Record<string, any>): Promise<User> {
+    console.log(
+      '🚀 ~ file: user.service.ts:36 ~ UserService ~ findUserByField ~ option:',
+      option,
+    );
+
+    return await this.userRepository.findOneBy(option);
+  }
   async updatePasswordById(id: number, newPassword: string): Promise<any> {
     return this.userRepository.update(id, { password: newPassword });
   }

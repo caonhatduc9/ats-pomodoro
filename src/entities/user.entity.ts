@@ -60,6 +60,9 @@ export class User {
   @Column('tinyint', { name: 'isPremium', nullable: true, default: 0 })
   isPremium: number | null;
 
+  @Column('text', { name: 'appleId', nullable: true })
+  appleId: string | null;
+
   @Column({
     type: 'enum',
     enum: AuthProvider,

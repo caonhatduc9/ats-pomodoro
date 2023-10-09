@@ -13,7 +13,7 @@ export class SettingService {
     @Inject('DEFAULT_SETTING_REPOSITORY')
     private defaultSettingRepository: Repository<DefaultSetting>,
     @Inject('ASSET_REPOSITORY') private assetRepository: Repository<Asset>,
-  ) {}
+  ) { }
 
   async findByUserId(id: number) {
     const data = await this.settingRepository
@@ -122,7 +122,6 @@ export class SettingService {
 
   async create(userId: number, createSettingDto: CreateSettingDto) {
     const setting = await this.settingRepository.findOne({ where: { userId } });
-
     if (setting) {
       // Cập nhật các thuộc tính của setting
       setting.pomodoroTime = createSettingDto.pomodoroTime || 25;
@@ -153,7 +152,6 @@ export class SettingService {
         JSON.stringify(createSettingDto.backgroundColorLinear) ||
         '{"begin":[-0.97,-0.81],"end":[1,1.02],"colors":["#0cfafafa","#19000000"],"stops":[0,1]}';
 
-      // Kiểm tra và cập nhật ringSound nếu ringSoundId được cung cấp và tồn tại trong bảng Asset
       if (createSettingDto.ringSoundId) {
         const ringSoundExists = await this.assetRepository.findOne({
           where: { assetId: createSettingDto.ringSoundId },
@@ -319,6 +317,10 @@ export class SettingService {
     // Lặp qua các trường cần cập nhật và áp dụng chúng vào foundUser
     for (const field in updateFields) {
       if (updateFields.hasOwnProperty(field)) {
+        if (field === 'backgroundColorLinear') {
+          foundSetting[field] = JSON.stringify(updateFields[field]);
+          continue;
+        }
         foundSetting[field] = updateFields[field];
       }
     }

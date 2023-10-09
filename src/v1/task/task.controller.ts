@@ -14,7 +14,7 @@ import { JwtAuthGuard } from 'src/v1/auth/guards/auth.jwt.guard';
 
 @Controller('v1/task')
 export class TaskController {
-  constructor(private readonly taskService: TaskService) {}
+  constructor(private readonly taskService: TaskService) { }
   @UseGuards(JwtAuthGuard)
   @Delete('/empty')
   async deleteAllTasks(@Req() req: any) {
@@ -34,6 +34,11 @@ export class TaskController {
   @Get()
   async getTaskByUserId(@Req() req: any) {
     return this.taskService.findTaskByUserId(req.user.userId);
+  }
+  // @UseGuards(JwtAuthGuard)
+  @Get('default')
+  async getDefaultTask(@Req() req: any) {
+    return this.taskService.getDefaultTask();
   }
   @UseGuards(JwtAuthGuard)
   @Patch()

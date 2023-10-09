@@ -14,4 +14,6 @@ export class Category {
 
   @OneToMany(() => Task, (task) => task.category)
   tasks: Task[];
+  @OneToMany(() => Task, (task) => task.category)
+  defaultTasks: Task[];
 }

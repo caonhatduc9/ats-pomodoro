@@ -20,6 +20,18 @@ export class TaskService {
     private categoryRepository: Repository<Category>,
   ) {}
 
+  async getDefaultTask(): Promise<any> {
+    const data = await this.taskRepository
+      .createQueryBuilder('task')
+      .leftJoinAndSelect('task.category', 'category')
+      // .andWhere('task.status != :status', { status: TaskStatus.DELETE })
+      .getOne();
+    return {
+      statusCode: 200,
+      data: data ? data : {},
+    };
+  }
+
   async createTask(userId: number, body: any, project: string) {
     if (project === 'true') {
       if (body.project.projectId == null) {

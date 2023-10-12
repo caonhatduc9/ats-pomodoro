@@ -1,6 +1,8 @@
+/* eslint-disable prettier/prettier */
 import { UserService } from './../../v1/user/user.service';
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Product } from 'src/entities/product.entity';
 import { StripeEvent } from 'src/entities/stripeEvent.entity';
 import { Subscription } from 'src/entities/subscription.entity';
 import { SettingService } from 'src/setting/setting.service';
@@ -22,6 +24,8 @@ export class PaymentService {
     private subscriptionRepository: Repository<Subscription>,
     @Inject('STRIPE_EVENT_REPOSITORY')
     private stripeEventRepository: Repository<StripeEvent>,
+    @Inject('PRODUCT_REPOSITORY')
+    private productRepository: Repository<Product>,
     private maillingService: MailingService,
   ) {
     const secretKey = this.configService.get('STRIPE_SECRET_KEY');
@@ -119,24 +123,33 @@ export class PaymentService {
     }
   }
 
-  async getListProduct(): Promise<any> {
-    const prices = await this.stripe.prices.list({ active: true });
-    return {
-      statusCode: 200,
-      data: prices.data.reverse(),
-    };
+  async getListProduct(userAgent: string): Promise<any> {
+    if (userAgent && userAgent === 'mobile') {
+      const products = await this.productRepository.find();
+      console.log('products', products);
+      return {
+        statusCode: 200,
+        data: products,
+      };
+    } else {
+      const prices = await this.stripe.prices.list({ active: true });
+      return {
+        statusCode: 200,
+        data: prices.data.reverse(),
+      };
+    }
   }
 
   async saveSubscription(customer: any, data: any): Promise<Subscription> {
     const newSub = new Subscription();
-    newSub.customerId = customer.id;
+    newSub.customerId = customer?.id ?? null;
     newSub.createdDate = data.createdDate;
     newSub.endDate = data.endDate;
-    newSub.assetId = data.assetId;
+    newSub.assetId = data?.assetId ?? null;
     newSub.typeSubscription =
       data.typeSubscription === 'month' ? 'monthly' : 'annual';
     newSub.priceId = data.priceId;
-    newSub.stripeSubscriptionId = data.subscriptionId;
+    newSub.stripeSubscriptionId = data?.subscriptionId ?? null;
     newSub.userId = data.userId;
     console.log('newSub', newSub);
     try {
@@ -186,7 +199,6 @@ export class PaymentService {
         );
 
         const payload: any = {};
-
         const subscription: any = await this.stripe.subscriptions.retrieve(
           subscriptionId,
         );

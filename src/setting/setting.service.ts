@@ -13,7 +13,7 @@ export class SettingService {
     @Inject('DEFAULT_SETTING_REPOSITORY')
     private defaultSettingRepository: Repository<DefaultSetting>,
     @Inject('ASSET_REPOSITORY') private assetRepository: Repository<Asset>,
-  ) { }
+  ) {}
 
   async findByUserId(id: number) {
     const data = await this.settingRepository

@@ -28,12 +28,16 @@ export class Subscription {
 
   @Column('int', { name: 'assetId', nullable: true })
   assetId: number | null;
-  @Column('varchar', { name: 'priceId', length: 100 })
+  @Column('varchar', { name: 'priceId', length: 100, nullable: true })
   priceId: string | null;
-  @Column('varchar', { name: 'customerId', length: 100 })
+  @Column('varchar', { name: 'customerId', length: 100, nullable: true })
   customerId: string | null;
 
-  @Column('varchar', { name: 'stripeSubscriptionId', length: 100 })
+  @Column('varchar', {
+    name: 'stripeSubscriptionId',
+    length: 100,
+    nullable: true,
+  })
   stripeSubscriptionId: string;
 
   @Column('int', { name: 'userId', nullable: true })

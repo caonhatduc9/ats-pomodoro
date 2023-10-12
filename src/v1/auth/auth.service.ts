@@ -25,7 +25,7 @@ export class AuthService {
     private jwtService: JwtService,
     private maillingService: MailingService,
     private settingService: SettingService,
-  ) {}
+  ) { }
 
   async validateUser(email: string, password: string): Promise<any> {
     console.log('check user', email, password);
@@ -47,7 +47,7 @@ export class AuthService {
     const foundUser = await this.userService.findUserByEmail(user.email);
     foundUser.authProvider = AuthProvider.LOCAL;
     await this.userService.create(foundUser);
-    const payload = { username: user.username, sub: user.userId };
+    const payload = { username: foundUser.username, sub: foundUser.userId, email: foundUser.email };
     return {
       statusCode: 200,
       data: {
@@ -64,6 +64,11 @@ export class AuthService {
         // currentSubscription: user.ubscriptions,
       },
     };
+    console.log("🚀 ~ file: auth.service.ts:67 ~ AuthService ~ login ~ payload:", payload)
+    console.log("🚀 ~ file: auth.service.ts:67 ~ AuthService ~ login ~ payload:", payload)
+    console.log("🚀 ~ file: auth.service.ts:67 ~ AuthService ~ login ~ payload:", payload)
+    console.log("🚀 ~ file: auth.service.ts:67 ~ AuthService ~ login ~ payload:", payload)
+    console.log("🚀 ~ file: auth.service.ts:67 ~ AuthService ~ login ~ payload:", payload)
   }
   async signup(userSignupDto: UserSignupDto): Promise<any> {
     const email = userSignupDto.email.toLowerCase();
@@ -113,7 +118,7 @@ export class AuthService {
         foundUser.authProvider = AuthProvider.GOOGLE;
         await this.userService.create(foundUser);
       }
-      const payload = { username: foundUser.username, sub: foundUser.userId };
+      const payload = { username: foundUser.username, sub: foundUser.userId, email: foundUser.email };
       return {
         statusCode: 200,
         data: {
@@ -178,7 +183,7 @@ export class AuthService {
           foundUser.authProvider = AuthProvider.APPLE;
           await this.userService.create(foundUser);
         }
-        const payload = { username: foundUser.username, sub: foundUser.userId };
+        const payload = { username: foundUser.username, sub: foundUser.userId, email: foundUser.email };
         return {
           statusCode: 200,
           data: {

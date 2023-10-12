@@ -25,4 +25,4 @@ jobs:
             git pull
             npm i
             npm run build
-            pm2 reload ${{ secrets.PM2_PROCESS_NAME_V2DEV}}
+            sudo pm2 reload ${{ secrets.PM2_PROCESS_NAME_V2DEV}}

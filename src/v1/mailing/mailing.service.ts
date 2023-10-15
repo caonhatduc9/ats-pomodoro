@@ -9,7 +9,7 @@ export class MailingService {
   constructor(
     private readonly configService: ConfigService,
     private readonly mailerService: MailerService,
-  ) { }
+  ) {}
 
   private async setTransport() {
     const OAuth2 = google.auth.OAuth2;
@@ -62,7 +62,6 @@ export class MailingService {
         .catch((err) => {
           console.log(err);
         });
-
     } catch (err) {
       console.log(err);
       // throw new Error('Send mail failed');

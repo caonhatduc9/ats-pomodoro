@@ -22,7 +22,7 @@ export class PaymentController {
     private readonly paymentService: PaymentService,
     private maillingService: MailingService,
     private userService: UserService,
-  ) { }
+  ) {}
 
   // @Post
   @UseGuards(JwtAuthGuard)
@@ -42,7 +42,10 @@ export class PaymentController {
     @Headers('User-Agent') userAgent: string,
   ) {
     const { userId, email } = req.user;
-    console.log("🚀 ~ file: payment.controller.ts:45 ~ PaymentController ~ req.user:", req.user)
+    console.log(
+      '🚀 ~ file: payment.controller.ts:45 ~ PaymentController ~ req.user:',
+      req.user,
+    );
     if (userAgent && userAgent === 'mobile') {
       try {
         const customer = null;
@@ -73,13 +76,13 @@ export class PaymentController {
         return {
           statusCode: 200,
           message: 'Payment Success',
-        }
+        };
       } catch (err) {
         console.log(err);
         // throw new BadRequestException(err.message);
         return {
           statusCode: 500,
-          error: err.message
+          error: err.message,
         };
       }
     } else {

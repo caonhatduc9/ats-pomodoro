@@ -132,7 +132,7 @@ export class PaymentService {
         data: products,
       };
     } else {
-      console.log("web");
+      console.log('web');
       const prices = await this.stripe.prices.list({ active: true });
       return {
         statusCode: 200,

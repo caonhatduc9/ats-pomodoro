@@ -42,10 +42,10 @@ export class Task {
   @Column('text', { name: 'taskName' })
   taskName: string;
 
-  @Column('float', { name: 'estimatePomodoro' })
+  @Column('int', { name: 'estimatePomodoro' })
   estimatePomodoro: number;
 
-  @Column('float', {
+  @Column('int', {
     name: 'actualPomodoro',
     nullable: true,
     default: () => 0,

@@ -25,7 +25,7 @@ export class PaymentController {
   ) { }
 
   // @Post
-
+  @UseGuards(JwtAuthGuard)
   @Get('getListProduct')
   async getListProduct(@Headers('User-Agent') userAgent: string) {
     console.log(

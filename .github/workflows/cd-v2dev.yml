@@ -23,6 +23,6 @@ jobs:
             ls -la
             git status
             git pull
-            npm i
-            npm run build
+            sudo npm i
+            sudo npm run build
             sudo pm2 reload ${{ secrets.PM2_PROCESS_NAME_V2DEV}}

@@ -13,13 +13,14 @@ import {
 } from './interfaces/index.interface';
 
 import * as moment from 'moment';
+import { SharedService } from 'src/shared/shared.service';
 
 @Injectable()
 export class ReportService {
   constructor(
     @Inject('PROJECT_REPOSITORY') private reportRepository: Repository<Report>,
     @Inject('USER_REPOSITORY') private userRepository: Repository<User>,
-  ) {}
+  ) { }
 
   // calculateStreakDay(focusedPomodoros) {
   //   const sortedPomodoros = focusedPomodoros.sort((a, b) => new Date(a.createdDate) - new Date(b.createdDate));
@@ -77,13 +78,13 @@ export class ReportService {
         .leftJoinAndSelect('user.projects', 'projects')
         .leftJoinAndSelect('user.tasks', 'tasks')
         .where('user.userId = :id ', { id })
-        .andWhere('projects.status != :status', { status: 'DELETE' })
+        // .andWhere('projects.status != :status', { status: 'DELETE' })
         .getMany(),
       this.userRepository
         .createQueryBuilder('user')
         .leftJoinAndSelect('user.tasks', 'tasks')
         .where('user.userId = :id ', { id })
-        .andWhere('tasks.status != :status', { status: 'DELETE' })
+        // .andWhere('tasks.status != :status', { status: 'DELETE' })
         .getMany(),
     ]);
     // return [taskDataRaw, projectDataRaw];
@@ -161,7 +162,7 @@ export class ReportService {
       .leftJoinAndSelect('project.tasks', 'taskProject')
       .where('user.userId = :id ', { id })
       .getMany();
-
+    // return dataRaw;
     // Biến lưu trữ kết quả
     const result = [];
 
@@ -175,13 +176,13 @@ export class ReportService {
         totalMinutes += +task.timeSpent;
       });
       const dateString: string = project.createdDate;
-      // Tạo đối tượng Moment từ chuỗi ngày
-      const date: moment.Moment = moment(dateString);
-      // Định dạng ngày theo mẫu 'DD-MMM-YYYY'
-      const formattedDate: string = date.format('YYYY-MM-DD');
-      // Thêm project vào kết quả
+      // // Tạo đối tượng Moment từ chuỗi ngày
+      // const date: moment.Moment = moment(dateString);
+      // // Định dạng ngày theo mẫu 'DD-MMM-YYYY'
+      // const formattedDate: string = date.format('YYYY-MM-DD');
+      // // Thêm project vào kết quả
       result.push({
-        date: formattedDate,
+        date: dateString,
         project: project.projectName,
         minutes: totalMinutes,
       });
@@ -189,30 +190,30 @@ export class ReportService {
 
     // Lặp qua các task không thuộc project
     dataRaw[0].tasks.forEach((task) => {
-      if (task.projectId === null) {
-        // const [hours, minutes, seconds] = task.timeSpent.split(":");
-        const taskName = task.taskName;
-        const existingTask = result.find((item) => item.task === taskName);
-        if (existingTask) {
-          // Cộng thời gian vào task đã tồn tại trong kết quả
-          existingTask.minutes += task.timeSpent;
-        } else {
-          const dateString: string = task.createdDate;
-          // Tạo đối tượng Moment từ chuỗi ngày
-          const date: moment.Moment = moment(dateString);
-          // Định dạng ngày theo mẫu 'DD-MMM-YYYY'
-          const formattedDate: string = date.format('YYYY-MM-DD');
-          // Thêm task vào kết quả
-          result.push({
-            date: formattedDate,
-            task: taskName,
-            minutes: task.timeSpent,
-          });
-        }
-      }
+      // if (task.projectId === null) {
+      // const [hours, minutes, seconds] = task.timeSpent.split(":");
+      const taskName = task.taskName;
+      // const existingTask = result.find((item) => item.task === taskName);
+      // if (existingTask) {
+      //   // Cộng thời gian vào task đã tồn tại trong kết quả
+      //   existingTask.minutes += task.timeSpent;
+      // } else {
+      const dateString: string = task.createdDate;
+      // // Tạo đối tượng Moment từ chuỗi ngày
+      // const date: moment.Moment = moment(dateString);
+      // // Định dạng ngày theo mẫu 'DD-MMM-YYYY'
+      // const formattedDate: string = date.format('YYYY-MM-DD');
+      // Thêm task vào kết quả
+      result.push({
+        date: dateString,
+        task: taskName,
+        minutes: task.timeSpent,
+      });
+      // }
+      // }
     });
 
-    console.log(result);
+    // console.log(result);
 
     return {
       statusCode: 200,

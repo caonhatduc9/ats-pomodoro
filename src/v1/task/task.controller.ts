@@ -14,7 +14,7 @@ import { JwtAuthGuard } from 'src/v1/auth/guards/auth.jwt.guard';
 
 @Controller('v1/task')
 export class TaskController {
-  constructor(private readonly taskService: TaskService) {}
+  constructor(private readonly taskService: TaskService) { }
   @UseGuards(JwtAuthGuard)
   @Delete('/empty')
   async deleteAllTasks(@Req() req: any) {
@@ -43,7 +43,10 @@ export class TaskController {
   @UseGuards(JwtAuthGuard)
   @Patch()
   async updateTaskByUserId(@Body() body: any, @Req() req: any) {
-    return this.taskService.updateTaskByUserId(body, +req.user.userId);
+    const updateTaskField = { ...body };
+    // updateTaskField.modifiedDate = new Date().toISOString().slice(0, 10);
+    // console.log("🚀 ~ file: task.controller.ts:48 ~ TaskController ~ updateTaskByUserId ~ updateTaskField:", updateTaskField)
+    return this.taskService.updateTaskByUserId(updateTaskField, +req.user.userId);
   }
   @UseGuards(JwtAuthGuard)
   @Delete()

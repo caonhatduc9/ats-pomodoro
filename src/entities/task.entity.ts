@@ -58,10 +58,10 @@ export class Task {
   @Column('text', { name: 'note', nullable: true })
   note: string | null;
 
-  @Column('date', { name: 'createdDate', nullable: true })
+  @Column('datetime', { name: 'createdDate', nullable: true })
   createdDate: string | null;
 
-  @Column('date', { name: 'modifiedDate', nullable: true })
+  @Column('datetime', { name: 'modifiedDate', nullable: true })
   modifiedDate: string | null;
 
   @Column('int', { name: 'categoryId', nullable: true })

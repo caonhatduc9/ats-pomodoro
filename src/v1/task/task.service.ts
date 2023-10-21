@@ -7,8 +7,8 @@ import {
 import { Project, ProjectStatus } from '../../entities/project.entity';
 import { Task, TaskStatus } from '../../entities/task.entity';
 import { Repository } from 'typeorm';
-import { async } from 'rxjs';
 import { Category } from 'src/entities/category.entity';
+import { SharedService } from 'src/shared/shared.service';
 
 @Injectable()
 export class TaskService {
@@ -18,7 +18,8 @@ export class TaskService {
     @Inject('TASK_REPOSITORY') private taskRepository: Repository<Task>,
     @Inject('CATEGORY_REPOSITORY')
     private categoryRepository: Repository<Category>,
-  ) {}
+    private sharedService: SharedService,
+  ) { }
 
   async getDefaultTask(): Promise<any> {
     const data = await this.taskRepository
@@ -39,7 +40,7 @@ export class TaskService {
           userId: userId,
           projectName: body.project.projectName,
           description: body.project.description,
-          createdDate: new Date().toISOString().slice(0, 10),
+          createdDate: this.sharedService.getDateTimeNow(),
         });
         const savedProject = await this.projectRepository.save(newProject);
         const newTask = this.taskRepository.create({
@@ -48,7 +49,7 @@ export class TaskService {
           taskName: body.task.taskName,
           estimatePomodoro: body.task.estimatePomodoro,
           note: body.task.note,
-          createdDate: new Date().toISOString().slice(0, 10),
+          createdDate: this.sharedService.getDateTimeNow(),
           status: body.status,
         });
         const savedTask = await this.taskRepository.save(newTask);
@@ -67,7 +68,7 @@ export class TaskService {
             taskName: body.task.taskName,
             estimatePomodoro: body.task.estimatePomodoro,
             note: body.task.note,
-            createdDate: new Date().toISOString().slice(0, 10),
+            createdDate: this.sharedService.getDateTimeNow(),
             status: body.task.status,
           });
           const savedTask = await this.taskRepository.save(newTask);
@@ -80,7 +81,7 @@ export class TaskService {
           const newProject = this.projectRepository.create({
             userId: userId,
             projectName: body.project.projectName,
-            createdDate: new Date().toISOString().slice(0, 10),
+            createdDate: this.sharedService.getDateTimeNow(),
           });
           const savedProject = await this.projectRepository.save(newProject);
           const newTask = this.taskRepository.create({
@@ -89,7 +90,7 @@ export class TaskService {
             taskName: body.task.taskName,
             estimatePomodoro: body.task.estimatePomodoro,
             note: body.task.note,
-            createdDate: new Date().toISOString().slice(0, 10),
+            createdDate: this.sharedService.getDateTimeNow(),
             status: body.status,
           });
           const savedTask = await this.taskRepository.save(newTask);
@@ -108,7 +109,7 @@ export class TaskService {
         taskName: body.taskName,
         estimatePomodoro: body.estimatePomodoro,
         note: body.note,
-        createdDate: new Date().toISOString().slice(0, 10),
+        createdDate: this.sharedService.getDateTimeNow(),
         status: body.status,
         categoryId: body.categoryId,
       });
@@ -143,6 +144,7 @@ export class TaskService {
       '🚀 ~ file: task.service.ts:130 ~ TaskService ~ updateTaskByUserId ~ body:',
       updateFields,
     );
+    console.log('time', this.sharedService.getDateTimeNow());
 
     const foundTask = await this.taskRepository.findOne({
       where: { taskId: updateFields.taskId },
@@ -153,6 +155,7 @@ export class TaskService {
         const newTask = this.taskRepository.create({
           taskId: updateFields.taskId,
           projectId: null,
+          modifiedDate: this.sharedService.getDateTimeNow(),
         });
         // console.log(body.taskId);
         const savedTask = await this.taskRepository.save(newTask);
@@ -163,6 +166,8 @@ export class TaskService {
       }
       if (Object.keys(updateFields).length >= 2) {
         console.log(updateFields.taskId);
+        updateFields.modifiedDate = this.sharedService.getDateTimeNow()
+        console.log("🚀 ~ file: task.service.ts:168 ~ TaskService ~ updateTaskByUserId ~ updateFields:", updateFields)
         const savedTask = await this.taskRepository.save(updateFields);
         return {
           statusCode: 200,
@@ -180,7 +185,7 @@ export class TaskService {
           const newProject = this.projectRepository.create({
             projectId: updateFields.projectId,
             projectName: updateFields.projectName,
-            modifiedDate: new Date().toISOString().slice(0, 10),
+            modifiedDate: this.sharedService.getDateTimeNow(),
           });
           const updatedProject = await this.projectRepository.save(newProject);
           // return savedProject;
@@ -192,7 +197,7 @@ export class TaskService {
             taskName: updateFields.taskName,
             estimatePomodoro: updateFields.estimatePomodoro,
             note: updateFields.note,
-            modifiedDate: new Date().toISOString().slice(0, 10),
+            modifiedDate: this.sharedService.getDateTimeNow(),
             status: updateFields.status,
             timeSpent: updateFields.timeSpent,
           });
@@ -213,7 +218,7 @@ export class TaskService {
       const newTask = this.taskRepository.create({
         taskId: taskId,
         status: TaskStatus.DELETE,
-        modifiedDate: new Date().toISOString().slice(0, 10),
+        modifiedDate: this.sharedService.getDateTimeNow(),
       });
       const savedTask = await this.taskRepository.save(newTask);
       return {
@@ -236,7 +241,7 @@ export class TaskService {
         const data = this.taskRepository.create({
           taskId: item.taskId,
           status: TaskStatus.DELETE,
-          modifiedDate: new Date().toISOString().slice(0, 10),
+          modifiedDate: this.sharedService.getDateTimeNow(),
         });
         const savedTask = this.taskRepository.save(data);
       }

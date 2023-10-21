@@ -41,10 +41,6 @@ export class ReportService {
   // }
 
   countConsecutiveDays(dates: string[]): number {
-    console.log(
-      '🚀 ~ file: report.service.ts:43 ~ ReportService ~ countConsecutiveDays ~ dates:',
-      dates,
-    );
     dates.sort();
 
     let maxConsecutiveDays = 1;

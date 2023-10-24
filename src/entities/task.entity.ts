@@ -67,6 +67,30 @@ export class Task {
   @Column('int', { name: 'categoryId', nullable: true })
   categoryId: number | null;
 
+  @Column('float', {
+    name: 'pomodoroTime',
+    nullable: true,
+    precision: 12,
+    default: 25,
+  })
+  pomodoroTime: number | null;
+
+  @Column('float', {
+    name: 'shortBreakTime',
+    nullable: true,
+    precision: 12,
+    default: 5,
+  })
+  shortBreakTime: number | null;
+
+  @Column('float', {
+    name: 'longBreakTime',
+    nullable: true,
+    precision: 12,
+    default: 10,
+  })
+  longBreakTime: number | null;
+
   @ManyToOne(() => Project, (project) => project.tasks, {
     onDelete: 'RESTRICT',
     onUpdate: 'RESTRICT',

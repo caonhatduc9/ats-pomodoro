@@ -112,6 +112,9 @@ export class TaskService {
         createdDate: this.sharedService.getDateTimeNow(),
         status: body.status,
         categoryId: body.categoryId,
+        pomodoroTime: body?.pomodoroTime,
+        shortBreakTime: body?.shortBreakTime,
+        longBreakTime: body?.longBreakTime,
       });
       const savedTask = await this.taskRepository.save(newTask);
       return savedTask;

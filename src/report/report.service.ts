@@ -20,7 +20,7 @@ export class ReportService {
   constructor(
     @Inject('PROJECT_REPOSITORY') private reportRepository: Repository<Report>,
     @Inject('USER_REPOSITORY') private userRepository: Repository<User>,
-  ) { }
+  ) {}
 
   // calculateStreakDay(focusedPomodoros) {
   //   const sortedPomodoros = focusedPomodoros.sort((a, b) => new Date(a.createdDate) - new Date(b.createdDate));

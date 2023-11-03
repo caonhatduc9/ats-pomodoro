@@ -43,4 +43,17 @@ export class SettingController {
   getDefaultSetting() {
     return this.settingService.findDefaultSetting();
   }
+
+  @Get('getPlaylist')
+  async getPlaylist() {
+    try {
+      const data = await this.settingService.getPlaylists();
+      return {
+        statusCode: 200,
+        data: data,
+      };
+    } catch (error) {
+      return { statusCode: 500, message: error.message };
+    }
+  }
 }

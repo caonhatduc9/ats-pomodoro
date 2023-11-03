@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { Setting } from '../entities/setting.entity';
 import { Asset } from '../entities/asset.entity';
 import { DefaultSetting } from 'src/entities/defaultSetting.entity';
+import { Playlist } from 'src/entities/playlist.entity';
 @Injectable()
 export class SettingService {
   constructor(
@@ -13,6 +14,8 @@ export class SettingService {
     @Inject('DEFAULT_SETTING_REPOSITORY')
     private defaultSettingRepository: Repository<DefaultSetting>,
     @Inject('ASSET_REPOSITORY') private assetRepository: Repository<Asset>,
+    @Inject('PLAYLIST_REPOSITORY')
+    private playlistRepository: Repository<Playlist>,
   ) {}
 
   async findByUserId(id: number) {
@@ -428,5 +431,18 @@ export class SettingService {
       statusCode: 200,
       data: cleanedData ? cleanedData : {},
     };
+  }
+
+  async getPlaylists() {
+    const data = await this.playlistRepository
+      .createQueryBuilder('playlists')
+      .leftJoinAndSelect('playlists.assets', 'items')
+      .where('items.type = :music', { music: 'MUSIC' })
+      .getMany();
+
+    // return {
+    // statusCode: 200,
+    return data;
+    // }
   }
 }

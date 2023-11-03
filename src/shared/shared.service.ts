@@ -7,7 +7,7 @@ import { Repository } from 'typeorm';
 export class SharedService {
   constructor(
     @Inject('ASSET_REPOSITORY') private reportRepository: Repository<Asset>,
-  ) { }
+  ) {}
 
   async getAssetById(id: number): Promise<Asset> {
     return await this.reportRepository.findOne({ where: { assetId: id } });
@@ -19,7 +19,9 @@ export class SharedService {
     const nowUTC = new Date();
     const userTimezoneOffset = 7 * 60; // Độ chênh lệch múi giờ GMT+7 là 7 giờ
     // Chuyển đổi ngày giờ thành múi giờ của người dùng
-    const userTime = new Date(nowUTC.getTime() + userTimezoneOffset * 60000).toISOString();
+    const userTime = new Date(
+      nowUTC.getTime() + userTimezoneOffset * 60000,
+    ).toISOString();
     return userTime;
   }
 }

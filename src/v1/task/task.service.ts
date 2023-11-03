@@ -19,7 +19,7 @@ export class TaskService {
     @Inject('CATEGORY_REPOSITORY')
     private categoryRepository: Repository<Category>,
     private sharedService: SharedService,
-  ) { }
+  ) {}
 
   async getDefaultTask(): Promise<any> {
     const data = await this.taskRepository
@@ -169,8 +169,11 @@ export class TaskService {
       }
       if (Object.keys(updateFields).length >= 2) {
         console.log(updateFields.taskId);
-        updateFields.modifiedDate = this.sharedService.getDateTimeNow()
-        console.log("🚀 ~ file: task.service.ts:168 ~ TaskService ~ updateTaskByUserId ~ updateFields:", updateFields)
+        updateFields.modifiedDate = this.sharedService.getDateTimeNow();
+        console.log(
+          '🚀 ~ file: task.service.ts:168 ~ TaskService ~ updateTaskByUserId ~ updateFields:',
+          updateFields,
+        );
         const savedTask = await this.taskRepository.save(updateFields);
         return {
           statusCode: 200,

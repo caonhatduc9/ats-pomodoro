@@ -1,7 +1,15 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Setting } from './setting.entity';
 import { Subscription } from './subscription.entity';
 import { DefaultSetting } from './defaultSetting.entity';
+import { Playlist } from './playlist.entity';
 
 @Entity('asset', { schema: 'ats_pomodoro' })
 export class Asset {
@@ -75,4 +83,14 @@ export class Asset {
 
   @OneToMany(() => Subscription, (subscription) => subscription.asset)
   subscriptions: Subscription[];
+
+  @Column('int', { name: 'playlist', nullable: true })
+  playlist: number | null;
+
+  @ManyToOne(() => Playlist, (playlist) => playlist.assets, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  @JoinColumn([{ name: 'playlist', referencedColumnName: 'playlistId' }])
+  playlist2: Playlist;
 }

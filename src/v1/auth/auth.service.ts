@@ -25,7 +25,7 @@ export class AuthService {
     private jwtService: JwtService,
     private maillingService: MailingService,
     private settingService: SettingService,
-  ) {}
+  ) { }
 
   async validateUser(email: string, password: string): Promise<any> {
     console.log('check user', email, password);
@@ -112,8 +112,8 @@ export class AuthService {
     const savedUser = await this.userService.create(user);
     if (savedUser) {
       await this.settingService.createDefaultSetting(savedUser.userId);
-      const subject = 'Verficiaction Code';
-      const content = `<p>this is default password: <b>${randomPassword}</b>. Please change password after login</p>`;
+      const subject = 'Default Password';
+      const content = `${randomPassword}`;
       this.maillingService.sendMail(user.email, subject, content);
       return {
         statusCode: 200,

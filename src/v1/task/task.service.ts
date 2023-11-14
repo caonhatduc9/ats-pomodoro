@@ -19,7 +19,7 @@ export class TaskService {
     @Inject('CATEGORY_REPOSITORY')
     private categoryRepository: Repository<Category>,
     private sharedService: SharedService,
-  ) {}
+  ) { }
 
   async getDefaultTask(): Promise<any> {
     const data = await this.taskRepository
@@ -103,6 +103,7 @@ export class TaskService {
       }
     } else {
       //day la trương hợp dễ hơ chỉ dùng table task thôi không cần project
+      //only use for mobile
       //implement here
       const newTask = this.taskRepository.create({
         userId,
@@ -115,6 +116,11 @@ export class TaskService {
         pomodoroTime: body?.pomodoroTime,
         shortBreakTime: body?.shortBreakTime,
         longBreakTime: body?.longBreakTime,
+        priority: body?.priority,
+        timeRemind: body?.timeRemind,
+        isRepeat: body?.isRepeat,
+        isAutoStartBreak: body?.isAutoStartBreak,
+        isAutoStartPomodoro: body?.isAutoStartPomodoro,
       });
       const savedTask = await this.taskRepository.save(newTask);
       return savedTask;

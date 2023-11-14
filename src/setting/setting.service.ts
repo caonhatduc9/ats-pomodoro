@@ -16,7 +16,7 @@ export class SettingService {
     @Inject('ASSET_REPOSITORY') private assetRepository: Repository<Asset>,
     @Inject('PLAYLIST_REPOSITORY')
     private playlistRepository: Repository<Playlist>,
-  ) {}
+  ) { }
 
   async findByUserId(id: number) {
     const data = await this.settingRepository
@@ -43,6 +43,7 @@ export class SettingService {
         'asset.assetUrl',
         'asset.isFree',
         'asset.thumbnail',
+        'asset.durationSec',
       ])
       .getMany();
 

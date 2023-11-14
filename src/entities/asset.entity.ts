@@ -49,6 +49,9 @@ export class Asset {
   @Column('text', { name: 'thumbnail' })
   thumbnail: string;
 
+  @Column('int', { name: 'durationSec', nullable: true, default: 0 })
+  durationSec: number | null;
+
   @OneToMany(() => Setting, (setting) => setting.backgroundMusic2)
   settings: Setting[];
 

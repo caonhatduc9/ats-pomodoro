@@ -25,7 +25,7 @@ export class AuthService {
     private jwtService: JwtService,
     private maillingService: MailingService,
     private settingService: SettingService,
-  ) { }
+  ) {}
 
   async validateUser(email: string, password: string): Promise<any> {
     console.log('check user', email, password);

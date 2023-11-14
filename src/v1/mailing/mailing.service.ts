@@ -82,10 +82,9 @@ import { Options } from 'nodemailer/lib/smtp-transport';
 
 @Injectable()
 export class MailingService {
-  constructor(private mailerService: MailerService) { }
+  constructor(private mailerService: MailerService) {}
 
   async sendMail(email: string, subject: string, content: string) {
-
     try {
       await this.mailerService.sendMail({
         to: email,

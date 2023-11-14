@@ -36,4 +36,4 @@ import { join } from 'path';
   providers: [MailingService, ConfigService],
   exports: [MailingService],
 })
-export class MailingModule { }
+export class MailingModule {}

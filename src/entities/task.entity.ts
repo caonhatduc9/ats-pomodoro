@@ -91,16 +91,29 @@ export class Task {
   })
   longBreakTime: number | null;
 
-  @Column('varchar', { name: 'priority', nullable: true, length: 7, default: 'medium' })
+  @Column('varchar', {
+    name: 'priority',
+    nullable: true,
+    length: 7,
+    default: 'medium',
+  })
   priority: string | null;
 
-  @Column('datetime', { name: 'timeRemind', nullable: true, default: () => 'CURRENT_TIMESTAMP' })
+  @Column('datetime', {
+    name: 'timeRemind',
+    nullable: true,
+    default: () => 'CURRENT_TIMESTAMP',
+  })
   timeRemind: Date | null;
 
   @Column('tinyint', { name: 'isRepeat', nullable: true, default: 0 })
   isRepeat: number | null;
 
-  @Column('tinyint', { name: 'isAutoStartPomodoro', nullable: true, default: 0 })
+  @Column('tinyint', {
+    name: 'isAutoStartPomodoro',
+    nullable: true,
+    default: 0,
+  })
   isAutoStartPomodoro: number | null;
 
   @Column('tinyint', { name: 'isAutoStartBreak', nullable: true, default: 0 })

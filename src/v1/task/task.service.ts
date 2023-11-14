@@ -19,7 +19,7 @@ export class TaskService {
     @Inject('CATEGORY_REPOSITORY')
     private categoryRepository: Repository<Category>,
     private sharedService: SharedService,
-  ) { }
+  ) {}
 
   async getDefaultTask(): Promise<any> {
     const data = await this.taskRepository

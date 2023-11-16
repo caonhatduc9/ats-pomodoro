@@ -19,7 +19,7 @@ export class TaskService {
     @Inject('CATEGORY_REPOSITORY')
     private categoryRepository: Repository<Category>,
     private sharedService: SharedService,
-  ) {}
+  ) { }
 
   async getDefaultTask(): Promise<any> {
     const data = await this.taskRepository
@@ -118,9 +118,10 @@ export class TaskService {
         longBreakTime: body?.longBreakTime,
         priority: body?.priority,
         timeRemind: body?.timeRemind,
-        isRepeat: body?.isRepeat,
+        numOfTimeRepeat: body?.numOfTimeRepeat,
         isAutoStartBreak: body?.isAutoStartBreak,
         isAutoStartPomodoro: body?.isAutoStartPomodoro,
+        timeStart: body?.timeStart
       });
       const savedTask = await this.taskRepository.save(newTask);
       return savedTask;

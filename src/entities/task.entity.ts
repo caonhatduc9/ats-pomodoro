@@ -106,8 +106,8 @@ export class Task {
   })
   timeRemind: Date | null;
 
-  @Column('tinyint', { name: 'isRepeat', nullable: true, default: 0 })
-  isRepeat: number | null;
+  @Column('int', { name: 'numOfTimeRepeat', nullable: true, default: 0 })
+  numOfTimeRepeat: number | null;
 
   @Column('tinyint', {
     name: 'isAutoStartPomodoro',
@@ -118,6 +118,13 @@ export class Task {
 
   @Column('tinyint', { name: 'isAutoStartBreak', nullable: true, default: 0 })
   isAutoStartBreak: number | null;
+
+  @Column('datetime', {
+    name: 'timeStart',
+    nullable: true,
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  timeStart: Date | null;
 
   @ManyToOne(() => Project, (project) => project.tasks, {
     onDelete: 'RESTRICT',

@@ -20,7 +20,7 @@ export class ReportService {
   constructor(
     @Inject('PROJECT_REPOSITORY') private reportRepository: Repository<Report>,
     @Inject('USER_REPOSITORY') private userRepository: Repository<User>,
-  ) {}
+  ) { }
 
   // calculateStreakDay(focusedPomodoros) {
   //   const sortedPomodoros = focusedPomodoros.sort((a, b) => new Date(a.createdDate) - new Date(b.createdDate));
@@ -83,7 +83,8 @@ export class ReportService {
         // .andWhere('tasks.status != :status', { status: 'DELETE' })
         .getMany(),
     ]);
-    // return [taskDataRaw, projectDataRaw];
+    let taskCompleted = 0;
+    let pomodoroCompleted = 0;
     const focusHours = [];
     let projects = [];
     projects = projectDataRaw.length > 0 ? projectDataRaw[0].projects : [];
@@ -98,6 +99,10 @@ export class ReportService {
     const focusTimeCreatedDates: string[] = [];
     const accessedDates = new Set();
     tasks.forEach((task) => {
+      if (task.status === 'DONE') {
+        taskCompleted++;
+      }
+      pomodoroCompleted += task.actualPomodoro;
       totalTimeSpent += task.timeSpent;
       const focusHour = {
         timeFocus: task.timeSpent,
@@ -115,6 +120,8 @@ export class ReportService {
         focusedHours: totalTimeSpent,
         accessedDays: accessedDay,
         streakDays: streak,
+        taskCompleted,
+        pomodoroCompleted,
       },
       focusHours,
       projects,

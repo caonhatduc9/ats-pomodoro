@@ -82,14 +82,14 @@ import { Options } from 'nodemailer/lib/smtp-transport';
 
 @Injectable()
 export class MailingService {
-  constructor(private mailerService: MailerService) {}
+  constructor(private mailerService: MailerService) { }
 
   async sendMail(email: string, subject: string, content: string) {
     try {
       await this.mailerService.sendMail({
         to: email,
         // from: '"Support Team" <support@example.com>', // override default from
-        subject: 'default password',
+        subject: subject,
         template: './confirmation', // `.hbs` extension is appended automatically
         context: {
           name: email,

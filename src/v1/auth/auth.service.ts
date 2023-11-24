@@ -68,26 +68,6 @@ export class AuthService {
         // currentSubscription: user.ubscriptions,
       },
     };
-    console.log(
-      '🚀 ~ file: auth.service.ts:67 ~ AuthService ~ login ~ payload:',
-      payload,
-    );
-    console.log(
-      '🚀 ~ file: auth.service.ts:67 ~ AuthService ~ login ~ payload:',
-      payload,
-    );
-    console.log(
-      '🚀 ~ file: auth.service.ts:67 ~ AuthService ~ login ~ payload:',
-      payload,
-    );
-    console.log(
-      '🚀 ~ file: auth.service.ts:67 ~ AuthService ~ login ~ payload:',
-      payload,
-    );
-    console.log(
-      '🚀 ~ file: auth.service.ts:67 ~ AuthService ~ login ~ payload:',
-      payload,
-    );
   }
   async signup(userSignupDto: UserSignupDto): Promise<any> {
     const email = userSignupDto.email.toLowerCase();
@@ -150,6 +130,7 @@ export class AuthService {
           email: foundUser.email,
           userName: foundUser.username,
           gender: foundUser.gender,
+          birthDate: foundUser.birthDate,
           avatarURL: foundUser.avatarUrl,
           payment: 'free',
           isPremium: foundUser.isPremium,
@@ -177,6 +158,7 @@ export class AuthService {
             email: savedUser.email,
             userName: savedUser.username,
             gender: savedUser.gender,
+            birthDate: savedUser.birthDate,
             isPremium: savedUser.isPremium,
             phoneNumber: savedUser.phoneNumber,
             avatarURL: savedUser.avatarUrl,
@@ -219,6 +201,7 @@ export class AuthService {
             email: foundUser.email,
             userName: foundUser.username,
             gender: foundUser.gender,
+            birthDate: foundUser.birthDate,
             avatarURL: foundUser.avatarUrl,
             payment: 'free',
             isPremium: foundUser.isPremium,
@@ -252,6 +235,7 @@ export class AuthService {
               email: savedUser.email,
               userName: savedUser.username,
               gender: savedUser.gender,
+              birthDate: savedUser.birthDate,
               isPremium: savedUser.isPremium,
               phoneNumber: savedUser.phoneNumber,
               avatarURL: savedUser.avatarUrl,

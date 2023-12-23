@@ -30,8 +30,8 @@ import { SettingModule } from 'src/setting/setting.module';
     LocalStrategy,
     JwtStrategy,
     GoogleStrategy,
-    AppleStrategy,
-    GithubStrategy,
+    // AppleStrategy,
+    // GithubStrategy,
   ],
   exports: [AuthService],
 })
